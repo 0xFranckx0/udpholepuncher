@@ -4,7 +4,7 @@ libobj_libuhp_la_SOURCES =  lib/uhp.c
 							
 libobj_libuhp_la_LDFLAGS = -version-info 0:0:0
 include_HEADERS = lib/uhp.c
-libobj_libael_la_LIBADD = -lssl -lcrypto
+libobj_libuhp_la_LIBADD = -lssl -lcrypto
 
 bin_PROGRAMS = bin/test
 bin_test_SOURCES = src/test.c
