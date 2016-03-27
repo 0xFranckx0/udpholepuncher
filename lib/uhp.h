@@ -6,7 +6,9 @@
 #include <openssl/x509.h>
 #include <openssl/evp.h>
 
-void uhp_new();
+#include "error.h"
+
+int uhp_new();
 void uhp_print();
 
 #endif /* UHP_H_ */

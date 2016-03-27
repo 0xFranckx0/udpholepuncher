@@ -4,10 +4,11 @@
 #include "uhp.h"
 
 
-void 
+int 
 uhp_new()
 {
 	 printf("This is NEW !\n");
+     return -1;
 }
 
 void 

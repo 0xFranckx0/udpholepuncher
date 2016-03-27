@@ -1,6 +1,7 @@
 *.*~
 *.o
 *.lo
+*.swp
 bin/*
 aclocal.m4
 config

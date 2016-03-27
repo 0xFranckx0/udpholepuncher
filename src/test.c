@@ -23,8 +23,26 @@
 int
 main (void)
 {
-          puts ("This is :" PACKAGE_STRING ".");
-          uhp_new();
-          uhp_print();
-          return 0;
+    char *str;
+    str = malloc(4 * sizeof(char));
+    if ( str == NULL) {
+        err_sscb(__func__, "malloc");
+        err_pb(stderr);
+        return -1;
+    }
+    free( str);
+
+    puts ("This is :" PACKAGE_STRING ".");
+
+    int res;
+    res = uhp_new();
+    
+    if (res == -1) {
+        err_sb(__func__, "error code is %d", res);
+        err_pb(stderr);
+    }
+    
+    uhp_print();
+
+    return 0;
 }
