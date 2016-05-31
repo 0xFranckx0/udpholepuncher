@@ -15,6 +15,8 @@
 #include <stdio.h>
 #include <errno.h>
 
+#include "uhp.h"
+
 void
 readcb(struct bufferevent *bev, void *ctx)
 {
@@ -29,16 +31,16 @@ void
 udp_cb(evutil_socket_t listener, short event, void *arg)
 {
         struct event_base *base = arg;
-        struct sockaddr_in server_sin;
+        struct sockaddr_in sin;
         ssize_t lenrcv, lensnd;
-        socklen_t server_sz = sizeof(server_sin);
+        socklen_t slen = sizeof(sin);
         char buf[512];
 
         memset(buf,0,strlen(buf));
         /* Recv the data, store the address of the sender in server_sin */
     
         if (lenrcv = (recvfrom((int)listener, &buf, sizeof(buf) - 1, 0,
-                (struct sockaddr *) &server_sin, &server_sz)) == -1) {
+                (struct sockaddr *) &sin, &slen)) == -1) {
             perror("recvfrom()");
             event_loopbreak();
         }
@@ -46,7 +48,7 @@ udp_cb(evutil_socket_t listener, short event, void *arg)
         fprintf(stdout,"RECEIVED : %s\n", buf);
         /* Send the data back to the client */
         if (lensnd = (sendto((int)listener, buf,sizeof(lenrcv) , 0, 
-                (struct sockaddr *) &server_sin, server_sz)) == -1 ) {
+                (struct sockaddr *) &sin, slen)) == -1 ) {
             perror("sendto()");
             event_loopbreak();
         }
@@ -68,7 +70,7 @@ int run_udp()
         memset(&sin, 0, sizeof(sin));
         sin.sin_family = AF_INET;
         sin.sin_addr.s_addr = 0;
-        sin.sin_port = htons(4000);
+        sin.sin_port = htons(UHPPORT);
         
         listener = socket(AF_INET,SOCK_DGRAM,0);
         evutil_make_socket_nonblocking(listener);

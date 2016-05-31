@@ -8,6 +8,7 @@
 
 #include "error.h"
 
-void run_udp();
+#define UHPPORT	4000
+int run_udp();
 
 #endif /* UHP_H_ */
