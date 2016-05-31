@@ -23,7 +23,8 @@
 int
 main (void)
 {
-    char *str;
+    run_udp();
+/*    char *str;
     str = malloc(4 * sizeof(char));
     if ( str == NULL) {
         err_sscb(__func__, "malloc");
@@ -43,6 +44,6 @@ main (void)
     }
     
     uhp_print();
-
+*/
     return 0;
 }
