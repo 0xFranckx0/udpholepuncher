@@ -7,9 +7,7 @@
 #include <openssl/evp.h>
 
 #include "error.h"
-#include "svr_ux.h"
 
-int uhp_new();
-void uhp_print();
+void run_udp();
 
 #endif /* UHP_H_ */

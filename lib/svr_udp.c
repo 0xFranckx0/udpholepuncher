@@ -28,27 +28,28 @@ errorcb(struct bufferevent *bev, short error, void *ctx)
 void
 udp_cb(evutil_socket_t listener, short event, void *arg)
 {
-    struct event_base *base = arg;
-    struct sockaddr_in server_sin;
-    ssize_t lenrcv, lensnd;
-    socklen_t server_sz = sizeof(server_sin);
-    char buf[512];
+        struct event_base *base = arg;
+        struct sockaddr_in server_sin;
+        ssize_t lenrcv, lensnd;
+        socklen_t server_sz = sizeof(server_sin);
+        char buf[512];
 
-    memset(buf,0,strlen(buf));
-    /* Recv the data, store the address of the sender in server_sin */
+        memset(buf,0,strlen(buf));
+        /* Recv the data, store the address of the sender in server_sin */
     
-    if (lenrcv = (recvfrom((int)listener, &buf, sizeof(buf) - 1, 0,
-        (struct sockaddr *) &server_sin, &server_sz)) == -1) {
-        perror("recvfrom()");
-        event_loopbreak();
-    }
-    fprintf(stdout,"RECEIVED : %s\n", buf);
-    /* Send the data back to the client */
-    if (lensnd = (sendto((int)listener, buf,sizeof(lenrcv) , 0, 
-        (struct sockaddr *) &server_sin, server_sz)) == -1 ) {
-       perror("sendto()");
-       event_loopbreak();
-    }
+        if (lenrcv = (recvfrom((int)listener, &buf, sizeof(buf) - 1, 0,
+                (struct sockaddr *) &server_sin, &server_sz)) == -1) {
+            perror("recvfrom()");
+            event_loopbreak();
+        }
+        
+        fprintf(stdout,"RECEIVED : %s\n", buf);
+        /* Send the data back to the client */
+        if (lensnd = (sendto((int)listener, buf,sizeof(lenrcv) , 0, 
+                (struct sockaddr *) &server_sin, server_sz)) == -1 ) {
+            perror("sendto()");
+            event_loopbreak();
+        }
 }
 
 int run_udp()
