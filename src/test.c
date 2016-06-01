@@ -23,7 +23,10 @@
 int
 main (void)
 {
+/*
     run_udp();
+*/
+    run_log();
 /*    char *str;
     str = malloc(4 * sizeof(char));
     if ( str == NULL) {

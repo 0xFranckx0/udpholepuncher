@@ -10,5 +10,6 @@
 
 #define UHPPORT	4000
 int run_udp();
+int run_ux();
 
 #endif /* UHP_H_ */
