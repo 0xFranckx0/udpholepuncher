@@ -10,6 +10,7 @@ AM_PROG_AR([act-if-fail])
 LT_INIT
 
 PKG_CHECK_MODULES([libevent], [libevent])
+PKG_CHECK_MODULES([jansson], [jansson])
 PKG_CHECK_MODULES([GLIB], [glib-2.0])
 PKG_CHECK_MODULES([crypto], [libcrypto])
 PKG_CHECK_MODULES([ssl], [libssl])
