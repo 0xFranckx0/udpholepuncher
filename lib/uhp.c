@@ -54,6 +54,7 @@ free_pkt(struct hdr_pkt *pkt)
                 case KEEPALIVE:
                         if(pkt->pl.msg != NULL)
                             free(pkt->pl.msg);
+                        
                         free(pkt);
                         break;
                  default:

@@ -18,16 +18,6 @@
 #include "uhp.h"
 
 void
-readcb(struct bufferevent *bev, void *ctx)
-{
-}
-
-void
-errorcb(struct bufferevent *bev, short error, void *ctx)
-{
-}
-
-void
 udp_cb(evutil_socket_t listener, short event, void *arg)
 {
         struct event_base *base = arg;
