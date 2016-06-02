@@ -28,18 +28,18 @@ new_keepalive()
 
         keep = malloc(sizeof(*keep));
         if (keep == NULL){
-                err_sscb(__func__, "malloc");
-                err_pb(stderr);
-                return NULL;
+            err_sscb(__func__, "malloc");
+            err_pb(stderr);
+            return NULL;
         }
         keep->id = KEEPALIVE;
         len = (int)(strlen(KEEPALIVE_TAG)+1);
         keep->pl.msg = malloc(sizeof(char)*len);
         if (keep->pl.msg == NULL){
-                err_sscb(__func__, "malloc");
-                err_pb(stderr);
-                free(keep);
-                return NULL;
+            err_sscb(__func__, "malloc");
+            err_pb(stderr);
+            free(keep);
+            return NULL;
         }
         strcpy(keep->pl.msg, KEEPALIVE_TAG);
         
@@ -50,14 +50,14 @@ void
 free_pkt(struct hdr_pkt *pkt)
 {
         if(pkt != NULL){
-                switch(pkt->id){
-                        case KEEPALIVE:
-                                if(pkt->pl.msg != NULL)
-                                        free(pkt->pl.msg);
-                                free(pkt);
-                                break;
-                         default:
-                                break;
-                }
+            switch(pkt->id){
+                case KEEPALIVE:
+                        if(pkt->pl.msg != NULL)
+                            free(pkt->pl.msg);
+                        free(pkt);
+                        break;
+                 default:
+                        break;
+             }
         }
 }
