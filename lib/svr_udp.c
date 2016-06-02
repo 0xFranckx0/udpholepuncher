@@ -37,7 +37,6 @@ udp_cb(evutil_socket_t listener, short event, void *arg)
         char buf[512];
 
         memset(buf,0,strlen(buf));
-        /* Recv the data, store the address of the sender in server_sin */
     
         if (lenrcv = (recvfrom((int)listener, &buf, sizeof(buf) - 1, 0,
                 (struct sockaddr *) &sin, &slen)) == -1) {
@@ -46,7 +45,6 @@ udp_cb(evutil_socket_t listener, short event, void *arg)
         }
         
         fprintf(stdout,"RECEIVED : %s\n", buf);
-        /* Send the data back to the client */
         if (lensnd = (sendto((int)listener, buf,sizeof(lenrcv) , 0, 
                 (struct sockaddr *) &sin, slen)) == -1 ) {
             perror("sendto()");
