@@ -23,8 +23,14 @@
 int
 main (void)
 {
-    run_udp();
+        struct hdr_pkt *pkt;
+
+        pkt = new_keepalive();
+        printf("ID : %d\n",pkt->id);
+        printf("TAG: %s\n",pkt->pl.msg);
+        free_pkt(pkt);
 /*    run_log();*/
+/*    run_udp(); */
 /*    char *str;
     str = malloc(4 * sizeof(char));
     if ( str == NULL) {
