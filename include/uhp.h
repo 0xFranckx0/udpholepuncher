@@ -52,6 +52,6 @@ void		read_pkt(struct hdr_pkt*);
 
 int		run_udp(evutil_socket_t,evutil_socket_t);
 evutil_socket_t	new_client_socket(const char *, const char*);
-evutil_socket_t	new_server_socket(const char *, const char*);
+evutil_socket_t	new_server_socket(const char*);
 
 #endif /* UHP_H */

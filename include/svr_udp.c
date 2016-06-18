@@ -18,6 +18,7 @@
 #include "queue.h"
 #include "uhp.h"
 
+
 evutil_socket_t new_socket(const char *, const char *, int);
 static void udp_cb(evutil_socket_t, short, void*);
 static void send_cb(evutil_socket_t, short, void*);
@@ -135,9 +136,9 @@ new_client_socket(const char *addr, const char *port)
 }
 
 evutil_socket_t	
-new_server_socket(const char *addr, const char *port)
+new_server_socket(const char *port)
 {
-	return new_socket(addr, port, SERVER);
+	return new_socket(NULL, port, SERVER);
 }
 
 int run_udp(evutil_socket_t fd1, evutil_socket_t fd2)
