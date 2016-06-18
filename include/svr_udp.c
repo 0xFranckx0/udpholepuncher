@@ -27,15 +27,13 @@ void
 client_cb(evutil_socket_t listener, short event, void *arg)
 {
 	struct event_base *base = arg;
-	struct sockaddr_storage addr;
-	socklen_t addrlen = sizeof(addr);
 	ssize_t lenrcv, lensnd;
 	char buf[512];
 
 	memset(buf,0,strlen(buf));
 
 	if (lenrcv = (recvfrom((int)listener, &buf, sizeof(buf) - 1, 0,
-		(struct sockaddr *) &addr, &addrlen)) == -1) {
+		NULL,0)) == -1) {
 		perror("sendto()");
 		event_loopbreak();
 	}
@@ -43,7 +41,7 @@ client_cb(evutil_socket_t listener, short event, void *arg)
 	fprintf(stdout,"SENT : %s\n", buf);
 
 	if (lenrcv = (recvfrom((int)listener, &buf, sizeof(buf) - 1, 0,
-		(struct sockaddr *) &addr, &addrlen)) == -1) {
+		NULL, NULL)) == -1) {
 		perror("recvfrom()");
 		event_loopbreak();
 	}
