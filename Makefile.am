@@ -11,7 +11,7 @@ include_HEADERS =   lib/error.h \
 libobj_libuhp_la_LIBADD = -lssl -lcrypto -levent \
 			  $(jansson_LIBS)
 
-noinst_PROGRAMS = bin/test
+bin_PROGRAMS = bin/test
 bin_test_SOURCES = src/test.c
 bin_test_CPPFLAGS = -DDEBUG
 bin_test_LDADD = $(lib_LTLIBRARIES) 

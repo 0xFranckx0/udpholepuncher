@@ -37,14 +37,10 @@ json_t *
 pkt2json(struct hdr_pkt *pkt)
 {
 	switch(pkt->id){
-            case KEEPALIVE:
-                return keep2json(pkt);
             case HELLO:
                 return hello2json(pkt);
 	    case ACK:
                 return ack2json(pkt);  
-	    case BYE:	
-                return bye2json(pkt);
             default:        
                 return NULL;
 	}

@@ -19,7 +19,7 @@
 #include <stdio.h>
 
 #include "uhp.h"
-
+/*
 struct hdr_pkt*
 new_keepalive()
 {
@@ -45,20 +45,14 @@ new_keepalive()
         
         return keep;
 }
-
+*/
 void
 free_pkt(struct hdr_pkt *pkt)
 {
         if(pkt != NULL){
             switch(pkt->id){
-                case KEEPALIVE:
-                        if(pkt->pl.msg != NULL)
-                            free(pkt->pl.msg);
-                        
-                        free(pkt);
-                        break;
                  default:
-                        break;
+                 break;
              }
         }
 }
