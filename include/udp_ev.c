@@ -18,6 +18,7 @@
 #include "queue.h"
 #include "uhp.h"
 
+#define MAX_BUF		64000
 
 evutil_socket_t new_socket(const char *, const char *, int);
 static void client_cb(evutil_socket_t, short, void*);
@@ -28,7 +29,7 @@ client_cb(evutil_socket_t listener, short event, void *arg)
 {
 	struct event_base *base = arg;
 	ssize_t lenrcv, lensnd;
-	char buf[512];
+	char buf[MAX_BUF];
 
 	memset(buf,0,strlen(buf));
 
@@ -54,7 +55,7 @@ server_cb(evutil_socket_t listener, short event, void *arg)
 	struct sockaddr_in sin;
 	ssize_t lenrcv, lensnd;
 	socklen_t slen = sizeof(sin);
-	char buf[512];
+	char buf[MAX_BUF];
 
 	memset(buf,0,strlen(buf));
 
