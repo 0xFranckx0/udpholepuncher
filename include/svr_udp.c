@@ -22,12 +22,32 @@
 evutil_socket_t new_socket(const char *, const char *, int);
 static void client_cb(evutil_socket_t, short, void*);
 static void server_cb(evutil_socket_t, short, void*);
-static void send_cb(evutil_socket_t, short, void*);
-static void recv_cb(evutil_socket_t, short, void*);
 
 void
 client_cb(evutil_socket_t listener, short event, void *arg)
 {
+	struct event_base *base = arg;
+	struct sockaddr_storage addr;
+	socklen_t addrlen = sizeof(addr);
+	ssize_t lenrcv, lensnd;
+	char buf[512];
+
+	memset(buf,0,strlen(buf));
+
+	if (lenrcv = (recvfrom((int)listener, &buf, sizeof(buf) - 1, 0,
+		(struct sockaddr *) &addr, &addrlen)) == -1) {
+		perror("sendto()");
+		event_loopbreak();
+	}
+
+	fprintf(stdout,"SENT : %s\n", buf);
+
+	if (lenrcv = (recvfrom((int)listener, &buf, sizeof(buf) - 1, 0,
+		(struct sockaddr *) &addr, &addrlen)) == -1) {
+		perror("recvfrom()");
+		event_loopbreak();
+	}
+	
 }
 
 void
