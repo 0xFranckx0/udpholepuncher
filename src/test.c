@@ -18,7 +18,7 @@
 #include <config.h>
 #include <stdio.h>
 
-#include <lib/uhp.h>
+#include <include/uhp.h>
 
 int
 main (void)
