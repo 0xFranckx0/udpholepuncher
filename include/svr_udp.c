@@ -20,12 +20,18 @@
 
 
 evutil_socket_t new_socket(const char *, const char *, int);
-static void udp_cb(evutil_socket_t, short, void*);
+static void client_cb(evutil_socket_t, short, void*);
+static void server_cb(evutil_socket_t, short, void*);
 static void send_cb(evutil_socket_t, short, void*);
 static void recv_cb(evutil_socket_t, short, void*);
 
 void
-udp_cb(evutil_socket_t listener, short event, void *arg)
+client_cb(evutil_socket_t listener, short event, void *arg)
+{
+}
+
+void
+server_cb(evutil_socket_t listener, short event, void *arg)
 {
 	struct event_base *base = arg;
 	struct sockaddr_in sin;
@@ -153,9 +159,9 @@ int run_udp(evutil_socket_t fd1, evutil_socket_t fd2)
 	}
 
 	ev1 = event_new( base, fd1, EV_READ|EV_PERSIST,
-					udp_cb, (void*)base);
+					client_cb, (void*)base);
 	ev2 = event_new( base, fd2, EV_READ|EV_PERSIST,
-					udp_cb, (void*)base);
+					server_cb, (void*)base);
 	event_add(ev1, NULL);
 	event_add(ev2, NULL);
 	event_base_dispatch(base);
