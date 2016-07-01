@@ -1,1 +1,3 @@
-docker run --name runner --net=host -v /home/gurwall/dev/udpholepuncher:/opt/uhp -t -i uhp/runner:1-0 /bin/bash
+#!/bin/bash
+
+docker run --name runner --net=host -t -i uhp/runner:1-0 /bin/bash
