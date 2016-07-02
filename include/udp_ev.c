@@ -81,7 +81,6 @@ new_socket(const char *addr, const char *port, int type)
 	int rv, s;
 
 	int optval = 1;
-	printf("NEW_SOCKET: memset\n");
 	memset(&hints, 0, sizeof(struct addrinfo));
 	hints.ai_family 	= AF_INET;
 	hints.ai_socktype 	= SOCK_DGRAM;
@@ -91,18 +90,15 @@ new_socket(const char *addr, const char *port, int type)
 	hints.ai_canonname 	= NULL;
 	hints.ai_next 		= NULL;
 
-	printf("NEW_SOCKET: switch\n");
 	switch(type){
 	case SERVER:
         	hints.ai_flags = AI_PASSIVE;
-		printf("NEW_SOCKET: getaddrinfo\n");
 		if ((rv = getaddrinfo(NULL, port, &hints, &res)) != 0){
 			perror("getaddrinfo failed");
 			fprintf(stderr, "getaddrinfo: %s\n", gai_strerror(rv));
 			listener = -1;
 			goto cleanup;
 		}
-		printf("NEW_SOCKET: socket\n");
 		if ( (listener = socket(res->ai_family, res->ai_socktype, 
 				res->ai_protocol)) < 0){
 			perror("socket failed");
@@ -110,14 +106,12 @@ new_socket(const char *addr, const char *port, int type)
 			goto cleanup;
 		}
 		evutil_make_socket_nonblocking(listener);
-		printf("NEW_SOCKET: setsockopt\n");
 		if (setsockopt(listener, SOL_SOCKET, SO_REUSEADDR, 
 				&optval, sizeof(optval)) < 0){
 			perror("setsockopt failed");
 			listener = -1;
 			goto cleanup;
 		}
-		printf("NEW_SOCKET: bind\n");
 		if (bind(listener, res->ai_addr, res->ai_addrlen) < 0){
 			perror("bind failed");
 			listener = -1;
@@ -126,14 +120,12 @@ new_socket(const char *addr, const char *port, int type)
 		break;
 	case CLIENT:
         	hints.ai_flags = 0;
-		printf("NEW_SOCKET: getaddrinfo\n");
 		if (getaddrinfo(addr, port, &hints, &res) == 1){
 			perror("getaddrinfo failed");
 			fprintf(stderr, "getaddrinfo: %s\n", gai_strerror(rv));
 			listener = -1;
 			goto cleanup;
 		}
-		printf("NEW_SOCKET: socket\n");
 		if ((listener = socket(res->ai_family, res->ai_socktype, 
 				res->ai_protocol)) < 0){
 			perror("socket failed");
@@ -141,7 +133,6 @@ new_socket(const char *addr, const char *port, int type)
 			goto cleanup;
 		}
 		evutil_make_socket_nonblocking(listener);
-		printf("NEW_SOCKET: setsockopt\n");
 		if (setsockopt(listener, SOL_SOCKET, SO_REUSEADDR, 
 				&optval, sizeof(optval)) < 0){
 			perror("setsockopt failed");
