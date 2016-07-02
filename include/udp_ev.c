@@ -20,7 +20,7 @@
 
 #define MAX_BUF		64000
 
-evutil_socket_t new_socket(const char *, const char *, int);
+static evutil_socket_t new_socket(const char *, const char *, int);
 static void client_cb(evutil_socket_t, short, void*);
 static void server_cb(evutil_socket_t, short, void*);
 

@@ -39,3 +39,5 @@ RUN cd /opt && wget https://github.com/libevent/libevent/releases/download/relea
 	./configure &&\
 	make &&\
 	make install
+
+RUN ln -s /usr/local/lib/libevent-2.0.so.5 /usr/lib/libevent-2.0.so.5
