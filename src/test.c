@@ -23,9 +23,15 @@
 int
 main (void)
 {
-        struct hdr_pkt *pkt;
 
-    puts ("This is :" PACKAGE_STRING ".");
+	evutil_socket_t client, server;
+	
+	client = new_socket("127.0.0.1", "80",CLIENT);
+	server = new_socket(NULL, "80",SERVER);
+
+//        struct hdr_pkt *pkt;
+
+//    puts ("This is :" PACKAGE_STRING ".");
 //        pkt = new_keepalive();
 //        printf("ID : %d\n",pkt->id);
 //        printf("TAG: %s\n",pkt->pl.msg);
