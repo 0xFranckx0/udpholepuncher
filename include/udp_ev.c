@@ -29,23 +29,29 @@ client_cb(evutil_socket_t listener, short event, void *arg)
 {
 	struct event_base *base = arg;
 	ssize_t lenrcv, lensnd;
-	char buf[MAX_BUF];
+	char *buf = "HELLO From Client";
 
-	memset(buf,0,strlen(buf));
+	//memset(buf,0,strlen(buf));
 
-	if (lenrcv = (recvfrom((int)listener, &buf, sizeof(buf) - 1, 0,
+
+	if (lenrcv = (write((int)listener, buf, strlen(buf))) != strlen(buf)){
+		perror("write():");
+		event_loopbreak();
+	}
+/*	if (lenrcv = (recvfrom((int)listener, buf, strlen(buf), 0,
 		NULL,0)) == -1) {
 		perror("sendto()");
 		event_loopbreak();
 	}
+*/
+	//fprintf(stdout,"SENT : %s\n", buf);
 
-	fprintf(stdout,"SENT : %s\n", buf);
-
-	if (lenrcv = (recvfrom((int)listener, &buf, sizeof(buf) - 1, 0,
+/*	if (lenrcv = (recvfrom((int)listener, &buf, sizeof(buf) - 1, 0,
 		NULL, NULL)) == -1) {
 		perror("recvfrom()");
 		event_loopbreak();
 	}
+*/
 }
 
 void
@@ -65,7 +71,7 @@ server_cb(evutil_socket_t listener, short event, void *arg)
 		event_loopbreak();
 	}
 
-	fprintf(stdout,"RECEIVED : %s\n", buf);
+	fprintf(stdout,"SERVER RECEIVED : %s\n", buf);
 	if (lensnd = (sendto((int)listener, buf,sizeof(lenrcv) , 0, 
 		(struct sockaddr *) &sin, slen)) == -1 ) {
 		perror("sendto()");
@@ -177,7 +183,7 @@ int run_udp(evutil_socket_t fd1, evutil_socket_t fd2)
 		return 1;
 	}
 
-	ev1 = event_new( base, fd1, EV_READ|EV_PERSIST,
+	ev1 = event_new( base, fd1, EV_WRITE|EV_PERSIST, 
 					client_cb, (void*)base);
 	ev2 = event_new( base, fd2, EV_READ|EV_PERSIST,
 					server_cb, (void*)base);
