@@ -20,6 +20,7 @@
 
 #include <include/uhp.h>
 
+//static struct filter_list      filters;
 int
 main (void)
 {

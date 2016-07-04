@@ -8,13 +8,25 @@
 #include <openssl/evp.h>
 #include <jansson.h>
 #include <event2/listener.h>
-	
+
+#include "queue.h"
 #include "error.h"
 
 #define UHPPORT	4000
 
 #define HELLO_TAG	"HELLO"
 #define ACK_TAG		"ACK"
+
+struct uhp_socks {
+	char *port;
+	char *dst;
+};
+
+struct address {
+	SLIST_ENTRY(address)	entry;
+	int	sock;	
+};
+SLIST_HEAD(address_list, address);
 
 enum socket_flag{
 	SERVER,
@@ -42,14 +54,14 @@ struct hello_pl{
 
 struct ack_pl;
 
-struct hdr_pkt	*new_hello();
+struct hdr_pkt	*new_hello(struct uhp_socks*);
 struct hdr_pkt	*new_ack();
 void		free_pkt(struct hdr_pkt*);
 json_t		*pkt2json(struct hdr_pkt*);
 struct hdr_pkt	*json2pkt(json_t*);
 void		read_pkt(struct hdr_pkt*);
 
-
+struct address_list	*init_uhp(struct uhp_socks*);
 int		run_udp(evutil_socket_t,evutil_socket_t);
 evutil_socket_t	new_client_socket(const char *, const char*);
 evutil_socket_t	new_server_socket(const char*);
