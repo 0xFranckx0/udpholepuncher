@@ -27,9 +27,8 @@ main (void)
 
 	evutil_socket_t client, server;
 	
-	client = new_client_socket("127.0.0.1","12345");
 	server = new_server_socket("12345");
-	run_udp(client,server);
+	run_udp(server);
 
 //        struct hdr_pkt *pkt;
 
