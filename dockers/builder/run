@@ -1,5 +1,5 @@
 #!/bin/bash
 
-SRC=/home/gurwall/dev/udpholepuncher
+SRC=/opt/udpholepuncher
 
 docker run --name builder --net=host -v ${SRC}:/opt/uhp -t -i cdev/builder:1-0 /bin/bash
