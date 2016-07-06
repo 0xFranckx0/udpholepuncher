@@ -26,13 +26,14 @@ static void server_cb(evutil_socket_t, short, void*);
 void
 server_cb(evutil_socket_t listener, short event, void *arg)
 {
-	struct event_base *base = arg;
-	struct sockaddr_in sin;
-	ssize_t lenrcv, lensnd;
-	socklen_t slen = sizeof(sin);
-	char buf[MAX_BUF];
+	struct event_base 	*base = arg;
+	struct sockaddr_in 	sin;
+	ssize_t 		lenrcv, lensnd;
+	char 			buf[MAX_BUF];
+	socklen_t		slen;
 
 	memset(buf,0,strlen(buf));
+	slen = sizeof(sin);
 
 	if (lenrcv = (recvfrom((int)listener, &buf, sizeof(buf) - 1, 0,
 		(struct sockaddr *) &sin, &slen)) == -1) {
@@ -40,7 +41,9 @@ server_cb(evutil_socket_t listener, short event, void *arg)
 		event_loopbreak();
 	}
 
+	/* For testing purpose while it still  under development  */
 	fprintf(stdout,"SERVER RECEIVED : %s\n", buf);
+
 	if (lensnd = (sendto((int)listener, buf,sizeof(lenrcv) , 0, 
 		(struct sockaddr *) &sin, slen)) == -1 ) {
 		perror("sendto()");
@@ -98,7 +101,7 @@ cleanup:
 	return listener;
 }
 
-evutil_socket_t	
+evutil_socket_t
 new_server_socket(const char *port)
 {
 	return new_socket(NULL, port);
@@ -106,8 +109,8 @@ new_server_socket(const char *port)
 
 int run_udp(evutil_socket_t fd1)
 {
-	struct event_base *base;
-	struct event *ev1, *ev2;
+	struct event_base 	*base;
+	struct event 		*ev1, *ev2;
 
 	base = event_base_new();
 	if (!base) {
