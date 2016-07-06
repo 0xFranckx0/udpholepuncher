@@ -20,7 +20,7 @@
 
 #define MAX_BUF		64000
 
-static evutil_socket_t new_socket(const char *, const char *, int);
+static evutil_socket_t new_socket(const char *, const char *);
 static void server_cb(evutil_socket_t, short, void*);
 
 void
@@ -49,11 +49,11 @@ server_cb(evutil_socket_t listener, short event, void *arg)
 }
 
 evutil_socket_t
-new_socket(const char *addr, const char *port, int type)
+new_socket(const char *addr, const char *port)
 {
-	evutil_socket_t listener;
-    	struct addrinfo *res, hints;
-	int rv, s;
+	evutil_socket_t 	 listener;
+    	struct addrinfo 	*res, hints;
+	int 			 rv, s;
 
 	int optval = 1;
 	memset(&hints, 0, sizeof(struct addrinfo));
@@ -101,7 +101,7 @@ cleanup:
 evutil_socket_t	
 new_server_socket(const char *port)
 {
-	return new_socket(NULL, port, SERVER);
+	return new_socket(NULL, port);
 }
 
 int run_udp(evutil_socket_t fd1)
