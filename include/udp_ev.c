@@ -23,13 +23,13 @@
 #define UNWRITABLE	0
 
 evutil_socket_t new_socket(const char *, const char *, int);
-static void client_cb(evutil_socket_t, short, void*);
-static void server_cb(evutil_socket_t, short, void*);
+static void sender_cb(evutil_socket_t, short, void*);
+static void receiver_cb(evutil_socket_t, short, void*);
 
 static int writer = WRITABLE;
 
 void
-client_cb(evutil_socket_t listener, short event, void *arg)
+sender_cb(evutil_socket_t listener, short event, void *arg)
 {
 	struct event_base *base = arg;
 	ssize_t lenrcv, lensnd;
@@ -43,7 +43,7 @@ client_cb(evutil_socket_t listener, short event, void *arg)
 }
 
 void
-server_cb(evutil_socket_t listener, short event, void *arg)
+receiver_cb(evutil_socket_t listener, short event, void *arg)
 {
 	struct event_base *base = arg;
 	struct sockaddr_in sin;
@@ -59,7 +59,8 @@ server_cb(evutil_socket_t listener, short event, void *arg)
 		event_loopbreak();
 	}
 
-	fprintf(stdout,"SERVER RECEIVED : %s\n", buf);
+	//fprintf(stdout,"SERVER RECEIVED : %s\n", buf);
+
 	if (lensnd = (sendto((int)listener, buf,sizeof(lenrcv) , 0, 
 		(struct sockaddr *) &sin, slen)) == -1 ) {
 		perror("sendto()");
@@ -75,7 +76,6 @@ new_socket(const char *addr, const char *port, int type)
 	int rv, s;
 
 	int optval = 1;
-	printf("NEW_SOCKET: memset\n");
 	memset(&hints, 0, sizeof(struct addrinfo));
 	hints.ai_family 	= AF_INET;
 	hints.ai_socktype 	= SOCK_DGRAM;
@@ -85,18 +85,15 @@ new_socket(const char *addr, const char *port, int type)
 	hints.ai_canonname 	= NULL;
 	hints.ai_next 		= NULL;
 
-	printf("NEW_SOCKET: switch\n");
 	switch(type){
 	case SERVER:
         	hints.ai_flags = AI_PASSIVE;
-		printf("NEW_SOCKET: getaddrinfo\n");
 		if ((rv = getaddrinfo(NULL, port, &hints, &res)) != 0){
 			perror("getaddrinfo failed");
 			fprintf(stderr, "getaddrinfo: %s\n", gai_strerror(rv));
 			listener = -1;
 			goto cleanup;
 		}
-		printf("NEW_SOCKET: socket\n");
 		if ( (listener = socket(res->ai_family, res->ai_socktype, 
 				res->ai_protocol)) < 0){
 			perror("socket failed");
@@ -104,14 +101,12 @@ new_socket(const char *addr, const char *port, int type)
 			goto cleanup;
 		}
 		evutil_make_socket_nonblocking(listener);
-		printf("NEW_SOCKET: setsockopt\n");
 		if (setsockopt(listener, SOL_SOCKET, SO_REUSEADDR, 
 				&optval, sizeof(optval)) < 0){
 			perror("setsockopt failed");
 			listener = -1;
 			goto cleanup;
 		}
-		printf("NEW_SOCKET: bind\n");
 		if (bind(listener, res->ai_addr, res->ai_addrlen) < 0){
 			perror("bind failed");
 			listener = -1;
@@ -120,14 +115,12 @@ new_socket(const char *addr, const char *port, int type)
 		break;
 	case CLIENT:
         	hints.ai_flags = 0;
-		printf("NEW_SOCKET: getaddrinfo\n");
 		if (getaddrinfo(addr, port, &hints, &res) == 1){
 			perror("getaddrinfo failed");
 			fprintf(stderr, "getaddrinfo: %s\n", gai_strerror(rv));
 			listener = -1;
 			goto cleanup;
 		}
-		printf("NEW_SOCKET: socket\n");
 		if ((listener = socket(res->ai_family, res->ai_socktype, 
 				res->ai_protocol)) < 0){
 			perror("socket failed");
@@ -135,7 +128,6 @@ new_socket(const char *addr, const char *port, int type)
 			goto cleanup;
 		}
 		evutil_make_socket_nonblocking(listener);
-		printf("NEW_SOCKET: setsockopt\n");
 		if (setsockopt(listener, SOL_SOCKET, SO_REUSEADDR, 
 				&optval, sizeof(optval)) < 0){
 			perror("setsockopt failed");
@@ -184,9 +176,9 @@ int run_udp(evutil_socket_t fd1, evutil_socket_t fd2)
 	}
 
 	ev1 = event_new( base, fd1, EV_PERSIST,
-					client_cb, (void*)base);
+					sender_cb, (void*)base);
 	ev2 = event_new( base, fd2, EV_READ|EV_PERSIST,
-					server_cb, (void*)base);
+					receiver_cb, (void*)base);
 	event_add(ev1, &time);
 	event_add(ev2, NULL);
 	event_base_dispatch(base);
