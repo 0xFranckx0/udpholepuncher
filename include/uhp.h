@@ -54,16 +54,16 @@ struct hello_pl{
 
 struct ack_pl;
 
-struct hdr_pkt	*new_hello(struct uhp_socks*);
-struct hdr_pkt	*new_ack();
-void		free_pkt(struct hdr_pkt*);
-json_t		*pkt2json(struct hdr_pkt*);
-struct hdr_pkt	*json2pkt(json_t*);
-void		read_pkt(struct hdr_pkt*);
+struct hdr_pkt		*new_hello(struct uhp_socks*);
+struct hdr_pkt		*new_ack();
+void			free_pkt(struct hdr_pkt*);
+json_t			*pkt2json(struct hdr_pkt*);
+struct hdr_pkt		*json2pkt(json_t*);
+void			read_pkt(struct hdr_pkt*);
 
 struct address_list	*init_uhp(struct uhp_socks*);
-int		run_udp(evutil_socket_t);
-evutil_socket_t	new_client_socket(const char *, const char*);
-evutil_socket_t	new_server_socket(const char*);
+int			run_udp(evutil_socket_t, evutil_socket_t);
+evutil_socket_t		new_client_socket(const char *, const char*);
+evutil_socket_t		new_server_socket(const char*);
 
 #endif /* UHP_H */
