@@ -175,9 +175,9 @@ int run_udp(struct uhp_socks *s)
 		return 1;
 	}
 
-	ev1 = event_new( base, s->sock, EV_PERSIST,
+	ev1 = event_new( base, s->s, EV_PERSIST,
 					sender_cb, (void*)base);
-	ev2 = event_new( base, s->sock, EV_READ|EV_PERSIST,
+	ev2 = event_new( base, s->r, EV_READ|EV_PERSIST,
 					receiver_cb, (void*)base);
 	event_add(ev1, &time);
 	event_add(ev2, NULL);

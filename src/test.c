@@ -20,6 +20,10 @@
 
 #include <include/uhp.h>
 
+#define SPORT "12345"
+#define RPORT "54321"
+#define DEST  "192.168.0.173"
+
 //static struct filter_list      filters;
 int
 main (void)
@@ -34,13 +38,17 @@ main (void)
 		perror("malloc():");
 		exit(1);
 	}
-	s->port = "12345";
-	s->dst = "192.168.0.114";
+	s->sport = strdup(SPORT);
+	s->rport = strdup(RPORT);
+	s->dst = strdup(DEST);
 
-	s->sock = new_client_socket(s->dst,s->port);
-	//server = new_server_socket("12344");
+	s->s = new_client_socket(s->dst,s->sport);
+	s->r = new_server_socket(s->rport);
 	run_udp(s);
-
+	free(s->sport);
+	free(s->rport);
+	free(s->dst);
+	free(s);
 //        struct hdr_pkt *pkt;
 
 //    puts ("This is :" PACKAGE_STRING ".");

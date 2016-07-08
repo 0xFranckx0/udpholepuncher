@@ -18,9 +18,11 @@
 #define ACK_TAG		"ACK"
 
 struct uhp_socks {
-	char *port;
+	char *sport;
+	char *rport;
 	char *dst;
-	int   sock;
+	int   s;
+	int   r;
 };
 
 struct address {
