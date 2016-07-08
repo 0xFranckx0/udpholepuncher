@@ -32,7 +32,7 @@ main (void)
 	s = malloc(sizeof(s));
 	if (s == NULL){
 		perror("malloc():");
-		exiti(1);
+		exit(1);
 	}
 	s->port = "12345";
 	s->dst = "192.168.0.114";
