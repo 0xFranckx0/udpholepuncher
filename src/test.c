@@ -25,11 +25,21 @@ int
 main (void)
 {
 
-	evutil_socket_t client, server;
+	evutil_socket_t server;
+	//evutil_socket_t client;
+	struct uhp_socks *s;
 	
-	client = new_client_socket("192.168.0.114","12344");
-	server = new_server_socket("12344");
-	run_udp(client,server);
+	s = malloc(sizeof(s));
+	if (s == NULL){
+		perror("malloc():");
+		exiti(1);
+	}
+	s->port = "12345";
+	s->dst = "192.168.0.114";
+
+	s->sock = new_client_socket(s->dst,s->port);
+	//server = new_server_socket("12344");
+	run_udp(s);
 
 //        struct hdr_pkt *pkt;
 

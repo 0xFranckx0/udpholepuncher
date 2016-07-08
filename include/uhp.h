@@ -20,6 +20,7 @@
 struct uhp_socks {
 	char *port;
 	char *dst;
+	int   sock;
 };
 
 struct address {
@@ -62,7 +63,7 @@ struct hdr_pkt		*json2pkt(json_t*);
 void			read_pkt(struct hdr_pkt*);
 
 struct address_list	*init_uhp(struct uhp_socks*);
-int			run_udp(evutil_socket_t, evutil_socket_t);
+int			run_udp(struct uhp_socks* );
 evutil_socket_t		new_client_socket(const char *, const char*);
 evutil_socket_t		new_server_socket(const char*);
 

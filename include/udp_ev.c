@@ -161,7 +161,7 @@ new_server_socket(const char *port)
 	return new_socket(NULL, port, SERVER);
 }
 
-int run_udp(evutil_socket_t fd1, evutil_socket_t fd2)
+int run_udp(struct uhp_socks *s)
 {
 	struct event_base *base;
 	struct event *ev1, *ev2;
@@ -175,9 +175,9 @@ int run_udp(evutil_socket_t fd1, evutil_socket_t fd2)
 		return 1;
 	}
 
-	ev1 = event_new( base, fd1, EV_PERSIST,
+	ev1 = event_new( base, s->sock, EV_PERSIST,
 					sender_cb, (void*)base);
-	ev2 = event_new( base, fd2, EV_READ|EV_PERSIST,
+	ev2 = event_new( base, s->sock, EV_READ|EV_PERSIST,
 					receiver_cb, (void*)base);
 	event_add(ev1, &time);
 	event_add(ev2, NULL);
