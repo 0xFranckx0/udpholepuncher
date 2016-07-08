@@ -39,7 +39,7 @@ main (void)
 		exit(1);
 	}
 	s->sport = strdup(SPORT);
-	s->rport = strdup(RPORT);
+	s->rport = strdup(SPORT);
 	s->dst = strdup(DEST);
 
 	s->s = new_client_socket(s->dst,s->sport);
