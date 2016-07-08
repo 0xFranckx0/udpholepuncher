@@ -34,12 +34,24 @@ sender_cb(evutil_socket_t listener, short event, void *arg)
 	struct event_base *base = arg;
 	ssize_t lenrcv, lensnd;
 	char *buf = "HELLO from client";
+	char rcv[512];
 
-	if (lenrcv = (write((int)listener, buf, strlen(buf))) 
+	memset(rcv,0,512);
+	
+	if (lensnd = (write((int)listener, buf, strlen(buf))) 
 		!= strlen(buf)){
 		perror("write()");
 		event_loopbreak();
 	}
+	
+	if (lenrcv = (read((int)listener, rcv, strlen(rcv))) 
+		!= strlen(rcv)){
+		perror("read()");
+		event_loopbreak();
+	}
+	if(lenrcv > 0) 
+		fprintf(stdout,"SENDER RECEIVED : %s\n", rcv);
+
 }
 
 void
@@ -59,7 +71,7 @@ receiver_cb(evutil_socket_t listener, short event, void *arg)
 		event_loopbreak();
 	}
 
-	//fprintf(stdout,"SERVER RECEIVED : %s\n", buf);
+	fprintf(stdout,"SERVER RECEIVED : %s\n", buf);
 
 	if (lensnd = (sendto((int)listener, buf,sizeof(lenrcv) , 0, 
 		(struct sockaddr *) &sin, slen)) == -1 ) {
