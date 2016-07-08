@@ -66,29 +66,17 @@ receiver_cb(evutil_socket_t listener, short event, void *arg)
 
 	memset(buf,0,MAX_BUF);
 
-/*	if (lenrcv = (recvfrom((int)listener, &buf, sizeof(buf) - 1, 0,
+	if (lenrcv = (recvfrom((int)listener, &buf, sizeof(buf) - 1, 0,
 		(struct sockaddr *) &sin, &slen)) == -1) {
 		perror("recvfrom()");
 		event_loopbreak();
 	}
-*/
-	if (lenrcv = (read((int)listener, buf, strlen(buf))) 
-		!= MAX_BUF){
-		perror("read()");
-		event_loopbreak();
-	}
+
 
 	fprintf(stdout,"SERVER RECEIVED : %s\n", buf);
-/*
 	if (lensnd = (sendto((int)listener, buf,sizeof(lenrcv) , 0, 
 		(struct sockaddr *) &sin, slen)) == -1 ) {
 		perror("sendto()");
-		event_loopbreak();
-	}
-*/
-	if (lensnd = (write((int)listener, msg, strlen(msg))) 
-		!= strlen(buf)){
-		perror("write()");
 		event_loopbreak();
 	}
 }
@@ -202,7 +190,7 @@ int run_udp(struct uhp_socks *s)
 
 	ev1 = event_new( base, s->s, EV_PERSIST,
 					sender_cb, (void*)base);
-	ev2 = event_new( base, s->s, EV_READ|EV_PERSIST,
+	ev2 = event_new( base, s->r, EV_READ|EV_PERSIST,
 					receiver_cb, (void*)base);
 	event_add(ev1, &time);
 	event_add(ev2, NULL);
