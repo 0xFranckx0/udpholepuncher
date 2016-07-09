@@ -61,8 +61,8 @@ main (int argc, char **argv)
 		exit(1);
 	}
 	s->sport = strdup(SPORT);
-	s->rport = strdup(RPORT);
-	s->dst = strdup(DEST);
+	s->rport = strdup(port);
+	s->dst = strdup(address);
 
 	s->s = new_sender_socket(s->dst,s->sport);
 	s->r = new_receiver_socket(s->rport);
