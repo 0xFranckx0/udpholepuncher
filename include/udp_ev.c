@@ -43,32 +43,10 @@ sender_cb(evutil_socket_t listener, short event, void *arg)
 
 	addr = get_addr("192.168.0.173", AF_INET); 
 	if (lensnd = (sendto((int)listener, "HI",3 , 0, 
-		(struct sockaddr *) &sin, sizeof(sin))) == -1 ) {
+		(struct sockaddr *) &addr, sizeof(addr))) == -1 ) {
 		perror("sendto()");
 		event_loopbreak();
 	}
-
-	memset(rcv,0,512);
-	if (lenrcv = (recvfrom((int)listener, &rcv, sizeof(rcv) - 1, 0,
-		(struct sockaddr *) &sin, &slen)) == -1) {
-		perror("recvfrom()");
-		event_loopbreak();
-	}
-	if(lenrcv > 0) 
-		fprintf(stdout,"SENDER RECEIVED : %s\n", rcv);
-/*	
-	if (lensnd = (write((int)listener, buf, strlen(buf))) 
-		!= strlen(buf)){
-		perror("write()");
-		event_loopbreak();
-	}
-*/	
-/*	if (lenrcv = (read((int)listener, rcv, strlen(rcv))) 
-		!= strlen(rcv)){
-		perror("read()");
-		event_loopbreak();
-	}
-*/
 }
 
 void
@@ -92,33 +70,6 @@ receiver_cb(evutil_socket_t listener, short event, void *arg)
 	fprintf(stdout,"SERVER RECEIVED : %s\n", buf);
 }
 
-void
-echo_cb(evutil_socket_t listener, short event, void *arg)
-{
-	struct event_base *base = arg;
-	struct sockaddr_in sin;
-	ssize_t lenrcv, lensnd;
-	socklen_t slen = sizeof(sin);
-	char buf[MAX_BUF];
-	char *msg = "ACK from server";
-
-	memset(buf,0,MAX_BUF);
-
-	if (lenrcv = (recvfrom((int)listener, &buf, sizeof(buf) - 1, 0,
-		(struct sockaddr *) &sin, &slen)) == -1) {
-		perror("recvfrom()");
-		event_loopbreak();
-	}
-
-	fprintf(stdout,"SERVER RECEIVED : %s\n", buf);
-
-	if (lensnd = (sendto((int)listener, msg,strlen(msg)+1 , 0, 
-		(struct sockaddr *) &sin, slen)) == -1 ) {
-		perror("sendto()");
-		event_loopbreak();
-	}
-}
-
 int run_udp(struct uhp_socks *s)
 {
 	struct event_base *base;
@@ -133,7 +84,7 @@ int run_udp(struct uhp_socks *s)
 		return 1;
 	}
 
-	ev1 = event_new( base, s->r, EV_WRITE|EV_PERSIST,
+	ev1 = event_new( base, s->r, EV_PERSIST,
 					sender_cb, (void*)base);
 	ev2 = event_new( base, s->r, EV_READ|EV_PERSIST,
 					receiver_cb, (void*)base);
