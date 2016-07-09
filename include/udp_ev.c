@@ -23,8 +23,9 @@
 #define UNWRITABLE	0
 
 evutil_socket_t new_socket(const char *, const char *, int);
-static void sender_cb(evutil_socket_t, short, void*);
+static void echo_cb(evutil_socket_t, short, void*);
 static void receiver_cb(evutil_socket_t, short, void*);
+static void sender_cb(evutil_socket_t, short, void*);
 
 static int writer = WRITABLE;
 
@@ -83,23 +84,33 @@ receiver_cb(evutil_socket_t listener, short event, void *arg)
 	}
 
 	fprintf(stdout,"SERVER RECEIVED : %s\n", buf);
-/*
+}
+
+void
+echo_cb(evutil_socket_t listener, short event, void *arg)
+{
+	struct event_base *base = arg;
+	struct sockaddr_in sin;
+	ssize_t lenrcv, lensnd;
+	socklen_t slen = sizeof(sin);
+	char buf[MAX_BUF];
+	char *msg = "ACK from server";
+
+	memset(buf,0,MAX_BUF);
+
+	if (lenrcv = (recvfrom((int)listener, &buf, sizeof(buf) - 1, 0,
+		(struct sockaddr *) &sin, &slen)) == -1) {
+		perror("recvfrom()");
+		event_loopbreak();
+	}
+
+	fprintf(stdout,"SERVER RECEIVED : %s\n", buf);
+
 	if (lensnd = (sendto((int)listener, msg,strlen(msg)+1 , 0, 
 		(struct sockaddr *) &sin, slen)) == -1 ) {
 		perror("sendto()");
 		event_loopbreak();
 	}
-*/
-/*
-	if (lenrcv = (read((int)listener,buf, strlen(buf))) 
-		!= strlen(buf)){
-		perror("read()");
-		event_loopbreak();
-	}
-	if(lenrcv > 0) 
-		fprintf(stdout,"RECEIVED : %s\n", buf);
-
-*/
 }
 
 int run_udp(struct uhp_socks *s)
