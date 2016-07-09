@@ -48,6 +48,11 @@ sender_cb(evutil_socket_t listener, short event, void *arg)
 		perror("sendto()");
 		event_loopbreak();
 	}
+	if (lenrcv = (recvfrom((int)listener, &rcv, sizeof(rcv) - 1, 0,
+		(struct sockaddr *) &sin, &slen)) == -1) {
+		perror("recvfrom()");
+		event_loopbreak();
+	}
 	if(lenrcv > 0) 
 		fprintf(stdout,"SENDER RECEIVED : %s\n", rcv);
 /*	
