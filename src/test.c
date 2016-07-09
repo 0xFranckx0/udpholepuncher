@@ -35,11 +35,11 @@ main (int argc, char **argv)
 	evutil_socket_t 	 server;
 	//evutil_socket_t client;
 	struct uhp_socks 	*s;
-	char 			*address = NULL;
-	char 			*port = NULL;
+	char 			*address;
+	char 			*port;
 	int			 c;
 
-	while ((c = getopt(argc, argv, "ap")) != -1) {
+	while ((c = getopt(argc, argv, "a:p:")) != -1) {
 		switch (c) {
 		case 'a':
 			address = optarg;
@@ -53,6 +53,8 @@ main (int argc, char **argv)
 			exit(-1);
 		}
 	}
+	printf("%s:%s\n",address, port);
+
 	s = malloc(sizeof(s));
 	if (s == NULL){
 		perror("malloc():");
