@@ -119,11 +119,12 @@ new_socket(const char *addr, const char *port, int type)
 			listener = -1;
 			goto cleanup;
 		}
-		if (connect(listener,res->ai_addr, res->ai_addrlen) == -1){
+/*		if (connect(listener,res->ai_addr, res->ai_addrlen) == -1){
 			perror("connect failed");
 			listener = -1;
 			goto cleanup;
 		}
+*/
 		break;
 	}
 
