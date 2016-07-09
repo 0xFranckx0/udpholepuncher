@@ -35,6 +35,7 @@ get_addr( const char *addr, const int domain)
 	}
 
 	return buf;
+
 error:
 	if (buf)
 		free(buf);

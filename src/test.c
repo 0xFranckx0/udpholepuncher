@@ -16,7 +16,10 @@
  */
 
 #include <config.h>
+#include <ctype.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
 
 #include <include/uhp.h>
 
@@ -26,13 +29,30 @@
 
 //static struct filter_list      filters;
 int
-main (void)
+main (int argc, char **argv)
 {
 
-	evutil_socket_t server;
+	evutil_socket_t 	 server;
 	//evutil_socket_t client;
-	struct uhp_socks *s;
-	
+	struct uhp_socks 	*s;
+	char 			*address = NULL;
+	char 			*port = NULL;
+	int			 c;
+
+	while ((c = getopt(argc, argv, "ap")) != -1) {
+		switch (c) {
+		case 'a':
+			address = optarg;
+			break;
+		case 'p':
+			port = optarg;
+			break;
+		default:
+			printf("Usage: ");
+			printf("test -a 192.168.0.1 -p 54321 ");
+			exit(-1);
+		}
+	}
 	s = malloc(sizeof(s));
 	if (s == NULL){
 		perror("malloc():");
