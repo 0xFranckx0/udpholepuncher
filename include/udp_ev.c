@@ -32,22 +32,23 @@ static int writer = WRITABLE;
 void
 sender_cb(evutil_socket_t listener, short event, void *arg)
 {
-	struct event_base *base = arg;
-	ssize_t lenrcv, lensnd;
-	char *buf = "HELLO from client";
-	char rcv[512];
-	struct sockaddr_in sin;
-	int slen = sizeof(sin);
+	struct event_base 	*base = arg;
+	ssize_t 		 lenrcv;
+	ssize_t 		 lensnd;
+	char 			*buf = "HELLO from client";
+	char 			 rcv[512];
+	struct sockaddr_in 	 sin;
+	int 			 slen = sizeof(sin);
+	unsigned char		*addr;
 
-	memset(rcv,0,512);
-	sin.sin_family = AF_INET;
-	
-	inet_pton(AF_INET, "192.168.0.173", &(sin.sin_addr));
+	addr = get_addr("192.168.0.173", AF_INET); 
 	if (lensnd = (sendto((int)listener, "HI",3 , 0, 
 		(struct sockaddr *) &sin, sizeof(sin))) == -1 ) {
 		perror("sendto()");
 		event_loopbreak();
 	}
+
+	memset(rcv,0,512);
 	if (lenrcv = (recvfrom((int)listener, &rcv, sizeof(rcv) - 1, 0,
 		(struct sockaddr *) &sin, &slen)) == -1) {
 		perror("recvfrom()");
