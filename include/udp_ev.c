@@ -35,22 +35,32 @@ sender_cb(evutil_socket_t listener, short event, void *arg)
 	ssize_t lenrcv, lensnd;
 	char *buf = "HELLO from client";
 	char rcv[512];
+	struct sockaddr_in sin;
+	int slen = sizeof(sin);
 
 	memset(rcv,0,512);
+	sin.sin_family = AF_INET;
 	
+	inet_pton(AF_INET, "192.168.0.173", &(sin.sin_addr));
+	if (lensnd = (sendto((int)listener, "HI",3 , 0, 
+		(struct sockaddr *) &sin, sizeof(sin))) == -1 ) {
+		perror("sendto()");
+		event_loopbreak();
+	}
+	if(lenrcv > 0) 
+		fprintf(stdout,"SENDER RECEIVED : %s\n", rcv);
+/*	
 	if (lensnd = (write((int)listener, buf, strlen(buf))) 
 		!= strlen(buf)){
 		perror("write()");
 		event_loopbreak();
 	}
-	
+*/	
 /*	if (lenrcv = (read((int)listener, rcv, strlen(rcv))) 
 		!= strlen(rcv)){
 		perror("read()");
 		event_loopbreak();
 	}
-	if(lenrcv > 0) 
-		fprintf(stdout,"SENDER RECEIVED : %s\n", rcv);
 */
 }
 
@@ -66,7 +76,6 @@ receiver_cb(evutil_socket_t listener, short event, void *arg)
 
 	memset(buf,0,MAX_BUF);
 
-/*
 	if (lenrcv = (recvfrom((int)listener, &buf, sizeof(buf) - 1, 0,
 		(struct sockaddr *) &sin, &slen)) == -1) {
 		perror("recvfrom()");
@@ -74,12 +83,14 @@ receiver_cb(evutil_socket_t listener, short event, void *arg)
 	}
 
 	fprintf(stdout,"SERVER RECEIVED : %s\n", buf);
+/*
 	if (lensnd = (sendto((int)listener, msg,strlen(msg)+1 , 0, 
 		(struct sockaddr *) &sin, slen)) == -1 ) {
 		perror("sendto()");
 		event_loopbreak();
 	}
 */
+/*
 	if (lenrcv = (read((int)listener,buf, strlen(buf))) 
 		!= strlen(buf)){
 		perror("read()");
@@ -88,100 +99,7 @@ receiver_cb(evutil_socket_t listener, short event, void *arg)
 	if(lenrcv > 0) 
 		fprintf(stdout,"RECEIVED : %s\n", buf);
 
-
-}
-
-evutil_socket_t
-new_socket(const char *addr, const char *port, int type)
-{
-	evutil_socket_t listener;
-    	struct addrinfo *res, hints;
-	int rv, s;
-
-	int optval = 1;
-	memset(&hints, 0, sizeof(struct addrinfo));
-	hints.ai_family 	= AF_INET;
-	hints.ai_socktype 	= SOCK_DGRAM;
-	hints.ai_protocol 	= IPPROTO_UDP;
-	hints.ai_addrlen 	= 0;
-	hints.ai_addr 		= NULL;
-	hints.ai_canonname 	= NULL;
-	hints.ai_next 		= NULL;
-
-	switch(type){
-	case SERVER:
-        	hints.ai_flags = AI_PASSIVE;
-		if ((rv = getaddrinfo(NULL, port, &hints, &res)) != 0){
-			perror("getaddrinfo failed");
-			fprintf(stderr, "getaddrinfo: %s\n", gai_strerror(rv));
-			listener = -1;
-			goto cleanup;
-		}
-		if ( (listener = socket(res->ai_family, res->ai_socktype, 
-				res->ai_protocol)) < 0){
-			perror("socket failed");
-			listener = -1;
-			goto cleanup;
-		}
-		evutil_make_socket_nonblocking(listener);
-		if (setsockopt(listener, SOL_SOCKET, SO_REUSEADDR, 
-				&optval, sizeof(optval)) < 0){
-			perror("setsockopt failed");
-			listener = -1;
-			goto cleanup;
-		}
-		if (bind(listener, res->ai_addr, res->ai_addrlen) < 0){
-			perror("bind failed");
-			listener = -1;
-			goto cleanup;
-		}
-		break;
-	case CLIENT:
-        	hints.ai_flags = 0;
-		if (getaddrinfo(addr, port, &hints, &res) == 1){
-			perror("getaddrinfo failed");
-			fprintf(stderr, "getaddrinfo: %s\n", gai_strerror(rv));
-			listener = -1;
-			goto cleanup;
-		}
-		if ((listener = socket(res->ai_family, res->ai_socktype, 
-				res->ai_protocol)) < 0){
-			perror("socket failed");
-			listener = -1;
-			goto cleanup;
-		}
-		evutil_make_socket_nonblocking(listener);
-		if (setsockopt(listener, SOL_SOCKET, SO_REUSEADDR, 
-				&optval, sizeof(optval)) < 0){
-			perror("setsockopt failed");
-			listener = -1;
-			goto cleanup;
-		}
-		if (connect(listener,res->ai_addr, res->ai_addrlen) == -1){
-			perror("connect failed");
-			listener = -1;
-			goto cleanup;
-		}
-		break;
-	}
-
-cleanup:
-	if (res != NULL)
-		freeaddrinfo(res);	
-
-	return listener;
-}
-
-evutil_socket_t	
-new_client_socket(const char *addr, const char *port)
-{
-	return new_socket(addr, port, CLIENT);
-}
-
-evutil_socket_t	
-new_server_socket(const char *port)
-{
-	return new_socket(NULL, port, SERVER);
+*/
 }
 
 int run_udp(struct uhp_socks *s)
@@ -198,9 +116,9 @@ int run_udp(struct uhp_socks *s)
 		return 1;
 	}
 
-	ev1 = event_new( base, s->s, EV_WRITE|EV_PERSIST,
+	ev1 = event_new( base, s->r, EV_WRITE|EV_PERSIST,
 					sender_cb, (void*)base);
-	ev2 = event_new( base, s->s, EV_PERSIST,
+	ev2 = event_new( base, s->r, EV_READ|EV_PERSIST,
 					receiver_cb, (void*)base);
 	event_add(ev1, &time);
 	event_add(ev2, NULL);

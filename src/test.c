@@ -42,8 +42,8 @@ main (void)
 	s->rport = strdup(RPORT);
 	s->dst = strdup(DEST);
 
-	s->s = new_client_socket(s->dst,s->sport);
-	s->r = new_server_socket(s->rport);
+	s->s = new_sender_socket(s->dst,s->sport);
+	s->r = new_receiver_socket(s->rport);
 	run_udp(s);
 	free(s->sport);
 	free(s->rport);
