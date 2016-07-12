@@ -44,17 +44,17 @@ sender_cb(evutil_socket_t listener, short event, void *arg)
 	int 			 len;
 	unsigned char		*addr;
 
-	//len = strlen(message) + 1;
+	len = strlen(message) + 1;
 	sin.sin_family = AF_INET;
 	sin.sin_port = htons(atoi(usock->rport));
 	inet_pton(AF_INET, usock->dst, &sin.sin_addr);
 
-	if (lensnd = (sendto((int)listener, "HI", 3 , 0, 
+	if (lensnd = (sendto((int)listener, message, len , 0, 
 		(struct sockaddr *) &sin, sizeof(sin))) == -1 ) {
 		perror("sendto()");
 		event_loopbreak();
 	}
-	printf("sent: %s");
+	printf("sent: %s\n",message);
 }
 
 void
