@@ -45,7 +45,6 @@ sender_cb(evutil_socket_t listener, short event, void *arg)
 	unsigned char		*addr;
 
 	len = strlen(message) + 1;
-	printf("len = %d\n",len);
 	sin.sin_family = AF_INET;
 	sin.sin_port = htons(atoi(usock->rport));
 	inet_pton(AF_INET, usock->dst, &sin.sin_addr);
@@ -55,7 +54,7 @@ sender_cb(evutil_socket_t listener, short event, void *arg)
 		perror("sendto()");
 		event_loopbreak();
 	}
-	printf("sent: %s\n",message);
+	printf("sent: %s");
 }
 
 void
@@ -84,7 +83,7 @@ int run_udp(struct uhp_socks *s, const char *msg)
 	struct event_base *base;
 	struct event *ev1, *ev2;
 	struct timeval time;
-	time.tv_sec = 1;
+	time.tv_sec = 2;
 	time.tv_usec = 0;
 	usock = s;
 	message = msg;
