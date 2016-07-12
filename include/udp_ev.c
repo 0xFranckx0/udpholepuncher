@@ -41,12 +41,16 @@ sender_cb(evutil_socket_t listener, short event, void *arg)
 	int 			 slen = sizeof(sin);
 	unsigned char		*addr;
 
-	addr = get_addr("192.168.0.173", AF_INET); 
+	sin.sin_family = AF_INET;
+	sin.sin_port = htons(12345);
+	inet_pton(AF_INET, "192.168.0.173", &sin.sin_addr);
+
 	if (lensnd = (sendto((int)listener, "HI",3 , 0, 
-		(struct sockaddr *) &addr, sizeof(addr))) == -1 ) {
+		(struct sockaddr *) &sin, sizeof(sin))) == -1 ) {
 		perror("sendto()");
 		event_loopbreak();
 	}
+	printf("sent!\n");
 }
 
 void
@@ -75,7 +79,7 @@ int run_udp(struct uhp_socks *s)
 	struct event_base *base;
 	struct event *ev1, *ev2;
 	struct timeval time;
-	time.tv_sec = 5;
+	time.tv_sec = 1;
 	time.tv_usec = 0;
 
 	base = event_base_new();
