@@ -65,7 +65,7 @@ struct hdr_pkt		*json2pkt(json_t*);
 void			 read_pkt(struct hdr_pkt*);
 
 struct address_list	*init_uhp(struct uhp_socks*);
-int			 run_udp(struct uhp_socks* );
+int			 run_udp(struct uhp_socks*, const char* );
 
 evutil_socket_t		 new_sender_socket(const char *, const char*);
 evutil_socket_t		 new_receiver_socket(const char*);

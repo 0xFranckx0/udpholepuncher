@@ -37,15 +37,23 @@ main (int argc, char **argv)
 	struct uhp_socks 	*s;
 	char 			*address;
 	char 			*port;
+	char 			*msg;
+	char 			*message;
 	int			 c;
 
-	while ((c = getopt(argc, argv, "a:p:")) != -1) {
+	while ((c = getopt(argc, argv, "a:m:p:")) != -1) {
 		switch (c) {
 		case 'a':
+			printf("Setting a \n");
 			address = optarg;
 			break;
 		case 'p':
+			printf("Setting p \n");
 			port = optarg;
+			break;
+		case 'm':
+			printf("Setting m \n");
+			msg = optarg;
 			break;
 		default:
 			printf("Usage: ");
@@ -53,21 +61,24 @@ main (int argc, char **argv)
 			exit(-1);
 		}
 	}
-	printf("%s:%s\n",address, port);
+	printf("%s:%s---->%s\n",address, port, msg);
 
 	s = malloc(sizeof(s));
 	if (s == NULL){
 		perror("malloc():");
 		exit(1);
 	}
-	s->sport = strdup(SPORT);
+	printf("s->rport: %s\n", port);
 	s->rport = strdup(port);
+	printf("s->dst: %s\n", address);
 	s->dst = strdup(address);
-
-	s->s = new_sender_socket(s->dst,s->sport);
+//	s->s = new_sender_socket(s->dst,s->rport);
 	s->r = new_receiver_socket(s->rport);
-	run_udp(s);
-	free(s->sport);
+	printf("MSG: %s\n", msg);
+	message = strdup(msg);
+	printf("MESSAGE: %s\n", message);
+	run_udp(s,message);
+//	free(s->sport);
 	free(s->rport);
 	free(s->dst);
 	free(s);
