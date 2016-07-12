@@ -27,8 +27,8 @@ static void echo_cb(evutil_socket_t, short, void*);
 static void receiver_cb(evutil_socket_t, short, void*);
 static void sender_cb(evutil_socket_t, short, void*);
 
-static int writer = WRITABLE;
-
+static int 	writer = WRITABLE;
+static struct 	uhp_socks *usock;
 void
 sender_cb(evutil_socket_t listener, short event, void *arg)
 {
@@ -42,8 +42,8 @@ sender_cb(evutil_socket_t listener, short event, void *arg)
 	unsigned char		*addr;
 
 	sin.sin_family = AF_INET;
-	sin.sin_port = htons(12345);
-	inet_pton(AF_INET, "192.168.0.173", &sin.sin_addr);
+	sin.sin_port = htons(atoi(usock->rport));
+	inet_pton(AF_INET, usock->dst, &sin.sin_addr);
 
 	if (lensnd = (sendto((int)listener, "HI",3 , 0, 
 		(struct sockaddr *) &sin, sizeof(sin))) == -1 ) {
@@ -81,6 +81,7 @@ int run_udp(struct uhp_socks *s)
 	struct timeval time;
 	time.tv_sec = 1;
 	time.tv_usec = 0;
+	usock = s;
 
 	base = event_base_new();
 	if (!base) {
@@ -88,9 +89,9 @@ int run_udp(struct uhp_socks *s)
 		return 1;
 	}
 
-	ev1 = event_new( base, s->r, EV_PERSIST,
+	ev1 = event_new( base, usock->r, EV_PERSIST,
 					sender_cb, (void*)base);
-	ev2 = event_new( base, s->r, EV_READ|EV_PERSIST,
+	ev2 = event_new( base, usock->r, EV_READ|EV_PERSIST,
 					receiver_cb, (void*)base);
 	event_add(ev1, &time);
 	event_add(ev2, NULL);
