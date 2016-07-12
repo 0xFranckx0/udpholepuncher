@@ -2,8 +2,8 @@ ACLOCAL_AMFLAGS = -I m4 --install
 lib_LTLIBRARIES = libobj/libuhp.la
 libobj_libuhp_la_SOURCES =  include/error.c \
                             include/jconverter.c \
-                            include/udp_ev.c \
-                            include/udp_net.c \
+                            include/uhp_ev.c \
+                            include/uhp_net.c \
                             include/uhp.c 
 							
 libobj_libuhp_la_LDFLAGS = -version-info 0:0:0
