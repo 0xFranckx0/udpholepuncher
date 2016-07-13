@@ -22,26 +22,6 @@
     under certain conditions.
 */
 
-
-
-/*
- * =====================================================================================
- *
- *       Filename:  uhp.c
- *
- *    Description:  
- *
- *        Version:  1.0
- *        Created:  02/06/16 18:56:01
- *       Revision:  none
- *       Compiler:  gcc
- *
- *         Author:  Franck Rupin (), franck.rupin@gmail.com
- *        Company:  
- *
- * =====================================================================================
- */
-
 #include <stdio.h>
 
 #include "uhp.h"
