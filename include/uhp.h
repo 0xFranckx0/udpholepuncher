@@ -51,12 +51,23 @@ enum msg_flag{
 	ACK
 };
 
+/**
+ * \struct uhp_socks
+ * \brief uhp_socks is used for sockets and sendto operations.
+ *
+ */
 struct uhp_socks {
 	char *rport;
 	char *dst;
 	int   r;
 };
 
+/**
+ * \struct uhp_state
+ * \brief uhp_state is used during the punch hole step to get the state of the
+ *	  attemtps and if the socket successfuls to strike.
+ *
+ */
 struct uhp_state {
 	int 			 count;
 	int 			 del;
@@ -84,17 +95,34 @@ struct hdr_pkt {
 		}pl;
 };
 
+/**
+ * \struct base
+ * \brief base struct is used into payloads. It provides the following 
+ *	  informations.
+ *
+ */
 struct base {
 	uint32_t	 rand;
 	time_t		 timestamp;
 	char 		*port;
 };
 
+/**
+ * \struct hello_pl
+ * \brief hello_pl struct is used into hdr_pkt struct. It is the first packet
+ *	  of the punch.
+ *
+ */
 struct hello_pl {
 	char		 tag[6];
 	struct base 	*b;
 };
 
+/**
+ * \struct ack_pl
+ * \brief ack_pl struct is used into hdr_pkt struct. It is a response packet.
+ *
+ */
 struct ack_pl {
 	char	 	 tag[3];
 	int		 id_src;
@@ -105,11 +133,18 @@ struct ack_pl {
 	}d;
 };
 
+/**
+ * \struct uhp_info
+ * \brief uhp_info is the struct returned by libuhp to the caller program once
+ *	  a NAT was punched and provides informations about socket, master role
+ *	  and the port to reach.
+ *
+ */
 struct uhp_info {
-	int 	sock;
+	int 	 sock;
 	char 	*port;
 	char 	*dst;
-	uint8_t master;
+	uint8_t  master;
 };
 
 struct hdr_pkt		*new_hello(struct uhp_socks*);
