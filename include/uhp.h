@@ -124,6 +124,7 @@ struct hello_pl {
  *
  */
 struct ack_pl {
+	int		 type;
 	char	 	 tag[3];
 	int		 id_src;
 	struct base 	*b;
@@ -141,12 +142,13 @@ struct ack_pl {
  *
  */
 struct uhp_info {
-	int 	 sock;
-	char 	*port;
-	char 	*dst;
-	uint8_t  master;
+	int 	 	 sock;
+	char 		*port;
+	char 		*dst;
+	uint8_t  	 master;
 };
 
+struct base		*new_base(char*);
 struct hdr_pkt		*new_hello(struct uhp_socks*);
 struct hdr_pkt		*new_ack();
 void			 free_pkt(struct hdr_pkt*);
