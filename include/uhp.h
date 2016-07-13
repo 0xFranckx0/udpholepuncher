@@ -17,20 +17,6 @@
 #define HELLO_TAG	"HELLO"
 #define ACK_TAG		"ACK"
 
-struct uhp_socks {
-	char *sport;
-	char *rport;
-	char *dst;
-	int   s;
-	int   r;
-};
-
-struct address {
-	SLIST_ENTRY(address)	entry;
-	int	sock;	
-};
-SLIST_HEAD(address_list, address);
-
 enum socket_flag{
 	SERVER,
 	CLIENT
@@ -41,7 +27,32 @@ enum msg_flag{
 	ACK
 };
 
-struct hdr_pkt{
+struct uhp_socks {
+	char *rport;
+	char *dst;
+	int   r;
+};
+
+struct uhp_state {
+	int 			 count;
+	int 			 del;
+	uint32_t 		 number;
+	struct uhp_socks 	*s;
+};
+
+struct address {
+	SLIST_ENTRY(address)	entry;
+	int	sock;	
+};
+SLIST_HEAD(address_list, address);
+
+/**
+ * \struct hdr_pkt
+ * \brief hdr_pkt is a header packet datastructure which is used to carry 
+ *        payload used in the master election protocol and to hole punch the
+ *	  the NAT.
+ */
+struct hdr_pkt {
 	int	id;
 	union{
 		struct hello_pl *hpl;
@@ -49,13 +60,33 @@ struct hdr_pkt{
 		}pl;
 };
 
-struct hello_pl{
-	char		tag[6];
-	uint32_t	rand;
-	time_t		timestamp;
+struct base {
+	uint32_t	 rand;
+	time_t		 timestamp;
+	char 		*port;
 };
 
-struct ack_pl;
+struct hello_pl {
+	char		 tag[6];
+	struct base 	*b;
+};
+
+struct ack_pl {
+	char	 	 tag[3];
+	int		 id_src;
+	struct base 	*b;
+	union {
+		struct base	*ori;
+		uint8_t		 master;
+	}d;
+};
+
+struct uhp_info {
+	int 	sock;
+	char 	*port;
+	char 	*dst;
+	uint8_t master;
+};
 
 struct hdr_pkt		*new_hello(struct uhp_socks*);
 struct hdr_pkt		*new_ack();
