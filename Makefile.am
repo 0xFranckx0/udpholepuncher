@@ -4,7 +4,8 @@ libobj_libuhp_la_SOURCES =  include/error.c \
                             include/jconverter.c \
                             include/uhp_data.c \
                             include/uhp_ev.c \
-                            include/uhp_net.c
+                            include/uhp_net.c \
+                            include/uhp_utils.c
 							
 libobj_libuhp_la_LDFLAGS = -version-info 0:0:0
 include_HEADERS =   include/error.h \
