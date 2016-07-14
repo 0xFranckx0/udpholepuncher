@@ -152,8 +152,8 @@ struct ack_pl {
  */
 struct uhp_info {
 	int 	 	 sock;	/*!< Socket on which communication is enabled */
-	char 		*port;/*!< Destination port */
-	char 		*dst;/*!< Destination address */
+	char 		*port;	/*!< Destination port */
+	char 		*dst;	/*!< Destination address */
 	uint8_t  	 master;/*!< Defines a master */
 
 };
