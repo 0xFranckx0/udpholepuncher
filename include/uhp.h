@@ -46,9 +46,14 @@ enum socket_flag{
 	CLIENT
 };
 
+/**
+ * \enum msg_flag
+ * \brief Message flags 
+ *
+ */
 enum msg_flag{
-	HELLO,
-	ACK
+	HELLO,	/*!< HELLO Flag for hello_pl */
+	ACK 	/*!< ACK Flag for ack_pl */
 };
 
 /**
@@ -57,9 +62,9 @@ enum msg_flag{
  *
  */
 struct uhp_socks {
-	char *rport;
-	char *dst;
-	int   r;
+	char *rport;	/*!< receiver port */
+	char *dst; 	/*!< Destination address */
+	int   r; 	/*!< Socket */
 };
 
 /**
@@ -69,10 +74,12 @@ struct uhp_socks {
  *
  */
 struct uhp_state {
-	int 			 count;
-	int 			 del;
-	uint32_t 		 number;
-	struct uhp_socks 	*s;
+	int 			 count;	/*!< Number of max tries */
+	int 			 del;	/*!< Del indicates whether 
+						an event should be deleted */
+	uint32_t 		 number;/*!< Rand number for master election */
+	struct uhp_socks 	*s;	/*!< Datastructure on which previous 
+					     params are applied to*/
 };
 
 struct address {
@@ -88,10 +95,11 @@ SLIST_HEAD(address_list, address);
  *	  the NAT.
  */
 struct hdr_pkt {
-	int	id;
+	int	id;/*!< Numeric ID of HEADER packet */
+
 	union{
-		struct hello_pl *hpl;
-		struct ack_pl   *apl;
+		struct hello_pl *hpl;	/*!< HELLO payload */
+		struct ack_pl   *apl;	/*!< ACK Payload */
 		}pl;
 };
 
@@ -102,9 +110,10 @@ struct hdr_pkt {
  *
  */
 struct base {
-	uint32_t	 rand;
-	time_t		 timestamp;
-	char 		*port;
+	uint32_t	 rand;		/*!< Random number */
+	time_t		 timestamp;	/*!< Timestamp */
+	char 		*port;		/*!< Original port */
+
 };
 
 /**
@@ -114,8 +123,8 @@ struct base {
  *
  */
 struct hello_pl {
-	char		 tag[6];
-	struct base 	*b;
+	char		 tag[6];	/*!< TAG identifying the payload */
+	struct base 	*b;		/*!< Base carried by the payload */
 };
 
 /**
@@ -124,14 +133,14 @@ struct hello_pl {
  *
  */
 struct ack_pl {
-	int		 type;
-	char	 	 tag[3];
-	int		 id_src;
-	struct base 	*b;
+	int		 type;		/*!< ACK Type */
+	char	 	 tag[3];	/*!< ACK Tag */
+	int		 id_src;	/*!< Refer to the Previous ID Header */
+	struct base 	*b;		/*!< Base */
 	union {
-		struct base	*ori;
-		uint8_t		 master;
-	}d;
+		struct base	*ori;	/*!< Original base */
+		uint8_t		 master;/*!< Defines a master */
+	} d;
 };
 
 /**
@@ -142,10 +151,11 @@ struct ack_pl {
  *
  */
 struct uhp_info {
-	int 	 	 sock;
-	char 		*port;
-	char 		*dst;
-	uint8_t  	 master;
+	int 	 	 sock;	/*!< Socket on which communication is enabled */
+	char 		*port;/*!< Destination port */
+	char 		*dst;/*!< Destination address */
+	uint8_t  	 master;/*!< Defines a master */
+
 };
 
 struct base		*new_base(char*);
