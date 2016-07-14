@@ -25,6 +25,15 @@
 #include <stdio.h>
 
 #include "uhp.h"
+
+struct base*
+new_base(char *port)
+{
+	struct base *b;
+
+	return b;
+}
+
 /*
 struct hdr_pkt*
 new_keepalive()
