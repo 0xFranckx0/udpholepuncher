@@ -3,6 +3,8 @@ AC_INIT([libuhp], [1.0], [franck.rupin@gmail.com])
 AC_CONFIG_AUX_DIR([build-aux])
 AC_CONFIG_MACRO_DIR([m4])
 
+AC_DEFINE(UHP_DEBUG_MODE, 1, [Define to  enable debug mode.])
+
 AM_INIT_AUTOMAKE([1.11 subdir-objects -Wall -Werror foreign])
 AC_PROG_CC
 
