@@ -21,11 +21,14 @@
     This is free software, and you are welcome to redistribute it
     under certain conditions.
 */
+
 #ifndef UHP_UTILS_H
 #define UHP_UTILS_H
 
-time_t		get_tm();
-uint32_t	get_rand();
+#include <unistd.h>
 
+time_t		get_tm();
+int			uhp_rand_seed(int);
+int			uhp_rand(unsigned char*);
 
 #endif /* UHP_UTILS_H */
