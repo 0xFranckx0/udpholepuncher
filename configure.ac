@@ -17,6 +17,14 @@ PKG_CHECK_MODULES([GLIB], [glib-2.0])
 PKG_CHECK_MODULES([crypto], [libcrypto])
 PKG_CHECK_MODULES([ssl], [libssl])
 
+AC_CHECK_FILE(/dev/random, [
+	AC_DEFINE(HAVE_DEVRAND, 1, [can use dev random])
+	],[])
+
+AC_CHECK_FILE(/dev/urandom, [
+	AC_DEFINE(HAVE_DEVURAND, 1, [can use dev urandom])
+	],[])
+
 AC_CONFIG_SRCDIR([src/test.c])
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_FILES([Makefile])
