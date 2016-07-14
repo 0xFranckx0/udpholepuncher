@@ -21,6 +21,7 @@
     This is free software, and you are welcome to redistribute it
     under certain conditions.
 */
+
 #include <unistd.h>
 #include <openssl/rand.h>
 
@@ -28,33 +29,37 @@
 
 #include "uhp_utils.h"
 
-/*
-static unsigned char *get_rand(int);
 
 unsigned char*
-get_rand(int s){
-	int randInt,i,c;
-	unsigned char rands[s];
+uhp_rand(int s)
+{
+	unsigned char *rands;
+	rands = malloc(sizeof(rand)*s);
+	if (rands == NULL){
+		perror("malloc()");
+		goto error;
+	}
+	
 	if( !(RAND_bytes(rands, s))) {
 		perror("ERROR: call to RAND_pseudo_bytes() failed\n");
-		return 0;
+		goto error;
 	} 
+
 	return rands;
+	
+error:
+	if (rands != NULL)
+		free(rands);
+	retun NULL;
 }
-*/
 
 int
-uhp_rand_seed(int s){
+uhp_rand_seed(int s)
+{
 	if(!RAND_load_file("/dev/random", s)){
 		perror("NOT enought entropy with RAND\n");
 		return -1;
 	}  
-  return RAND_status();
+	return RAND_status();
 }
 
-
-int
-uhp_rand(unsigned char *r)
-{
-	return RAND_bytes(r, sizeof(r));
-}

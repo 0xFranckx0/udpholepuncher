@@ -29,6 +29,6 @@
 
 time_t		get_tm();
 int			uhp_rand_seed(int);
-int			uhp_rand(unsigned char*);
+unsigned char*uhp_rand(int);
 
 #endif /* UHP_UTILS_H */
