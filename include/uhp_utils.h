@@ -27,8 +27,8 @@
 
 #include <unistd.h>
 
-time_t		get_tm();
-int			uhp_rand_seed(int);
-unsigned char*uhp_rand(int);
+time_t		 get_tm();
+unsigned char	*uhp_rand(int);
+int		 uhp_rand_seed(int);
 
 #endif /* UHP_UTILS_H */
