@@ -37,27 +37,27 @@ static int 	__uhp_rand(const char*, unsigned char*, int);
 int
 __uhp_rand(const char *device, unsigned char *byte, int blen)
 {
-    int fd;
-    ssize_t noc;
+	int fd;
+	ssize_t noc;
 
-    fd = open(device, O_RDONLY);
-    if (fd < 0) {
-	error_sys_set(__func__, "open");
-	return -1;
-    }
-    noc = read(fd, (void *) byte, blen);
-    if (noc < 0) {
-	error_sys_set(__func__, "read");
+	fd = open(device, O_RDONLY);
+	if (fd < 0) {
+		perror("open()");
+		return -1;
+	}
+	noc = read(fd, (void *) byte, blen);
+	if (noc < 0) {
+		perro("read()");
+		(void) close(fd);
+		return -1;
+	}
+	if (noc != blen) {
+		printf("read %zd != %zu bytes", noc, blen);
+		(void) close(fd);
+		return -1;
+	}
 	(void) close(fd);
-	return -1;
-    }
-    if (noc != blen) {
-	error_set(__func__, "read %zd != %zu bytes", noc, blen);
-	(void) close(fd);
-	return -1;
-    }
-    (void) close(fd);
-    return 0;
+	return 0;
 }
 #endif /* HAVE_DEVRAND... */
 
@@ -71,7 +71,7 @@ uhp_rand(int s)
 		perror("malloc()");
 		goto error;
 	}
-	
+
 	if( (nb = (RAND_bytes(rands, s))) < 0 ) {
 		perror("ERROR: call to RAND_pseudo_bytes() failed\n");
 #ifdef HAVE_DEVURAND
@@ -83,7 +83,7 @@ uhp_rand(int s)
 			goto out;
 #endif /* HAVE_DEVRAND... */	
 	}
-	 if (nb < 0 )
+	if (nb < 0 )
 		goto error;
 		
 error:
