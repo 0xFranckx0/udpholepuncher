@@ -98,10 +98,14 @@ out:
 int
 uhp_rand_seed(int s)
 {
-	if(!RAND_load_file("/dev/random", s)){
-		perror("NOT enought entropy with RAND\n");
-		return -1;
-	}  
-	return RAND_status();
+#ifdef HAVE_DEVURAND
+	if( RAND_load_file("/dev/urandom", s) > 0 )
+		return RAND_status();
+#endif /* HAVE_DEVURAND... */
+#ifdef HAVE_DEVRAND
+	if ( RAND_load_file("/dev/random", s) > 0 )
+		return RAND_status();
+#endif /* HAVE_DEVRAND... */		
+	return -1;
 }
 
