@@ -44,7 +44,7 @@ main (int argc, char **argv)
 #ifdef HAVE_DEVURAND
 	char *devurand =  "OK";
 	printf("dev urandom: %s\n", devurand);
-#endif /* HAVE_DEViURAND */
+#endif /* HAVE_DEVURAND */
 
 evutil_socket_t 	 server;
 	//evutil_socket_t client;
