@@ -74,17 +74,16 @@ uhp_rand(int s)
 
 	if( (nb = (RAND_bytes(rands, s))) < 0 ) {
 		perror("ERROR: call to RAND_pseudo_bytes() failed\n");
-#ifdef HAVE_DEVURAND
+#if defined(HAVE_DEVURAND)
 		else if ( (nb = __uhp_rand("/dev/urandom", rand, s)) > 0 )
 			goto out;
-#endif /* HAVE_DEVURAND... */
-#ifdef HAVE_DEVRAND
+#elif defined(HAVE_DEVRAND)
 		else if ( (nb = __uhp_rand("/dev/random", rand, s)) > 0 )
 			goto out;
+#else
+	goto error;
 #endif /* HAVE_DEVRAND... */	
 	}
-	if (nb < 0 )
-		goto error;
 		
 error:
 	if (rands != NULL)
@@ -98,14 +97,27 @@ out:
 int
 uhp_rand_seed(int s)
 {
-#ifdef HAVE_DEVURAND
-	if( RAND_load_file("/dev/urandom", s) > 0 )
+#if defined(HAVE_DEVURAND)
+	if (RAND_load_file("/dev/urandom", s) > 0)
 		return RAND_status();
-#endif /* HAVE_DEVURAND... */
-#ifdef HAVE_DEVRAND
-	if ( RAND_load_file("/dev/random", s) > 0 )
+/*#endif  HAVE_DEVURAND... */
+#elif defined(HAVE_DEVRAND)
+	if (RAND_load_file("/dev/random", s) > 0)
 		return RAND_status();
+#else
+	for (int i = 0; (i < 3); i++) {
+		uint8_t buf[4];
+
+		if (RAND_bytes(buf, sizeof(buf)) == 0)
+			continue;
+		else {
+			RAND_seed((const void *) buf, sizeof(buf));
+			return RAND_status;
+		}
+	}
+
 #endif /* HAVE_DEVRAND... */		
+
 	return -1;
 }
 
