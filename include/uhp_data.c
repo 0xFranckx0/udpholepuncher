@@ -26,12 +26,31 @@
 
 #include "uhp.h"
 
+#include "uhp_utils.h"
+
+#define MAX_BYTES 4
+
 struct base*
 new_base(char *port)
 {
-	struct base *b;
+	struct 		base *b;
+	unsigned char 	*rnd;
+	
+	b = malloc(sizeof(b));
+	if (b == NULL) {
+		perror("malloc()");
+		goto cleanup;
+	}
+
+	rnd = uhp_rand(MAX_BYTES);
 
 	return b;
+
+cleanup:
+	if (b)
+		free(b);
+	
+	return NULL;
 }
 
 /*
