@@ -4,7 +4,7 @@ AC_CONFIG_AUX_DIR([build-aux])
 AC_CONFIG_MACRO_DIR([m4])
 
 AC_DEFINE(UHP_DEBUG_MODE, 1, [Define to  enable debug mode.])
-CFLAGS="$CFLAGS -std=c11"
+CFLAGS="$CFLAGS -std=gnu99"
 AM_INIT_AUTOMAKE([1.11 subdir-objects -Wall -Werror foreign])
 AC_PROG_CC
 
