@@ -110,7 +110,7 @@ struct hdr_pkt {
  *
  */
 struct base {
-	uint32_t	 rand;		/*!< Random number */
+	unsigned char	*rand;		/*!< Random number */
 	time_t		 timestamp;	/*!< Timestamp */
 	char 		*port;		/*!< Original port */
 
