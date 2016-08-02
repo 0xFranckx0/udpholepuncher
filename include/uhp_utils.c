@@ -73,7 +73,7 @@ uhp_rand(int s)
 	}
 
 	if( (nb = (RAND_bytes(rands, s))) < 0 ) {
-		perror("ERROR: call to RAND_pseudo_bytes() failed\n");
+		perror("ERROR: call to RAND_bytes() failed\n");
 #if defined(HAVE_DEVURAND)
 		else if ( (nb = __uhp_rand("/dev/urandom", rand, s)) > 0 )
 			goto out;
@@ -97,6 +97,7 @@ out:
 int
 uhp_rand_seed(int s)
 {
+
 #if defined(HAVE_DEVURAND)
 	if (RAND_load_file("/dev/urandom", s) > 0)
 		return RAND_status();
