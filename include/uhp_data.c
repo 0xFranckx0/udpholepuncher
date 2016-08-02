@@ -34,7 +34,6 @@ struct base*
 new_base(char *port)
 {
 	struct 		base *b;
-	unsigned char 	*rnd;
 	
 	b = malloc(sizeof(b));
 	if (b == NULL) {
@@ -42,14 +41,35 @@ new_base(char *port)
 		goto cleanup;
 	}
 
-	rnd = uhp_rand(MAX_BYTES);
+	b->rand = uhp_rand(MAX_BYTES);
+	if (rand == NULL) {
+		perror("uhp_rand()");
+		goto cleanup;
+	}
+
+	b->port = strndup(port, strlen(port) + 1);
+	if (b->port == NULL){
+		perror("strndup()");
+		goto cleanup;
+	}
+	if ( b->timestamp = (int)time(NULL) < 0 ) {
+		perror("time()");
+		goto cleanup;
+	}
 
 	return b;
 
 cleanup:
-	if (b)
+
+	if (b->port != NULL)
+		free(b->port);
+
+	if (b->rand != NULL)
+		free(b->rand);
+
+	if (b != NULL)
 		free(b);
-	
+
 	return NULL;
 }
 
