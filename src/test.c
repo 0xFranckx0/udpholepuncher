@@ -31,8 +31,22 @@
 int
 main (int argc, char **argv)
 {
+#ifdef UHP_DEBUG_MODE
+	char *uhpport =  "4000";
+	printf("UHP port: %s\n", uhpport);
+#endif /* UHP_DEBUG_MODE */
 
-	evutil_socket_t 	 server;
+#ifdef HAVE_DEVRAND
+	char *devrand =  "OK";
+	printf("dev random: %s\n", devrand);
+#endif /* HAVE_DEVRAND */
+
+#ifdef HAVE_DEVURAND
+	char *devurand =  "OK";
+	printf("dev urandom: %s\n", devurand);
+#endif /* HAVE_DEVURAND */
+
+evutil_socket_t 	 server;
 	//evutil_socket_t client;
 	struct uhp_socks 	*s;
 	char 			*address;

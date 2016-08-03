@@ -22,20 +22,13 @@
     under certain conditions.
 */
 
-#ifndef ERROR_H
-#define ERROR_H
+#ifndef UHP_UTILS_H
+#define UHP_UTILS_H
 
-#include <stdio.h>
+#include <unistd.h>
 
+time_t		 get_tm();
+unsigned char	*uhp_rand(int);
+int		 uhp_rand_seed(int);
 
-void
-err_sb(const char*, const char*, ...);
-
-void
-err_sscb(const char*, const char*);
-
-void
-err_pb(FILE*);
-
-#endif /* ERROR_H */
-
+#endif /* UHP_UTILS_H */
