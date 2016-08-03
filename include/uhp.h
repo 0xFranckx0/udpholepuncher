@@ -160,7 +160,7 @@ struct uhp_info {
 
 struct base		*new_base(char*);
 struct hdr_pkt		*new_hello(struct uhp_socks*);
-struct hdr_pkt		*new_ack();
+struct hdr_pkt		*new_ack(void);
 void			 free_pkt(struct hdr_pkt*);
 json_t			*pkt2json(struct hdr_pkt*);
 struct hdr_pkt		*json2pkt(json_t*);
