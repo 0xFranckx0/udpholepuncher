@@ -28,14 +28,11 @@
 #include <stdio.h>
 
 
-void
-err_sb(const char*, const char*, ...);
+void funerr(const char*, const char*, ...);
 
-void
-err_sscb(const char*, const char*);
+void syserr(const char*, const char*);
 
-void
-err_pb(FILE*);
+void err_pb(FILE*);
 
 #endif /* ERROR_H */
 
