@@ -19,7 +19,7 @@
 #include <include/uhp.h>
 
 struct uhp_info *
-punch(const char *address, const char *port)
+punch(const char *address, const char *port, const char *msg)
 {
 	struct uhp_info *infos = NULL;
 	struct uhp_socks s;
@@ -43,8 +43,12 @@ punch(const char *address, const char *port)
 
 
 cleanup:
+	if (s.dst != NULL)
+		free(s.dst);
+
 	if (s.rport != NULL)
 		free(s.rport);
+
 	if (infos != NULL)
 		free(infos);
 
