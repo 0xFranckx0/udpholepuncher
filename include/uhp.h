@@ -158,20 +158,24 @@ struct uhp_info {
 
 };
 
-struct base		*new_base(char*);
+struct base			*new_base(char*);
 struct hdr_pkt		*new_hello(struct uhp_socks*);
 struct hdr_pkt		*new_ack(void);
-void			 free_pkt(struct hdr_pkt*);
-json_t			*pkt2json(struct hdr_pkt*);
+void			 	 free_pkt(struct hdr_pkt*);
+
+json_t				*pkt2json(struct hdr_pkt*);
 struct hdr_pkt		*json2pkt(json_t*);
-void			 read_pkt(struct hdr_pkt*);
+void			 	 read_pkt(struct hdr_pkt*);
 
 struct address_list	*init_uhp(struct uhp_socks*);
-int			 run_udp(struct uhp_socks*, const char* );
+int			 		 run_udp(struct uhp_socks*, const char* );
 
 evutil_socket_t		 new_sender_socket(const char *, const char*);
 evutil_socket_t		 new_receiver_socket(const char*);
 
 unsigned char		*get_addr(const char *, const int);
-void 			 print_addr(const unsigned char*, const int);
+void 			 	 print_addr(const unsigned char*, const int);
+
+
+struct uhp_info		*punch(const char*, const char*);
 #endif /* UHP_H */
