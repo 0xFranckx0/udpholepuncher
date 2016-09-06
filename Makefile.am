@@ -1,4 +1,5 @@
 ACLOCAL_AMFLAGS = -I m4 --install     
+
 lib_LTLIBRARIES = libobj/libuhp.la
 libobj_libuhp_la_SOURCES =  include/error.c \
                             include/jconverter.c \
@@ -10,13 +11,13 @@ libobj_libuhp_la_SOURCES =  include/error.c \
 							
 libobj_libuhp_la_LDFLAGS = -version-info 0:0:0
 include_HEADERS =   include/error.h \
-                    include/uhp.h
-libobj_libuhp_la_LIBADD = -lssl -lcrypto -levent \
-			  $(jansson_LIBS)
+                    include/uhp.h 
+libobj_libuhp_la_LIBADD = -lssl -lcrypto -levent -levent_core\
+			  $(jansson_LIBS) 
 
-noinst_PROGRAMS = bin/test
-bin_test_SOURCES = src/test.c
-bin_test_CPPFLAGS = -DDEBUG
-bin_test_LDADD = $(lib_LTLIBRARIES) 
+noinst_PROGRAMS = test
+test_SOURCES = src/test.c
+test_CPPFLAGS = -DDEBUG
+test_LDADD = $(lib_LTLIBRARIES) 
 
 EXTRA_DIST = m4/NOTES                                                           
