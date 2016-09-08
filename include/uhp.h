@@ -31,6 +31,7 @@
 #include <openssl/x509.h>
 #include <openssl/evp.h>
 #include <jansson.h>
+#include <event2/event.h>
 #include <event2/listener.h>
 
 #include "queue.h"
@@ -143,20 +144,6 @@ struct ack_pl {
 	} d;
 };
 
-/**
- * \struct uhp_info
- * \brief uhp_info is the struct returned by libuhp to the caller program once
- *	  a NAT was punched and provides informations about socket, master role
- *	  and the port to reach.
- *
- */
-struct uhp_info {
-	int 	 	 sock;	/*!< Socket on which communication is enabled */
-	char 		*port;	/*!< Destination port */
-	char 		*dst;	/*!< Destination address */
-	uint8_t  	 master;/*!< Defines a master */
-
-};
 
 struct base			*new_base(char*);
 struct hdr_pkt		*new_hello(struct uhp_socks*);
@@ -177,5 +164,4 @@ unsigned char		*get_addr(const char*, const int);
 void 			 	 print_addr(const unsigned char*, const int);
 
 
-struct uhp_info		*punch(const char*, const char*, const char*);
 #endif /* UHP_H */
