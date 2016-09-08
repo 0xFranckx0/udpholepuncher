@@ -16,41 +16,4 @@
  * =============================================================================
  */
 
-#include <include/uhp.h>
 
-struct uhp_info *
-punch(const char *address, const char *port, const char *msg)
-{
-	struct uhp_info *infos = NULL;
-	struct uhp_socks s;
-
-	s.dst = strdup(address);
-	if (s.dst == NULL){
-		syserr(__func__, "strdup");
-		goto cleanup ;
-	}
-	s.rport = strdup(port);
-	if (s.rport == NULL){
-		syserr(__func__, "strdup");
-		goto cleanup;
-	}
-
-	infos = malloc(sizeof(infos));
-	if (infos == NULL){
-		syserr(__func__, "malloc");
-		goto cleanup;
-	}
-
-
-cleanup:
-	if (s.dst != NULL)
-		free(s.dst);
-
-	if (s.rport != NULL)
-		free(s.rport);
-
-	if (infos != NULL)
-		free(infos);
-
-	return infos;
-}

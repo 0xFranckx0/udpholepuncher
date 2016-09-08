@@ -163,5 +163,4 @@ evutil_socket_t		 new_receiver_socket(const char*);
 unsigned char		*get_addr(const char*, const int);
 void 			 	 print_addr(const unsigned char*, const int);
 
-
 #endif /* UHP_H */
