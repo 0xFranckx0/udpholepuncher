@@ -11,8 +11,8 @@ libobj_libuhp_la_SOURCES =  include/error.c \
 							
 libobj_libuhp_la_LDFLAGS = -version-info 0:0:0
 include_HEADERS =   include/error.h \
-                    include/uhp.h 
-libobj_libuhp_la_LIBADD = -lssl -lcrypto -levent -levent_core\
+                    include/punch.h 
+libobj_libuhp_la_LIBADD = -lssl -lcrypto -levent_core\
 			  $(jansson_LIBS) 
 
 noinst_PROGRAMS = test

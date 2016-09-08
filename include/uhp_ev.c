@@ -21,11 +21,13 @@
     This is free software, and you are welcome to redistribute it
     under certain conditions.
 */
-
+#include <arpa/inet.h>
+#include <event.h>
 #include <event2/event.h>
 #include <event2/listener.h>
 #include <event2/bufferevent.h>
 #include <event2/buffer.h>
+#include <sys/time.h>
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <sys/un.h>
