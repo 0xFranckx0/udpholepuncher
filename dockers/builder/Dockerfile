@@ -47,7 +47,7 @@ RUN cd /opt &&\
 	cd libressl && sh autogen.sh &&\
 	./configure --prefix="${HOME}/opt/libressl" &&\
 	make && make install &&\
-	echo '/opt/libressl' | sudo tee /etc/ld.so.conf.d/libressl.conf &&\
+	echo '/opt/libressl' | tee /etc/ld.so.conf.d/libressl.conf &&\
 	ldconfig
 
 ENV C_INCLUDE_PATH="/opt/libressl/include" 
