@@ -41,3 +41,18 @@ RUN cd /opt && wget https://github.com/libevent/libevent/releases/download/relea
 	make install
 
 RUN ln -s /usr/local/lib/libevent-2.0.so.5 /usr/lib/libevent-2.0.so.5
+
+RUN cd /opt &&\
+	git clone https://github.com/libressl-portable/portable.git libressl &&\
+	cd libressl && sh autogen.sh &&\
+	./configure --prefix="${HOME}/opt/libressl" &&\
+	make && make install &&\
+	echo '/opt/libressl' | sudo tee /etc/ld.so.conf.d/libressl.conf &&\
+	ldconfig
+
+ENV C_INCLUDE_PATH="/opt/libressl/include" 
+ENV LIBRARY_PATH="/opt/libressl/lib"
+	
+
+
+
