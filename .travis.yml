@@ -9,5 +9,5 @@ before_install:
   - sudo apt-get install -y pkg-config autoconf automake build-essential libssl-dev make libjansson4 libjansson-dev libtool tar 
   - mkdir build && cd build/ && wget https://github.com/libevent/libevent/releases/download/release-2.0.22-stable/libevent-2.0.22-stable.tar.gz && tar xvzf libevent-2.0.22-stable.tar.gz && cd libevent-2.0.22-stable && ./configure && make && sudo make install
 
-script: ./build.sh 
+script: autoreconf -fiv && ./configure && make 
 
