@@ -47,7 +47,7 @@ __uhp_rand(const char *device, unsigned char *byte, int blen)
 	}
 	noc = read(fd, (void *) byte, blen);
 	if (noc < 0) {
-		perro("read()");
+		perror("read()");
 		(void) close(fd);
 		return -1;
 	}
