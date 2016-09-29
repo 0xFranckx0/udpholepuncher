@@ -26,33 +26,39 @@
 #define SPORT "12345"
 #define RPORT "54321"
 #define DEST  "192.168.0.173"
+static int p_cb(int, struct uhp_info *);
 
-//static struct filter_list      filters;
+int
+p_cb(int flag, struct uhp_info *ui)
+{
+	
+	return 0;
+}
+
 int
 main (int argc, char **argv)
 {
+/*
 #ifdef UHP_DEBUG_MODE
 	char *uhpport =  "4000";
 	printf("UHP port: %s\n", uhpport);
-#endif /* UHP_DEBUG_MODE */
-
+#endif*/ /* UHP_DEBUG_MODE */
+/*
 #ifdef HAVE_DEVRAND
 	char *devrand =  "OK";
 	printf("dev random: %s\n", devrand);
-#endif /* HAVE_DEVRAND */
-
+#endif*/ /* HAVE_DEVRAND */
+/*
 #ifdef HAVE_DEVURAND
 	char *devurand =  "OK";
 	printf("dev urandom: %s\n", devurand);
-#endif /* HAVE_DEVURAND */
+#endif*/ /* HAVE_DEVURAND */
 
-evutil_socket_t 	 server;
-	//evutil_socket_t client;
-	struct uhp_socks 	*s;
-	char 			*address;
+	struct event_base 	*base; 
+	struct uhp_info 	*ui;
 	char 			*port;
 	char 			*msg;
-	char 			*message;
+	char 			*address;
 	int			 c;
 
 	while ((c = getopt(argc, argv, "a:m:p:")) != -1) {
@@ -75,56 +81,16 @@ evutil_socket_t 	 server;
 			exit(-1);
 		}
 	}
-	printf("%s:%s---->%s\n",address, port, msg);
 
-	s = malloc(sizeof(s));
-	if (s == NULL){
-		perror("malloc():");
-		exit(1);
+	base = event_base_new();
+	if (base == NULL) {
+		puts("Couldn't open event base");
+		return -1;
 	}
-	printf("s->rport: %s\n", port);
-	s->rport = strdup(port);
-	printf("s->dst: %s\n", address);
-	s->dst = strdup(address);
-//	s->s = new_sender_socket(s->dst,s->rport);
-	s->r = new_receiver_socket(s->rport);
-	printf("MSG: %s\n", msg);
-	message = strdup(msg);
-	printf("MESSAGE: %s\n", message);
-	run_udp(s,message);
-//	free(s->sport);
-	free(s->rport);
-	free(s->dst);
-	free(s);
-//        struct hdr_pkt *pkt;
 
-//    puts ("This is :" PACKAGE_STRING ".");
-//        pkt = new_keepalive();
-//        printf("ID : %d\n",pkt->id);
-//        printf("TAG: %s\n",pkt->pl.msg);
-//        free_pkt(pkt);
-/*    run_log();*/
-/*    run_udp(); */
-/*    char *str;
-    str = malloc(4 * sizeof(char));
-    if ( str == NULL) {
-        err_sscb(__func__, "malloc");
-        err_pb(stderr);
-        return -1;
-    }
-    free( str);
+//	event_base_loopcontinue(base);
 
-    puts ("This is :" PACKAGE_STRING ".");
+	punch((const char*)address, (const char*)port, (const char*)msg, base, p_cb, NULL);
 
-    int res;
-    res = uhp_new();
-    
-    if (res == -1) {
-        err_sb(__func__, "error code is %d", res);
-        err_pb(stderr);
-    }
-    
-    uhp_print();
-*/
-    return 0;
+	return 0;
 }
