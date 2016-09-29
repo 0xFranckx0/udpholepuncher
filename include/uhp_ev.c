@@ -48,22 +48,19 @@ static void echo_cb(evutil_socket_t, short, void*);
 static void receiver_cb(evutil_socket_t, short, void*);
 static void sender_cb(evutil_socket_t, short, void*);
 
-static int 	writer = WRITABLE;
-static struct 	uhp_socks *usock;
-static char 	*message;
+static int 		 writer = WRITABLE;
+static struct uhp_socks *usock;
+static char 		*message;
+static struct uhp_info 	*ui;
 
 void
 sender_cb(evutil_socket_t listener, short event, void *arg)
 {
 	struct event_base 	*base = arg;
-	ssize_t 		 lenrcv;
 	ssize_t 		 lensnd;
-	char 			*buf = "HELLO from client";
-	char 			 rcv[512];
 	struct sockaddr_in 	 sin;
 	int 			 slen = sizeof(sin);
 	int 			 len;
-	unsigned char		*addr;
 
 	len = strlen(message) + 1;
 	sin.sin_family = AF_INET;
@@ -83,35 +80,35 @@ receiver_cb(evutil_socket_t listener, short event, void *arg)
 {
 	struct event_base *base = arg;
 	struct sockaddr_in sin;
-	ssize_t lenrcv, lensnd;
+	ssize_t lenrcv;
 	socklen_t slen = sizeof(sin);
 	char buf[MAX_BUF];
-	char *msg = "ACK from server";
 
 	memset(buf,0,MAX_BUF);
 
 	if (lenrcv = (recvfrom((int)listener, &buf, sizeof(buf) - 1, 0,
 		(struct sockaddr *) &sin, &slen)) == -1) {
 		perror("recvfrom()");
-		event_loopbreak();
+//		event_loopbreak();
 	}
-
-	fprintf(stdout,"SERVER RECEIVED : %s\n", buf);
+	printf("SERVER RECEIVED : %s\n", buf);
 }
 
-int run_udp(struct uhp_socks *s, const char *msg)
+int 
+run_udp(struct uhp_socks *s, const char *msg, struct event_base *base, struct uhp_info *infos)
 {
-	struct event_base *base;
 	struct event *ev1, *ev2;
 	struct timeval time;
 	time.tv_sec = 2;
 	time.tv_usec = 0;
 	usock = s;
 	message = msg;
-	base = event_base_new();
+	ui = infos;
+
+/*	base = event_base_new();*/
 	if (!base) {
 		puts("Couldn't open event base");
-		return 1;
+		return -1;
 	}
 
 	ev1 = event_new( base, usock->r, EV_PERSIST,
@@ -120,7 +117,6 @@ int run_udp(struct uhp_socks *s, const char *msg)
 					receiver_cb, (void*)base);
 	event_add(ev1, &time);
 	event_add(ev2, NULL);
-	event_base_dispatch(base);
 
 	return 0;
 }

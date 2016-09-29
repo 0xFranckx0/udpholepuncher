@@ -31,9 +31,7 @@
 
 #if defined(HAVE_DEVRAND) || defined(HAVE_DEVURAND)
 static int 	__uhp_rand(const char*, unsigned char*, int);
-#endif /* HAVE_DEVRAND... */
 
-#if defined(HAVE_DEVRAND) || defined(HAVE_DEVURAND)
 int
 __uhp_rand(const char *device, unsigned char *byte, int blen)
 {

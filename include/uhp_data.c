@@ -41,11 +41,6 @@ new_base(char *port)
 		goto cleanup;
 	}
 
-	b->rand = uhp_rand(MAX_BYTES);
-	if (rand == NULL) {
-		perror("uhp_rand()");
-		goto cleanup;
-	}
 
 	b->port = strndup(port, strlen(port) + 1);
 	if (b->port == NULL){
