@@ -21,25 +21,125 @@
     This is free software, and you are welcome to redistribute it
     under certain conditions.
 */
+#include <arpa/inet.h>
+#include <event.h>
+#include <event2/event.h>
+#include <event2/listener.h>
+#include <event2/bufferevent.h>
+#include <event2/buffer.h>
+#include <sys/time.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <sys/un.h>
+#include <string.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <errno.h>
 
-#include "punch.h"
+#include "uhp.h"
+#include "queue.h"
 
-struct uhp_info *
-punch(const char *address, const char *port, const char *msg)
+#define MAX_BUF		64000
+#define WRITABLE	3
+#define UNWRITABLE	0
+
+
+
+struct ev_data {
+	struct event_base 	*base;
+	void			*data;
+	struct uhp_socks 	*s;
+	struct uhp_infos 	*infos;
+
+	void (*uhp_cb)(int flag, struct uhp_info *ui);
+};
+
+static void receiver_cb(evutil_socket_t, short, void*);
+static void sender_cb(evutil_socket_t, short, void*);
+
+static int 		 writer = WRITABLE;
+static struct uhp_socks *usock;
+static char 		*message;
+static struct uhp_info 	*ui;
+struct event 		*evs;
+struct event 		*evr;
+
+void
+sender_cb(evutil_socket_t listener, short event, void *arg)
 {
-	struct uhp_info *infos = NULL;
-	struct uhp_socks s;
+	struct event_base 	*base = arg;
+	struct sockaddr_in 	 sin;
+	struct timeval 		 time = {2,0};
+	int 			 slen = sizeof(sin);
+	int 			 len;
+	ssize_t 		 lensnd;
 
-	s.dst = strdup(address);
-	if (s.dst == NULL){
+
+	len = strlen(message) + 1;
+	sin.sin_family = AF_INET;
+	sin.sin_port = htons(atoi(usock->rport));
+	inet_pton(AF_INET, usock->dst, &sin.sin_addr);
+
+	if (lensnd = (sendto((int)listener, message, len , 0, 
+		(struct sockaddr *) &sin, sizeof(sin))) == -1 ) {
+		perror("sendto()");
+		event_loopbreak();
+	}
+	printf("sent: %s\n",message);
+	if (strncmp(message,"stop",4) ==0 ){
+		printf("DELETING event\n");
+		event_free(evs);
+	}
+}
+
+void
+receiver_cb(evutil_socket_t listener, short event, void *arg)
+{
+	struct event_base *base = arg;
+	struct sockaddr_in sin;
+	ssize_t lenrcv;
+	socklen_t slen = sizeof(sin);
+	char buf[MAX_BUF];
+
+	memset(buf,0,MAX_BUF);
+
+	if (lenrcv = (recvfrom((int)listener, &buf, sizeof(buf) - 1, 0,
+		(struct sockaddr *) &sin, &slen)) == -1) {
+		perror("recvfrom()");
+	}
+	printf("SERVER RECEIVED : %s\n", buf);
+}
+
+int
+punch(const char *address, const char *port, const char *msg, struct event_base *base,
+	 void (*uhp_cb)(int flag, struct uhp_info *ui), void *data)
+{
+	struct uhp_socks 	*s;
+	struct uhp_infos 	*infos;
+	struct timeval 		 time = {2,0};
+	int 			 ret;
+
+	message = msg;
+
+	s = malloc(sizeof(*s));
+	if (s == NULL){
+		syserr(__func__, "malloc failed");
+		goto cleanup;
+	}
+	s->dst = strdup(address);
+	if (s->dst == NULL){
 		syserr(__func__, "strdup");
 		goto cleanup ;
 	}
-	s.rport = strdup(port);
-	if (s.rport == NULL){
+
+	s->rport = strdup(port);
+	if (s->rport == NULL){
 		syserr(__func__, "strdup");
 		goto cleanup;
 	}
+
+	s->r = new_receiver_socket(port); 	
+	usock = s;
 
 	infos = malloc(sizeof(infos));
 	if (infos == NULL){
@@ -47,16 +147,22 @@ punch(const char *address, const char *port, const char *msg)
 		goto cleanup;
 	}
 
+	evs = event_new( base, usock->r, EV_TIMEOUT|EV_PERSIST,
+					sender_cb, (void*)base);
+	evr = event_new( base, usock->r, EV_READ|EV_PERSIST,
+					receiver_cb, (void*)base);
+	event_add(evs, &time);
+	event_add(evr, NULL);
+	event_base_dispatch(base);
 
 cleanup:
-	if (s.dst != NULL)
-		free(s.dst);
+	if (s->dst != NULL)
+		free(s->dst);
 
-	if (s.rport != NULL)
-		free(s.rport);
+	if (s->rport != NULL)
+		free(s->rport);
 
-	if (infos != NULL)
-		free(infos);
-
-	return infos;
+	if (s != NULL)
+		free(s);
+	return 0;
 }

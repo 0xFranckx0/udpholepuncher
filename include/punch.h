@@ -26,7 +26,19 @@
 #ifndef PUNCP_H
 #define PUNCH_H
 
-#include "uhp.h"
+#include <stdint.h>
+#include <openssl/ssl.h>
+#include <openssl/rsa.h>
+#include <openssl/x509.h>
+#include <openssl/evp.h>
+#include <jansson.h>
+#include <event2/event.h>
+#include <event2/listener.h>
+
+/*
+define a callback that returns the structure info
+modify punch function to accept an event base and the callback
+*/
 
 /**
  * \struct uhp_info
@@ -40,10 +52,10 @@ struct uhp_info {
 	char 		*port;	/*!< Destination port */
 	char 		*dst;	/*!< Destination address */
 	uint8_t  	 master;/*!< Defines a master */
-
+	void 		*data;
 };
 
-
-struct uhp_info		*punch(const char*, const char*, const char*);
+int	punch(const char *, const char *, const char *, struct event_base *,
+		void (*uhp_cb)(int, struct uhp_info *), void *);
 
 #endif /* PUNCH_H  */
