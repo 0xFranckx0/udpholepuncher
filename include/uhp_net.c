@@ -37,6 +37,58 @@
 #define UNWRITABLE	0
 
 
+static evutil_socket_t		 new_socket(const char*, const char*);
+
+static evutil_socket_t
+new_socket(const char *addr, const char *port)
+{
+	evutil_socket_t listener;
+    	struct addrinfo *res, hints;
+	int rv, s;
+
+	int optval = 1;
+	memset(&hints, 0, sizeof(struct addrinfo));
+	hints.ai_family 	= AF_INET;
+	hints.ai_socktype 	= SOCK_DGRAM;
+	hints.ai_protocol 	= IPPROTO_UDP;
+	hints.ai_addrlen 	= 0;
+	hints.ai_addr 		= NULL;
+	hints.ai_canonname 	= NULL;
+	hints.ai_next 		= NULL;
+      	hints.ai_flags = AI_PASSIVE;
+
+	if ((rv = getaddrinfo(NULL, port, &hints, &res)) != 0){
+		perror("getaddrinfo failed");
+		fprintf(stderr, "getaddrinfo: %s\n", gai_strerror(rv));
+		listener = -1;
+		goto cleanup;
+	}
+	if ( (listener = socket(res->ai_family, res->ai_socktype, 
+			res->ai_protocol)) < 0){
+		perror("socket failed");
+		listener = -1;
+		goto cleanup;
+	}
+	evutil_make_socket_nonblocking(listener);
+	if (setsockopt(listener, SOL_SOCKET, SO_REUSEADDR, 
+			&optval, sizeof(optval)) < 0){
+		perror("setsockopt failed");
+		listener = -1;
+		goto cleanup;
+	}
+	if (bind(listener, res->ai_addr, res->ai_addrlen) < 0){
+		perror("bind failed");
+		listener = -1;
+		goto cleanup;
+	}
+
+cleanup:
+	if (res != NULL)
+		freeaddrinfo(res);	
+
+	return listener;
+}
+
 unsigned char*
 get_addr( const char *addr, const int domain)
 {
@@ -78,97 +130,9 @@ print_addr(const unsigned char *addr, const int domain)
 	printf("%s\n", str);
 }
 
-evutil_socket_t
-new_socket(const char *addr, const char *port, int type)
-{
-	evutil_socket_t listener;
-    	struct addrinfo *res, hints;
-	int rv, s;
-
-	int optval = 1;
-	memset(&hints, 0, sizeof(struct addrinfo));
-	hints.ai_family 	= AF_INET;
-	hints.ai_socktype 	= SOCK_DGRAM;
-	hints.ai_protocol 	= IPPROTO_UDP;
-	hints.ai_addrlen 	= 0;
-	hints.ai_addr 		= NULL;
-	hints.ai_canonname 	= NULL;
-	hints.ai_next 		= NULL;
-
-	switch(type){
-	case SERVER:
-        	hints.ai_flags = AI_PASSIVE;
-		if ((rv = getaddrinfo(NULL, port, &hints, &res)) != 0){
-			perror("getaddrinfo failed");
-			fprintf(stderr, "getaddrinfo: %s\n", gai_strerror(rv));
-			listener = -1;
-			goto cleanup;
-		}
-		if ( (listener = socket(res->ai_family, res->ai_socktype, 
-				res->ai_protocol)) < 0){
-			perror("socket failed");
-			listener = -1;
-			goto cleanup;
-		}
-		evutil_make_socket_nonblocking(listener);
-		if (setsockopt(listener, SOL_SOCKET, SO_REUSEADDR, 
-				&optval, sizeof(optval)) < 0){
-			perror("setsockopt failed");
-			listener = -1;
-			goto cleanup;
-		}
-		if (bind(listener, res->ai_addr, res->ai_addrlen) < 0){
-			perror("bind failed");
-			listener = -1;
-			goto cleanup;
-		}
-		break;
-	case CLIENT:
-        	hints.ai_flags = 0;
-		if (getaddrinfo(addr, port, &hints, &res) == 1){
-			perror("getaddrinfo failed");
-			fprintf(stderr, "getaddrinfo: %s\n", gai_strerror(rv));
-			listener = -1;
-			goto cleanup;
-		}
-		if ((listener = socket(res->ai_family, res->ai_socktype, 
-				res->ai_protocol)) < 0){
-			perror("socket failed");
-			listener = -1;
-			goto cleanup;
-		}
-		evutil_make_socket_nonblocking(listener);
-		if (setsockopt(listener, SOL_SOCKET, SO_REUSEADDR, 
-				&optval, sizeof(optval)) < 0){
-			perror("setsockopt failed");
-			listener = -1;
-			goto cleanup;
-		}
-/*		if (connect(listener,res->ai_addr, res->ai_addrlen) == -1){
-			perror("connect failed");
-			listener = -1;
-			goto cleanup;
-		}
-*/
-		break;
-	}
-
-cleanup:
-	if (res != NULL)
-		freeaddrinfo(res);	
-
-	return listener;
-}
-
-evutil_socket_t	
-new_sender_socket(const char *addr, const char *port)
-{
-	return new_socket(addr, port, CLIENT);
-}
-
 evutil_socket_t	
 new_receiver_socket(const char *port)
 {
-	return new_socket(NULL, port, SERVER);
+	return new_socket(NULL, port);
 }
     
