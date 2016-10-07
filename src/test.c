@@ -39,35 +39,34 @@ main (int argc, char **argv)
 
 	struct event_base 	*base; 
 	struct uhp_info 	*ui;
-	struct input_p 		*ip;
-	struct output_p 	*op;
 	char 			*port;
 	char 			*msg;
 	char 			*address;
 	int			 c;
 
-	ip = malloc(sizeof(*ip));
-	if (ip == NULL) {
-		perror("malloc failed");
-	}
-	op = malloc(sizeof(*op));
-	if (op == NULL) {
-		perror("malloc failed");
-	}
-
+	struct input_p 		 ip = {
+		NULL,
+		NULL,
+		NULL,
+		NULL
+	};
+	struct output_p 	op = {
+		p_cb,
+		NULL
+	};
 	while ((c = getopt(argc, argv, "a:m:p:")) != -1) {
 		switch (c) {
 		case 'a':
 			printf("Setting a \n");
-			ip->address = optarg;
+			ip.address = optarg;
 			break;
 		case 'p':
 			printf("Setting p \n");
-			ip->port = optarg;
+			ip.port = optarg;
 			break;
 		case 'm':
 			printf("Setting m \n");
-			ip->msg = optarg;
+			ip.msg = optarg;
 			break;
 		default:
 			printf("Usage: ");
@@ -84,21 +83,9 @@ main (int argc, char **argv)
 
 //	event_base_loopcontinue(base);
 
-//	punch((const char*)address, (const char*)port, (const char*)msg, base, p_cb, NULL);
-	punch(ip,op);
+	punch(&ip,&op);
 	
 
 	return 0;
 
-out:
-	if (ip != NULL) {
-		if (ip->address != NULL)
-			free(ip->address);
-		if (ip->port != NULL)
-			free(ip->port);
-		if (ip->msg != NULL)
-			free(ip->msg);
-		free(ip);
-	}
-	exit(1);
 }
