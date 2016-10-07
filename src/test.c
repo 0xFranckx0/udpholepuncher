@@ -21,21 +21,6 @@ p_cb(int flag, struct uhp_info *ui)
 int
 main (int argc, char **argv)
 {
-/*
-#ifdef UHP_DEBUG_MODE
-	char *uhpport =  "4000";
-	printf("UHP port: %s\n", uhpport);
-#endif*/ /* UHP_DEBUG_MODE */
-/*
-#ifdef HAVE_DEVRAND
-	char *devrand =  "OK";
-	printf("dev random: %s\n", devrand);
-#endif*/ /* HAVE_DEVRAND */
-/*
-#ifdef HAVE_DEVURAND
-	char *devurand =  "OK";
-	printf("dev urandom: %s\n", devurand);
-#endif*/ /* HAVE_DEVURAND */
 
 	struct event_base 	*base; 
 	struct uhp_info 	*ui;
