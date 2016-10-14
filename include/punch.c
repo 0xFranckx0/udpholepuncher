@@ -109,36 +109,39 @@ receiver_cb(evutil_socket_t listener, short event, void *arg)
 	}
 	printf("SERVER RECEIVED : %s\n", buf);
 }
-
+/*
 int
 punch(const char *address, const char *port, const char *msg, struct event_base *base,
 	 void (*uhp_cb)(int flag, struct uhp_info *ui), void *data)
+*/
+int
+punch(struct input_p *ip, struct output_p *op) 
 {
 	struct uhp_socks 	*s;
 	struct uhp_infos 	*infos;
 	struct timeval 		 time = {2,0};
 	int 			 ret;
 
-	message = msg;
+	message = ip->msg;
 
 	s = malloc(sizeof(*s));
 	if (s == NULL){
 		syserr(__func__, "malloc failed");
 		goto cleanup;
 	}
-	s->dst = strdup(address);
+	s->dst = strdup(ip->address);
 	if (s->dst == NULL){
 		syserr(__func__, "strdup");
 		goto cleanup ;
 	}
 
-	s->rport = strdup(port);
+	s->rport = strdup(ip->port);
 	if (s->rport == NULL){
 		syserr(__func__, "strdup");
 		goto cleanup;
 	}
 
-	s->r = new_receiver_socket(port); 	
+	s->r = new_receiver_socket(ip->port); 	
 	usock = s;
 
 	infos = malloc(sizeof(infos));
@@ -147,13 +150,13 @@ punch(const char *address, const char *port, const char *msg, struct event_base 
 		goto cleanup;
 	}
 
-	evs = event_new( base, usock->r, EV_TIMEOUT|EV_PERSIST,
-					sender_cb, (void*)base);
-	evr = event_new( base, usock->r, EV_READ|EV_PERSIST,
-					receiver_cb, (void*)base);
+	evs = event_new( ip->base, usock->r, EV_TIMEOUT|EV_PERSIST,
+					sender_cb, (void*)ip->base);
+	evr = event_new( ip->base, usock->r, EV_READ|EV_PERSIST,
+					receiver_cb, (void*)ip->base);
 	event_add(evs, &time);
 	event_add(evr, NULL);
-	event_base_dispatch(base);
+	event_base_dispatch(ip->base);
 
 cleanup:
 	if (s->dst != NULL)

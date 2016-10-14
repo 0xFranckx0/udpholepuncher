@@ -1,20 +1,3 @@
-/*
- * =====================================================================================
- *
- *       Filename:  test.c
- *
- *    Description:  
- *
- *        Version:  1.0
- *        Created:  03/24/2016 18:150:20
- *       Revision:  none
- *       Compiler:  gcc
- *
- *         Author:  Franck Rupin, franck.rupin@gmail.com
- *
- * =====================================================================================
- */
-
 #include <config.h>
 #include <ctype.h>
 #include <stdio.h>
@@ -56,24 +39,35 @@ main (int argc, char **argv)
 
 	struct event_base 	*base; 
 	struct uhp_info 	*ui;
+	struct input_p 		*ip;
+	struct output_p 	*op;
 	char 			*port;
 	char 			*msg;
 	char 			*address;
 	int			 c;
 
+	ip = malloc(sizeof(*ip));
+	if (ip == NULL) {
+		perror("malloc failed");
+	}
+	op = malloc(sizeof(*op));
+	if (op == NULL) {
+		perror("malloc failed");
+	}
+
 	while ((c = getopt(argc, argv, "a:m:p:")) != -1) {
 		switch (c) {
 		case 'a':
 			printf("Setting a \n");
-			address = optarg;
+			ip->address = optarg;
 			break;
 		case 'p':
 			printf("Setting p \n");
-			port = optarg;
+			ip->port = optarg;
 			break;
 		case 'm':
 			printf("Setting m \n");
-			msg = optarg;
+			ip->msg = optarg;
 			break;
 		default:
 			printf("Usage: ");
@@ -90,7 +84,21 @@ main (int argc, char **argv)
 
 //	event_base_loopcontinue(base);
 
-	punch((const char*)address, (const char*)port, (const char*)msg, base, p_cb, NULL);
+//	punch((const char*)address, (const char*)port, (const char*)msg, base, p_cb, NULL);
+	punch(ip,op);
+	
 
 	return 0;
+
+out:
+	if (ip != NULL) {
+		if (ip->address != NULL)
+			free(ip->address);
+		if (ip->port != NULL)
+			free(ip->port);
+		if (ip->msg != NULL)
+			free(ip->msg);
+		free(ip);
+	}
+	exit(1);
 }

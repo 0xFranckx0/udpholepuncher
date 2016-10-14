@@ -39,7 +39,6 @@
 define a callback that returns the structure info
 modify punch function to accept an event base and the callback
 */
-
 /**
  * \struct uhp_info
  * \brief uhp_info is the struct returned by libuhp to the caller program once
@@ -55,7 +54,21 @@ struct uhp_info {
 	void 		*data;
 };
 
-int	punch(const char *, const char *, const char *, struct event_base *,
-		void (*uhp_cb)(int, struct uhp_info *), void *);
+struct input_p {
+	char 			*address;
+	char 			*port;
+	char 			*msg;
+	struct event_base 	*base; 
+};
+
+struct output_p {
+	void (*uhp_cb)(int, struct uhp_info *);
+	void *metadata;
+};
+
+
+int	punch(struct input_p *, struct output_p *);
+//int	punch(const char *, const char *, const char *, struct event_base *,
+//		void (*uhp_cb)(int, struct uhp_info *), void *);
 
 #endif /* PUNCH_H  */
