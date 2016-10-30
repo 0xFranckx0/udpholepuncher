@@ -114,7 +114,7 @@ int
 punch(const char *address, const char *port, const char *msg, struct event_base *base,
 	 void (*uhp_cb)(int flag, struct uhp_info *ui), void *data)
 */
-int
+void
 punch(struct input_p *ip, struct output_p *op) 
 {
 	struct uhp_socks 	*s;
@@ -127,18 +127,21 @@ punch(struct input_p *ip, struct output_p *op)
 	s = malloc(sizeof(*s));
 	if (s == NULL){
 		syserr(__func__, "malloc failed");
-		goto cleanup;
+		//goto cleanup;
+		exit(-1);
 	}
 	s->dst = strdup(ip->address);
 	if (s->dst == NULL){
 		syserr(__func__, "strdup");
-		goto cleanup ;
+		//goto cleanup ;
+		exit(-1);
 	}
 
 	s->rport = strdup(ip->port);
 	if (s->rport == NULL){
 		syserr(__func__, "strdup");
-		goto cleanup;
+		//goto cleanup;
+		exit(-1);
 	}
 
 	s->r = new_receiver_socket(ip->port); 	
@@ -147,7 +150,8 @@ punch(struct input_p *ip, struct output_p *op)
 	infos = malloc(sizeof(infos));
 	if (infos == NULL){
 		syserr(__func__, "malloc");
-		goto cleanup;
+		//goto cleanup;
+		exit(-1);
 	}
 
 	evs = event_new( ip->base, usock->r, EV_TIMEOUT|EV_PERSIST,
@@ -156,8 +160,9 @@ punch(struct input_p *ip, struct output_p *op)
 					receiver_cb, (void*)ip->base);
 	event_add(evs, &time);
 	event_add(evr, NULL);
-//	event_base_dispatch(ip->base);
+/*
 cleanup:
+	printf("START TO CLEANUP\n");
 	if (s->dst != NULL)
 		free(s->dst);
 
@@ -166,5 +171,7 @@ cleanup:
 
 	if (s != NULL)
 		free(s);
-	return 0;
+	return 0;i
+*/
+
 }

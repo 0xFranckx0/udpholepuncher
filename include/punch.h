@@ -67,7 +67,7 @@ struct output_p {
 };
 
 //void	punch(const char *);
-int	punch(struct input_p *, struct output_p *);
+void	punch(struct input_p *, struct output_p *);
 //int	punch(const char *, const char *, const char *, struct event_base *,
 //		void (*uhp_cb)(int, struct uhp_info *), void *);
 
