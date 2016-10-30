@@ -88,6 +88,9 @@ sender_cb(evutil_socket_t listener, short event, void *arg)
 	printf("sent: %s\n",message);
 	if (strncmp(message,"stop",4) ==0 ){
 		printf("DELETING event\n");
+		free(usock->dst);
+		free(usock->rport);
+		free(usock);
 		event_free(evs);
 	}
 }
