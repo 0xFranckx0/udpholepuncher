@@ -2,6 +2,8 @@
 *.o
 *.lo
 *.swp
+*.core
+test.core
 bin/*
 aclocal.m4
 config
