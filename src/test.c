@@ -6,9 +6,6 @@
 
 #include <include/punch.h>
 
-#define SPORT "12345"
-#define RPORT "54321"
-#define DEST  "192.168.0.173"
 static int p_cb(int, struct uhp_info *);
 
 int
@@ -29,47 +26,81 @@ main (int argc, char **argv)
 	char 			*address;
 	int			 c;
 
-	struct input_p 		 ip = {
-		NULL,
-		NULL,
-		NULL,
-		NULL
-	};
-	struct output_p 	op = {
-		p_cb,
-		NULL
-	};
+	struct input_p 		*ip;
+	struct output_p 	*op;
+
+	printf("INITIALIZATION\n");
+
+	ip = malloc(sizeof(*ip));	
+	if (ip == NULL){
+		perror("malloc");
+		exit(-1);
+	}
+
 	while ((c = getopt(argc, argv, "a:m:p:")) != -1) {
 		switch (c) {
 		case 'a':
 			printf("Setting a \n");
-			ip.address = optarg;
+			address = optarg;
 			break;
 		case 'p':
 			printf("Setting p \n");
-			ip.port = optarg;
+			port = optarg;
 			break;
 		case 'm':
 			printf("Setting m \n");
-			ip.msg = optarg;
+			msg = optarg;
 			break;
 		default:
 			printf("Usage: ");
-			printf("test -a 192.168.0.1 -p 54321 ");
+			printf("test -a 192.168.0.1 -p 54321 -m message\n");
 			exit(-1);
 		}
 	}
-
-	base = event_base_new();
-	if (base == NULL) {
-		puts("Couldn't open event base");
-		return -1;
+	
+	ip->address = strdup(address);	
+	if (ip->address == NULL){
+		perror("strdup failed");
+		exit(-1);
 	}
+	printf("INITIALIZATION: ADDRESS: %s\n",ip->address);
+	ip->port = strdup(port);	
+	if (ip->port == NULL){
+		perror("strdup failed");
+		exit(-1);
+	}
+	printf("INITIALIZATION: PORT: %s\n", ip->port);
+
+	ip->msg = strdup(msg);	
+	if (ip->msg == NULL){
+		perror("strdup failed");
+		exit(-1);
+	}
+	printf("INITIALIZATION: MSG: %s\n", ip->msg);
+	ip->base = event_base_new();
+	if (ip->base == NULL) {
+		perror("Couldn't open event base");
+		exit(-1);
+	}
+
+	op = malloc(sizeof(*op));	
+	if (op == NULL){
+		perror("malloc");
+		exit(-1);
+	}
+	op->uhp_cb = p_cb;
+	op->metadata = NULL;
+
+
 
 //	event_base_loopcontinue(base);
 
-	punch(&ip,&op);
-	
+	printf("CALL PUNCH\n");
+	//punch((const char *)ip->msg);
+	punch(ip,op);
+
+	printf("DISPATCH\n");
+	event_base_dispatch(ip->base);	
 
 	return 0;
 

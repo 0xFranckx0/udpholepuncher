@@ -23,7 +23,7 @@
 */
 
 
-#ifndef PUNCP_H
+#ifndef PUNCH_H
 #define PUNCH_H
 
 #include <stdint.h>
@@ -62,11 +62,11 @@ struct input_p {
 };
 
 struct output_p {
-	void (*uhp_cb)(int, struct uhp_info *);
+	int (*uhp_cb)(int, struct uhp_info *);
 	void *metadata;
 };
 
-
+//void	punch(const char *);
 int	punch(struct input_p *, struct output_p *);
 //int	punch(const char *, const char *, const char *, struct event_base *,
 //		void (*uhp_cb)(int, struct uhp_info *), void *);

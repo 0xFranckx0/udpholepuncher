@@ -121,7 +121,7 @@ punch(struct input_p *ip, struct output_p *op)
 	struct uhp_infos 	*infos;
 	struct timeval 		 time = {2,0};
 	int 			 ret;
-
+	printf("RUN THE PUNCH: %s\n", ip->msg);
 	message = ip->msg;
 
 	s = malloc(sizeof(*s));
@@ -156,8 +156,7 @@ punch(struct input_p *ip, struct output_p *op)
 					receiver_cb, (void*)ip->base);
 	event_add(evs, &time);
 	event_add(evr, NULL);
-	event_base_dispatch(ip->base);
-
+//	event_base_dispatch(ip->base);
 cleanup:
 	if (s->dst != NULL)
 		free(s->dst);
