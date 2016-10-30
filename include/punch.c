@@ -109,48 +109,54 @@ receiver_cb(evutil_socket_t listener, short event, void *arg)
 	}
 	printf("SERVER RECEIVED : %s\n", buf);
 }
-/*
-int
-punch(const char *address, const char *port, const char *msg, struct event_base *base,
-	 void (*uhp_cb)(int flag, struct uhp_info *ui), void *data)
-*/
+
 void
 punch(struct input_p *ip, struct output_p *op) 
 {
 	struct uhp_socks 	*s;
 	struct uhp_infos 	*infos;
 	struct timeval 		 time = {2,0};
-	int 			 ret;
+
 	printf("RUN THE PUNCH: %s\n", ip->msg);
 	message = ip->msg;
 
 	s = malloc(sizeof(*s));
 	if (s == NULL){
 		syserr(__func__, "malloc failed");
-		//goto cleanup;
 		exit(-1);
 	}
-	s->dst = strdup(ip->address);
+
+	s->dst = strndup(ip->address, strlen(ip->address) + 1);
 	if (s->dst == NULL){
 		syserr(__func__, "strdup");
-		//goto cleanup ;
+		free(s);
 		exit(-1);
 	}
 
-	s->rport = strdup(ip->port);
+	s->rport = strndup(ip->port, strlen(ip->port) + 1);
 	if (s->rport == NULL){
 		syserr(__func__, "strdup");
-		//goto cleanup;
+		free(s->dst);
+		free(s);
 		exit(-1);
 	}
 
-	s->r = new_receiver_socket(ip->port); 	
+	s->r = new_receiver_socket(ip->port);
+	if (s->r < 0){
+		funerr(__func__, "new_receiver_scoket failed");	
+		free(s->dst);
+		free(s->rport);
+		free(s);
+		exit(-1);
+	}
 	usock = s;
 
 	infos = malloc(sizeof(infos));
 	if (infos == NULL){
 		syserr(__func__, "malloc");
-		//goto cleanup;
+		free(s->dst);
+		free(s->rport);
+		free(s);
 		exit(-1);
 	}
 
@@ -160,18 +166,5 @@ punch(struct input_p *ip, struct output_p *op)
 					receiver_cb, (void*)ip->base);
 	event_add(evs, &time);
 	event_add(evr, NULL);
-/*
-cleanup:
-	printf("START TO CLEANUP\n");
-	if (s->dst != NULL)
-		free(s->dst);
-
-	if (s->rport != NULL)
-		free(s->rport);
-
-	if (s != NULL)
-		free(s);
-	return 0;i
-*/
 
 }
