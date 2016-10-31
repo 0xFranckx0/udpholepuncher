@@ -8,15 +8,18 @@ libobj_libuhp_la_SOURCES =  include/error.c \
                             include/uhp_data.c \
                             include/uhp_net.c 
 							
+libobj_libuhp_la_LIBADD = $(libevent_LIBS) \
+			  -lssl -lcrypto \
+			  $(jansson_LIBS) 
+							
 libobj_libuhp_la_LDFLAGS = -version-info 0:0:0
 include_HEADERS =   include/error.h \
                     include/punch.h 
-libobj_libuhp_la_LIBADD = -lssl -lcrypto -levent_core\
-			  $(jansson_LIBS) 
 
 noinst_PROGRAMS = test
 test_SOURCES = src/test.c
 test_CPPFLAGS = -DDEBUG
-test_LDADD = $(lib_LTLIBRARIES) 
+test_LDADD = $(lib_LTLIBRARIES) \
+	     $(libevent_LIBS) 
 
 EXTRA_DIST = m4/NOTES                                                           
