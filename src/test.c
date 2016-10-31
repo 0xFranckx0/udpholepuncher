@@ -92,11 +92,7 @@ main (int argc, char **argv)
 	op->metadata = NULL;
 
 
-
-//	event_base_loopcontinue(base);
-
 	printf("CALL PUNCH\n");
-	//punch((const char *)ip->msg);
 	punch(ip,op);
 
 	printf("DISPATCH\n");
