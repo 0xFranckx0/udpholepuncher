@@ -16,10 +16,10 @@ libobj_libuhp_la_LDFLAGS = -version-info 0:0:0
 include_HEADERS =   include/error.h \
                     include/punch.h 
 
-noinst_PROGRAMS = test
-test_SOURCES = src/test.c
-test_CPPFLAGS = -DDEBUG
-test_LDADD = $(lib_LTLIBRARIES) \
+bin_PROGRAMS = punchctl
+punchctl_SOURCES = src/punchctl.c
+punchctl_CPPFLAGS = -DDEBUG
+punchctl_LDADD = $(lib_LTLIBRARIES) \
 	     $(libevent_LIBS) 
 
 EXTRA_DIST = m4/NOTES                                                           
