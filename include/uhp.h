@@ -137,22 +137,24 @@ struct ack_pl {
 };
 
 
-struct base		*new_base(char*);
-struct hdr_pkt		*new_hello(struct uhp_socks*);
+struct base		*new_base(char *);
+struct hdr_pkt		*new_hello(struct uhp_socks *);
 struct hdr_pkt		*new_ack(void);
-void			 free_pkt(struct hdr_pkt*);
+void			 free_pkt(struct hdr_pkt *);
 
-json_t			*pkt2json(struct hdr_pkt*);
-struct hdr_pkt		*json2pkt(json_t*);
-void			 read_pkt(struct hdr_pkt*);
+json_t			*pkt2json(struct hdr_pkt *);
+struct hdr_pkt		*json2pkt(json_t *);
+void			 read_pkt(struct hdr_pkt *);
 
-struct address_list	*init_uhp(struct uhp_socks*);
-int			 run_udp(struct uhp_socks*, const char*,
-				 struct event_base*, struct uhp_info* );
+struct address_list	*init_uhp(struct uhp_socks *);
+int			 run_udp(struct uhp_socks *, const char *,
+				 struct event_base *, struct uhp_info * );
 
-evutil_socket_t		 new_receiver_socket(const char*);
+evutil_socket_t		 new_receiver_socket(const char *);
 
-unsigned char		*get_addr(const char*, const int);
-void 			 print_addr(const unsigned char*, const int);
+unsigned char		*get_addr(const char *, const int);
+void 			 print_addr(const unsigned char *, const int);
+
+int			 port_sanitization(char *);
 
 #endif /* UHP_H */
