@@ -26,8 +26,6 @@
 
 #include "uhp.h"
 
-#include "uhp_utils.h"
-
 #define MAX_BYTES 4
 
 struct base*
