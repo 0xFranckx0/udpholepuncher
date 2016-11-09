@@ -168,30 +168,7 @@ punch(struct input_p *ip, struct output_p *op)
 		free(s);
 		exit(-1);
 	}
-/*	
-	sin = malloc(sizeof(*sin));
-	if (sin == NULL){
-		syserr(__func__, "malloc");
-		free(s->dst);
-		free(s->rport);
-		free(s);
-		exit(-1);
-	}
-	sin->sin_family = AF_INET;
-	sin->sin_port = htons(atoi(usock->rport));
 
-	s = inet_pton(AF_INET, usock->dst, &sin->sin_addr);
-	if (s <= 0){
-		if (s == 0) {
-      			perror ("Invalid IPv4 address");
-			exit(-1);
-		}
-    		else {
-      			perror ("System error");
-			exit(-1);
-		}	
-	}
-*/
 	sin = get_sockaddr_in((const char *)usock->dst, 
 				(const char *)usock->rport);
 
