@@ -68,7 +68,7 @@ void
 sender_cb(evutil_socket_t listener, short event, void *arg)
 {
 	struct event_base 	*base = arg;
-	struct sockaddr_in 	 sin;
+	struct sockaddr_in 	*sin;
 	struct timeval 		 time = {2,0};
 	int 			 slen = sizeof(sin);
 	int 			 len;
@@ -76,25 +76,18 @@ sender_cb(evutil_socket_t listener, short event, void *arg)
 	ssize_t 		 lensnd;
 
 	len = strlen(message) + 1;
-	sin.sin_family = AF_INET;
-	sin.sin_port = htons(atoi(usock->rport));
-
-	s = inet_pton(AF_INET, usock->dst, &sin.sin_addr);
-	if (s <= 0){
-		if (s == 0) {
-      			perror ("Invalid IPv4 address");
-			exit(-1);
-		}
-    		else {
-      			perror ("System error");
-			exit(-1);
-		}	
-	}
+	sin = (struct sockaddr_in *)arg;
 
 	if (lensnd = (sendto((int)listener, message, len , 0, 
-		(struct sockaddr *) &sin, sizeof(sin))) == -1 ) {
+		(struct sockaddr *) sin, sizeof(*sin))) < 0 ) {
 		perror("sendto()");
 		event_loopbreak();
+		printf("DELETING event\n");
+		free(usock->dst);
+		free(usock->rport);
+		free(usock);
+		event_free(evs);
+		exit(-1);
 	}
 	printf("sent: %s\n",message);
 	if (strncmp(message,"stop",4) ==0 ){
@@ -130,6 +123,7 @@ punch(struct input_p *ip, struct output_p *op)
 	struct uhp_socks 	*s;
 	struct uhp_infos 	*infos;
 	struct timeval 		 time = {2,0};
+	struct sockaddr_in 	*sin;
 
 	printf("RUN THE PUNCH: %s\n", ip->msg);
 	message = ip->msg;
@@ -173,9 +167,32 @@ punch(struct input_p *ip, struct output_p *op)
 		free(s);
 		exit(-1);
 	}
+	
+	sin = malloc(sizeof(*sin));
+	if (sin == NULL){
+		syserr(__func__, "malloc");
+		free(s->dst);
+		free(s->rport);
+		free(s);
+		exit(-1);
+	}
+	sin->sin_family = AF_INET;
+	sin->sin_port = htons(atoi(usock->rport));
+
+	s = inet_pton(AF_INET, usock->dst, &sin->sin_addr);
+	if (s <= 0){
+		if (s == 0) {
+      			perror ("Invalid IPv4 address");
+			exit(-1);
+		}
+    		else {
+      			perror ("System error");
+			exit(-1);
+		}	
+	}
 
 	evs = event_new( ip->base, usock->r, EV_TIMEOUT|EV_PERSIST,
-					sender_cb, (void*)ip->base);
+					sender_cb, (void*)sin);
 	evr = event_new( ip->base, usock->r, EV_READ|EV_PERSIST,
 					receiver_cb, (void*)ip->base);
 	event_add(evs, &time);
