@@ -72,13 +72,24 @@ sender_cb(evutil_socket_t listener, short event, void *arg)
 	struct timeval 		 time = {2,0};
 	int 			 slen = sizeof(sin);
 	int 			 len;
+	int			 s;
 	ssize_t 		 lensnd;
-
 
 	len = strlen(message) + 1;
 	sin.sin_family = AF_INET;
 	sin.sin_port = htons(atoi(usock->rport));
-	inet_pton(AF_INET, usock->dst, &sin.sin_addr);
+
+	s = inet_pton(AF_INET, usock->dst, &sin.sin_addr);
+	if (s <= 0){
+		if (s == 0) {
+      			perror ("Invalid IPv4 address");
+			exit(-1);
+		}
+    		else {
+      			perror ("System error");
+			exit(-1);
+		}	
+	}
 
 	if (lensnd = (sendto((int)listener, message, len , 0, 
 		(struct sockaddr *) &sin, sizeof(sin))) == -1 ) {
