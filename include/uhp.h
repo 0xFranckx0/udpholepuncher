@@ -150,11 +150,12 @@ struct address_list	*init_uhp(struct uhp_socks *);
 int			 run_udp(struct uhp_socks *, const char *,
 				 struct event_base *, struct uhp_info * );
 
-evutil_socket_t		 new_receiver_socket(const char *);
 
+/* uhp_net.c */
+evutil_socket_t		 new_receiver_socket(const char *);
+struct sockaddr_in 	*get_sockaddr_in(const char *, const char *);
 unsigned char		*get_addr(const char *, const int);
 void 			 print_addr(const unsigned char *, const int);
-
 int			 port_sanitization(char *);
 
 #endif /* UHP_H */

@@ -89,6 +89,7 @@ sender_cb(evutil_socket_t listener, short event, void *arg)
 		event_free(evs);
 		exit(-1);
 	}
+
 	printf("sent: %s\n",message);
 	if (strncmp(message,"stop",4) ==0 ){
 		printf("DELETING event\n");
@@ -167,7 +168,7 @@ punch(struct input_p *ip, struct output_p *op)
 		free(s);
 		exit(-1);
 	}
-	
+/*	
 	sin = malloc(sizeof(*sin));
 	if (sin == NULL){
 		syserr(__func__, "malloc");
@@ -190,6 +191,9 @@ punch(struct input_p *ip, struct output_p *op)
 			exit(-1);
 		}	
 	}
+*/
+	sin = get_sockaddr_in((const char *)usock->dst, 
+				(const char *)usock->rport);
 
 	evs = event_new( ip->base, usock->r, EV_TIMEOUT|EV_PERSIST,
 					sender_cb, (void*)sin);
