@@ -26,8 +26,6 @@
 
 #include "uhp.h"
 
-#include "uhp_utils.h"
-
 #define MAX_BYTES 4
 
 struct base*
@@ -104,5 +102,16 @@ free_pkt(struct hdr_pkt *pkt)
                  break;
              }
         }
+}
+
+int
+port_sanitization(char *p)
+{
+	char buffer[33];
+	int ret = snprintf(buffer, sizeof(buffer), "%d", p); 
+	if (ret == -1 || ret >= sizeof(buffer)) 
+		return -1;
+
+	return 0;
 }
 
