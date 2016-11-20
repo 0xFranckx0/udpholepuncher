@@ -33,6 +33,9 @@
 
 #define HELLO_TAG	"HELLO"
 #define ACK_TAG		"ACK"
+#define BYE_TAG		"BYE"
+
+#define RANGE	5
 
 enum socket_flag{
 	SERVER,
@@ -47,6 +50,7 @@ enum socket_flag{
 enum msg_flag{
 	HELLO,	/*!< HELLO Flag for hello_pl */
 	ACK 	/*!< ACK Flag for ack_pl */
+	BYE 	/*!< BYE Flag for bye_pl */
 };
 
 /**
@@ -75,12 +79,6 @@ struct uhp_state {
 					     params are applied to*/
 };
 
-struct address {
-	SLIST_ENTRY(address)	entry;
-	int	sock;	
-};
-SLIST_HEAD(address_list, address);
-
 /**
  * \struct hdr_pkt
  * \brief hdr_pkt is a header packet datastructure which is used to carry 
@@ -88,8 +86,8 @@ SLIST_HEAD(address_list, address);
  *	  the NAT.
  */
 struct hdr_pkt {
-	int	id;/*!< Numeric ID of HEADER packet */
-
+	int	transaction;/*!< Numeric ID of transaction */
+	int	packet_type;
 	union{
 		struct hello_pl *hpl;	/*!< HELLO payload */
 		struct ack_pl   *apl;	/*!< ACK Payload */
@@ -105,8 +103,6 @@ struct hdr_pkt {
 struct base {
 	unsigned char	*rand;		/*!< Random number */
 	int		 timestamp;	/*!< Timestamp */
-	char 		*port;		/*!< Original port */
-
 };
 
 /**
@@ -136,26 +132,18 @@ struct ack_pl {
 	} d;
 };
 
-
-struct base		*new_base(char *);
-struct hdr_pkt		*new_hello(struct uhp_socks *);
-struct hdr_pkt		*new_ack(void);
-void			 free_pkt(struct hdr_pkt *);
-
-json_t			*pkt2json(struct hdr_pkt *);
-struct hdr_pkt		*json2pkt(json_t *);
-void			 read_pkt(struct hdr_pkt *);
-
-struct address_list	*init_uhp(struct uhp_socks *);
-int			 run_udp(struct uhp_socks *, const char *,
-				 struct event_base *, struct uhp_info * );
-
+/* uhp_data.c */
+json_t			*new_hello(struct uhp_socks *);
+void			 free_hello(json_t *);
+json_t			*new_ack(void);
+void			 free_ack(json_t *);
+json_t			*new_bye(void);
+void			 free_bye(json_t *);
 
 /* uhp_net.c */
 evutil_socket_t		 new_receiver_socket(const char *);
 struct sockaddr_in 	*get_sockaddr_in(const char *, const char *);
 unsigned char		*get_addr(const char *, const int);
 void 			 print_addr(const unsigned char *, const int);
-int			 port_sanitization(char *);
 
 #endif /* UHP_H */
