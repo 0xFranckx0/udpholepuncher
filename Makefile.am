@@ -6,6 +6,7 @@ libobj_libuhp_la_SOURCES =  include/error.c \
                     	    include/punch.c \
                             include/uhp.c \
                             include/uhp_data.c \
+                            include/uhp_messages.c \
                             include/uhp_net.c 
 							
 libobj_libuhp_la_LIBADD = $(libevent_LIBS) \
