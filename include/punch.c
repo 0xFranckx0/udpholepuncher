@@ -50,7 +50,6 @@ struct ev_data {
 	void			*data;
 	struct uhp_socks 	*s;
 	struct uhp_infos 	*infos;
-
 	void (*uhp_cb)(int flag, struct uhp_info *ui);
 };
 
@@ -86,6 +85,7 @@ sender_cb(evutil_socket_t listener, short event, void *arg)
 		free(usock->dst);
 		free(usock->rport);
 		free(usock);
+		free(sin);
 		event_free(evs);
 		exit(-1);
 	}

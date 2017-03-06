@@ -28,32 +28,35 @@
 
 #define MAX_BYTES 4
 
+static void 	free_pkt(struct hdr_pkt *);
+static int 	port_sanitization(char *);
+static struct 	base *new_base(const char *);
+static void 	free_base(struct base *);
+
 struct base*
-new_base(char *port)
+new_base(const char *port)
 {
 	struct 		base *b;
 	
 	b = malloc(sizeof(b));
 	if (b == NULL) {
 		perror("malloc()");
-		goto cleanup;
+		goto out;
 	}
-
 
 	b->port = strndup(port, strlen(port) + 1);
 	if (b->port == NULL){
 		perror("strndup()");
-		goto cleanup;
+		goto out;
 	}
 	if ( b->timestamp = (int)time(NULL) < 0 ) {
 		perror("time()");
-		goto cleanup;
+		goto out;
 	}
 
 	return b;
 
-cleanup:
-
+out:
 	if (b->port != NULL)
 		free(b->port);
 
@@ -66,33 +69,12 @@ cleanup:
 	return NULL;
 }
 
-/*
-struct hdr_pkt*
-new_keepalive()
+void
+free_base(struct base *b)
 {
-        struct hdr_pkt *keep;
-        int len;
 
-        keep = malloc(sizeof(*keep));
-        if (keep == NULL){
-            err_sscb(__func__, "malloc");
-            err_pb(stderr);
-            return NULL;
-        }
-        keep->id = KEEPALIVE;
-        len = (int)(strlen(KEEPALIVE_TAG)+1);
-        keep->pl.msg = malloc(sizeof(char)*len);
-        if (keep->pl.msg == NULL){
-            err_sscb(__func__, "malloc");
-            err_pb(stderr);
-            free(keep);
-            return NULL;
-        }
-        strcpy(keep->pl.msg, KEEPALIVE_TAG);
-        
-        return keep;
 }
-*/
+
 void
 free_pkt(struct hdr_pkt *pkt)
 {

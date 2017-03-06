@@ -111,9 +111,12 @@ struct base {
  *	  of the punch.
  *
  */
-struct hello_pl {
+struct hello_msg {
 	char		 tag[6];	/*!< TAG identifying the payload */
-	struct base 	*b;		/*!< Base carried by the payload */
+	int	         transaction;/*!< Numeric ID of transaction */
+	unsigned char	*rand;		/*!< Random number */
+	int		 timestamp;	/*!< Timestamp */
+	uint8_t		 master;        /*!< Defines a master */
 };
 
 /**
@@ -121,16 +124,25 @@ struct hello_pl {
  * \brief ack_pl struct is used into hdr_pkt struct. It is a response packet.
  *
  */
-struct ack_pl {
-	int		 type;		/*!< ACK Type */
-	char	 	 tag[3];	/*!< ACK Tag */
-	int		 id_src;	/*!< Refer to the Previous ID Header */
-	struct base 	*b;		/*!< Base */
-	union {
-		struct base	*ori;	/*!< Original base */
-		uint8_t		 master;/*!< Defines a master */
-	} d;
+struct ack_msg {
+	int	         transaction;/*!< Numeric ID of transaction */
+	int	 	 status;	/*!< msg flag */
+	uint8_t		 master;        /*!< Defines a master */
+	unsigned char	*rand;		/*!< Random number */
+	int		 timestamp;	/*!< Timestamp */
 };
+
+struct transaction {
+        uint8_t         originator:1;
+        uint8_t         master:1;
+        int             status;
+        int             punchid;
+        int             timestamp;
+        char           *ip_peer;
+        int             port_peer;
+        uint8_t         asymetric:1;
+        int             retry;
+}
 
 /* uhp_data.c */
 json_t			*new_hello(struct uhp_socks *);
@@ -139,6 +151,7 @@ json_t			*new_ack(void);
 void			 free_ack(json_t *);
 json_t			*new_bye(void);
 void			 free_bye(json_t *);
+void			 free_message(json_t *);
 
 /* uhp_net.c */
 evutil_socket_t		 new_receiver_socket(const char *);
