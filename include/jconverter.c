@@ -60,7 +60,7 @@ bye2json(void *pkt)
 json_t *
 pkt2json(struct hdr_pkt *pkt)
 {
-	switch(pkt->id){
+/*	switch(pkt->id){
             case HELLO:
                 return hello2json(pkt);
 	    case ACK:
@@ -68,6 +68,8 @@ pkt2json(struct hdr_pkt *pkt)
             default:        
                 return NULL;
 	}
+        */
+        return;
 }
 
 
