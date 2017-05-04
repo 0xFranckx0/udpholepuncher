@@ -80,7 +80,7 @@ struct transaction {
         uint8_t         asymetric:1;
         int             retry;
 };
-
+/*
 struct list_elem {
         void            *data;
         struct elem     *next;
@@ -106,5 +106,6 @@ int  list_delete_next(struct list *, struct list_elem *, void **);
 #define list_is_tail(list, elem) ((elem)->next == NULL ? 1 : 0)
 #define list_data(elem) ((elem)->data)
 #define list_next(elem) ((elem)->elem)
+*/
 
 #endif /* PUNCH_H  */

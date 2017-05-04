@@ -36,6 +36,7 @@ static void 	free_base(struct base *);
 struct base*
 new_base(const char *port)
 {
+        /*
 	struct 		base *b;
 	
 	b = malloc(sizeof(b));
@@ -67,6 +68,7 @@ out:
 		free(b);
 
 	return NULL;
+        */
 }
 
 void
@@ -78,12 +80,14 @@ free_base(struct base *b)
 void
 free_pkt(struct hdr_pkt *pkt)
 {
+        /*
         if(pkt != NULL){
             switch(pkt->id){
                  default:
                  break;
              }
         }
+        */
 }
 
 int
@@ -96,4 +100,59 @@ port_sanitization(char *p)
 
 	return 0;
 }
+/*
+void
+list_init(struct list *l, void (*destroy)(void *data))
+{
+	printf("list init\n");
+	l->size = 0;
+	l->destroy = destroy;
+	l->head = NULL;
+	l->tail = NULL;
 
+}
+
+void 
+list_destroy(struct list *l)
+{
+	void *data;
+
+	while(l->size > 0) {
+		if (list_delete_next(l, NULL,(void **)&data) == 0 
+			&& l->destroy != NULL) {
+			l->destroy(data);
+		}
+	}
+	memset(l, 0, sizeof(l));
+	printf("list destroy\n");
+}
+
+int 
+list_append_next(struct list *l, struct list_elem *e, const void *d)
+{
+	struct list_elem *new_elem;
+
+	new_elem = malloc(sizeof(*new_elem));
+	if (new_elem == NULL) {
+		perror("Malloc failed");
+		exit(-1);
+	}
+	new_elem->data = (void*)d;
+	if (e == NULL) {
+                if (l->size == 0)
+                        l->tail = new_elem;
+
+                new_elem->next = l->head;
+                l->head = new_elem;
+	}
+	return 0;
+
+}
+
+int
+list_delete_next(struct list *l, struct list_elem *e, void **d)
+{
+
+	return 0;
+}
+*/
