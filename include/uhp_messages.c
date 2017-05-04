@@ -1,29 +1,16 @@
 #include "uhp.h"
 
 json_t	*
-new_hello(struct uhp_socks *s)
+new_msg(struct punch_msg *m)
 {
-	json_t *hello = json_object();
-	unsigned long err;
-	int rc;
+	json_t *msg = json_object();
 
-	byte buffer[32];
+	json_object_set_new( msg, "type", json_string(m->tag) );
+	json_object_set_new( msg, "punchid", json_integer(m->punchid) );
+	json_object_set_new( msg, "count", json_integer( m->count ));
+	json_object_set_new( msg, "epoch", json_string( m->epoch ));
 
-	rc = RAND_bytes(buffer, sizeof(buffer));
-	err = ERR_get_error();
-	if(rc != 1) {
-		exit(-1);
-    	/* RAND_bytes failed */
-    	/* `err` is valid    */
-	}
-
-	json_object_set_new( hello, "punchid", json_integer( 1 ) );
-	json_object_set_new( hello, "portorigin", json_string("enable") );
-	json_object_set_new( hello, "ip", json_string( 0 ));
-	json_object_set_new( hello, "count", json_integer( 0 ));
-	json_object_set_new( hello, "mastercandidate", json_string( 0 ));
-
-	return hello;
+	return msg;
 }
 
 void
