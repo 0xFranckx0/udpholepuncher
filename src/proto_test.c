@@ -8,6 +8,7 @@ main()
 {
         struct transaction *transac_table[MAX_PORT];
         struct punch_msg *pm = NULL;
+        struct punch_msg *resp = NULL;
         int i, err;
         uint32_t id;
         unsigned char buf[MAX_BYTES];
@@ -36,7 +37,16 @@ main()
                 exit(1);
         }
         printf("%s\n", json);
-
+	resp = json2msg(json);
+        if (resp == NULL) {
+                perror("RESP ERROR");
+                exit(1);
+        }
+        printf("TAG: %d\n", resp->tag);
+        printf("PUNCHID: %d\n", resp->punchid);
+        printf("EPOCH: %d\n", resp->epoch);
+        printf("COUNT: %d\n", resp->count);
+		
         /*
         for (i = 0; i < MAX_BYTES ; i++)
                 printf("%i", pm->punchid[i]);
