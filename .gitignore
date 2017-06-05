@@ -2,6 +2,7 @@
 *.o
 *.lo
 *.swp
+*.swo
 *.core
 test.core
 bin/*

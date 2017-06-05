@@ -1,6 +1,6 @@
 #include "uhp.h"
 
-json_t	*
+json_t*
 new_msg(struct punch_msg *m)
 {
 	json_t *msg = json_object();
@@ -16,7 +16,8 @@ new_msg(struct punch_msg *m)
 void
 free_message(json_t *json)
 {
-	json_decref(json);
+        if (json != NULL)
+	        json_decref(json);
 }
 
 /*
