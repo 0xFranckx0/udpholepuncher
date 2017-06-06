@@ -78,39 +78,7 @@ struct uhp_state {
 	struct uhp_socks 	*s;	/*!< Datastructure on which previous 
 					     params are applied to*/
 };
-
-/**
- * \struct hdr_pkt
- * \brief hdr_pkt is a header packet datastructure which is used to carry 
- *        payload used in the master election protocol and to hole punch the
- *	  the NAT.
- */
-struct hdr_pkt {
-	int	transaction;/*!< Numeric ID of transaction */
-	int	packet_type;
-	union{
-		struct hello_pl *hpl;	/*!< HELLO payload */
-		struct ack_pl   *apl;	/*!< ACK Payload */
-		}pl;
-};
-
-/**
- * \struct base
- * \brief base struct is used into payloads. It provides the following 
- *	  informations.
- *
- */
-struct base {
-	unsigned char	*rand;		/*!< Random number */
-	int		 timestamp;	/*!< Timestamp */
-};
-
-/**
- * \struct hello_pl
- * \brief hello_pl struct is used into hdr_pkt struct. It is the first packet
- *	  of the punch.
- *
- */
+  
 struct punch_msg {
 	char		 tag[6];	/*!< TAG identifying the payload */
 	int	         punchid;       /*!< Numeric ID of transaction */
