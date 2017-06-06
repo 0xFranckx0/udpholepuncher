@@ -39,7 +39,7 @@
 
 static evutil_socket_t		 new_socket(const char*, const char*);
 
-static evutil_socket_t
+evutil_socket_t
 new_socket(const char *addr, const char *port)
 {
 	evutil_socket_t listener;
