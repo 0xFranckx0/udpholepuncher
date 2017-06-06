@@ -101,9 +101,11 @@ struct transaction {
         int         asymetric;
         int         retry;
 };
+
+struct transaction *transac_table[65535];
+
 /* uhp_data.c */
-json_t			*new_msg(struct punch_msg *);
-void			 free_msg(json_t *);
+int 	port_sanitization(char *);
 
 /* uhp_net.c */
 evutil_socket_t		 new_receiver_socket(const char *);
@@ -111,4 +113,15 @@ struct sockaddr_in 	*get_sockaddr_in(const char *, const char *);
 unsigned char		*get_addr(const char *, const int);
 void 			 print_addr(const unsigned char *, const int);
 
+/* uhp_protocol.c */
+
+/**
+ * \fun next_operation
+ * \brief defines the next sequence in the protocol  
+ * If this function is called by the sender callback punch_msg will be null.
+ */
+
+void    next_operation(struct transaction **, struct punch_msg *, int);
+
 #endif /* UHP_H */
+

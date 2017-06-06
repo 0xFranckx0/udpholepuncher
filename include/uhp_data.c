@@ -28,7 +28,6 @@
 
 #define MAX_BYTES 4
 
-static int 	port_sanitization(char *);
 
 int
 port_sanitization(char *p)
