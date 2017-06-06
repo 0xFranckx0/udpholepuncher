@@ -26,15 +26,6 @@
 #ifndef PUNCH_H
 #define PUNCH_H
 
-#include <stdint.h>
-#include <openssl/ssl.h>
-#include <openssl/rsa.h>
-#include <openssl/x509.h>
-#include <openssl/evp.h>
-#include <jansson.h>
-#include <event2/event.h>
-#include <event2/listener.h>
-
 /*
 Defines a callback that returns the structure info
 modify punch function to accept an event base and the callback

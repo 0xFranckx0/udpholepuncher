@@ -25,6 +25,10 @@
 #ifndef UHP_H
 #define UHP_H
 
+#include <event2/event.h>
+#include <stdint.h>
+#include <jansson.h>
+
 #include "error.h"
 #include "punch.h"
 #include "queue.h"
