@@ -70,15 +70,15 @@ struct output_p {
 void	punch(struct input_p *, struct output_p *);
 
 struct transaction {
-        uint8_t         originator:1;
-        uint8_t         master:1;
-        int             status;
-        int             punchid;
-        int             timestamp;
-        char           *ip_peer;
-        int             port_peer;
-        uint8_t         asymetric:1;
-        int             retry;
+        int         originator;
+        int         master;
+        int         status;
+        int         punchid;
+        int         timestamp;
+        char       *ip_peer;
+        int         port_peer;
+        int         asymetric;
+        int         retry;
 };
 
 #endif /* PUNCH_H  */
