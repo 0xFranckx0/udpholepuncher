@@ -80,32 +80,5 @@ struct transaction {
         uint8_t         asymetric:1;
         int             retry;
 };
-/*
-struct list_elem {
-        void            *data;
-        struct elem     *next;
-};
-
-struct list {
-	int 			size;
-	int             	(*match) (const void *k1, const void *k2);
-	void            	(*destroy) (void *data);
-	struct list_elem 	*head;
-	struct list_elem 	*tail;
-};
-
-void list_init(struct list *, void (*destroy) (void *));
-void list_destroy(struct list *);
-int  list_append_next(struct list *, struct list_elem *, const void *);
-int  list_delete_next(struct list *, struct list_elem *, void **);
-
-#define list_size(list) ((list)->size)
-#define list_head(list) ((list)->head)
-#define list_tail(list) ((list)->tail)
-#define list_is_head(list, elem) ((elem) == (list)->head ? 1 : 0)
-#define list_is_tail(list, elem) ((elem)->next == NULL ? 1 : 0)
-#define list_data(elem) ((elem)->data)
-#define list_next(elem) ((elem)->elem)
-*/
 
 #endif /* PUNCH_H  */
