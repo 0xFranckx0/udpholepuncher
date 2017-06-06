@@ -20,26 +20,3 @@ free_message(json_t *json)
 	        json_decref(json);
 }
 
-/*
-void
-free_hello(json_t *j)
-{
-}
-
-json_t *
-new_ack(void)
-{
-}
-void
-free_ack(json_t *)
-{
-}
-json_t *
-new_bye(void)
-{
-}
-void
-free_bye(json_t *)
-{
-}
-*/
