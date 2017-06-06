@@ -86,6 +86,17 @@ struct punch_msg {
 	int		 epoch;	        /*!< Timestamp */
 };
 
+struct transaction {
+        int         originator;
+        int         master;
+        int         status;
+        int         punchid;
+        int         timestamp;
+        char       *ip_peer;
+        int         port_peer;
+        int         asymetric;
+        int         retry;
+};
 /* uhp_data.c */
 json_t			*new_msg(struct punch_msg *);
 void			 free_msg(json_t *);

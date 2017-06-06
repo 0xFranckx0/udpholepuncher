@@ -69,16 +69,6 @@ struct output_p {
 
 void	punch(struct input_p *, struct output_p *);
 
-struct transaction {
-        int         originator;
-        int         master;
-        int         status;
-        int         punchid;
-        int         timestamp;
-        char       *ip_peer;
-        int         port_peer;
-        int         asymetric;
-        int         retry;
-};
+
 
 #endif /* PUNCH_H  */
