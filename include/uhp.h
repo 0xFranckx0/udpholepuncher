@@ -40,7 +40,7 @@
 #define BYE_TAG		"BYE"
 
 #define RANGE	5
-
+#define MAX_PORT        65536
 enum socket_flag{
 	SERVER,
 	CLIENT
@@ -102,7 +102,7 @@ struct transaction {
         char       *ip_peer;
 };
 
-struct transaction *transac_table[65535];
+struct transaction *transac_table[MAX_PORT];
 
 /* uhp_data.c */
 int 	port_sanitization(char *);
@@ -122,6 +122,6 @@ void 			 print_addr(const unsigned char *, const int);
  */
 
 void    next_operation(struct transaction **, struct punch_msg *, int);
-
+void    init_table(struct transaction **, int);
 #endif /* UHP_H */
 
