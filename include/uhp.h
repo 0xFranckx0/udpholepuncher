@@ -102,7 +102,7 @@ struct transaction {
         char       *ip_peer;
 };
 
-struct transaction *transac_table[MAX_PORT];
+/* struct transaction *transac_table[MAX_PORT]; */
 
 /* uhp_data.c */
 int 	port_sanitization(char *);
