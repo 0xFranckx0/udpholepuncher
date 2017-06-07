@@ -63,9 +63,9 @@ enum msg_flag{
  *
  */
 struct uhp_socks {
+	int   r; 	/*!< Socket */
 	char *rport;	/*!< receiver port */
 	char *dst; 	/*!< Destination address */
-	int   r; 	/*!< Socket */
 };
 
 /**
@@ -75,31 +75,31 @@ struct uhp_socks {
  *
  */
 struct uhp_state {
+	struct uhp_socks 	*s;	/*!< Datastructure on which previous 
+					     params are applied to*/
 	int 			 count;	/*!< Number of max tries */
 	int 			 del;	/*!< Del indicates whether 
 						an event should be deleted */
 	uint32_t 		 number;/*!< Rand number for master election */
-	struct uhp_socks 	*s;	/*!< Datastructure on which previous 
-					     params are applied to*/
 };
   
 struct punch_msg {
 	char		 tag[6];	/*!< TAG identifying the payload */
 	int	         punchid;       /*!< Numeric ID of transaction */
-	int	         count;          /*!< Numeric ID of transaction */
 	int		 epoch;	        /*!< Timestamp */
+	int	         count;          /*!< Numeric ID of transaction */
 };
 
 struct transaction {
-        int         originator;
+        int         punchid;
+        int         origin;
         int         master;
         int         status;
-        int         punchid;
         int         timestamp;
-        char       *ip_peer;
         int         port_peer;
         int         asymetric;
         int         retry;
+        char       *ip_peer;
 };
 
 struct transaction *transac_table[65535];
