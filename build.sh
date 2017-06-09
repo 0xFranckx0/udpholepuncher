@@ -7,4 +7,5 @@ fi
 
 autoreconf -fiv &&\
 ./configure &&\
-make
+make &&\
+doas make install
