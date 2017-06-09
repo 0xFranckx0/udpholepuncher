@@ -75,9 +75,18 @@ new_transaction(struct transaction **table, int port)
         *(table+port) = t;
 }
 
+void 
+del_transaction(struct transaction *t)
+{
+        if ( t != NULL ) {
+                if (t->ip_peer != NULL)
+                        free((void*)t->ip_peer);
+                free((void*)t);
+                t = NULL;
+        }
+}
 /*
 void                cleanup_table(struct transaction **);
-void                del_transaction(struct transaction *);
 void                update_transaction(struct transaction **, int, 
                                        struct punch_msg *);
 */
