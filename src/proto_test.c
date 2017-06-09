@@ -25,6 +25,7 @@ main()
         del_punch_msg(pm);
         new_transaction(transac_table, 2222);
         printf("punchid = %d\n", transac_table[2222]->punchid);
-
+        del_transaction(transac_table[2222]);        
+        
         return 0;
 }
