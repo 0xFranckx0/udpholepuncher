@@ -28,34 +28,23 @@
 #include <event2/event.h>
 #include <stdint.h>
 #include <jansson.h>
+#include <time.h>
 
 #include "error.h"
 #include "punch.h"
 #include "queue.h"
 
-#define UHPPORT	4000
-
-#define HELLO_TAG	"HELLO"
-#define ACK_TAG		"ACK"
-#define BYE_TAG		"BYE"
-
-#define RANGE	5
+#define RANGE	        5
 #define MAX_PORT        65536
+#define	HELLO           0
+#define	ACK             1
+#define	BYE             2
+
 enum socket_flag{
 	SERVER,
 	CLIENT
 };
 
-/**
- * \enum msg_flag
- * \brief Message flags 
- *
- */
-enum msg_flag{
-	HELLO,	/*!< HELLO Flag for hello_pl */
-	ACK, 	/*!< ACK Flag for ack_pl */
-	BYE 	/*!< BYE Flag for bye_pl */
-};
 
 /**
  * \struct uhp_socks
@@ -84,7 +73,7 @@ struct uhp_state {
 };
   
 struct punch_msg {
-	char		 tag[6];	/*!< TAG identifying the payload */
+	int		 tag;	/*!< TAG identifying the payload */
 	int	         punchid;       /*!< Numeric ID of transaction */
 	int		 epoch;	        /*!< Timestamp */
 	int	         count;          /*!< Numeric ID of transaction */
@@ -115,13 +104,16 @@ void 			 print_addr(const unsigned char *, const int);
 
 /* uhp_protocol.c */
 
-/**
- * \fun next_operation
- * \brief defines the next sequence in the protocol  
- * If this function is called by the sender callback punch_msg will be null.
- */
-
-void    next_operation(struct transaction **, struct punch_msg *, int);
-void    init_table(struct transaction **, int);
+struct punch_msg   *new_punch_msg();
+struct punch_msg   *next_msg(struct transaction **, int);
+void                next_operation(struct transaction **,
+                                   struct punch_msg *, int);
+void                init_table(struct transaction **, int);
+void                cleanup_table(struct transaction **);
+void                del_punch_msg(struct punch_msg *);
+void                new_transaction(struct transaction **, int);
+void                del_transaction(struct transaction *);
+void                update_transaction(struct transaction **, int, 
+                                       struct punch_msg *);
 #endif /* UHP_H */
 
