@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <openssl/rand.h>
 
 #include <include/uhp.h>
 
@@ -7,7 +8,9 @@ main()
 {
         struct transaction *transac_table[MAX_PORT];
         struct punch_msg *pm = NULL;
-        int i;
+        int i, err;
+        uint32_t id;
+        unsigned char buf[32];
 
         init_table(transac_table, MAX_PORT);
 
@@ -26,6 +29,7 @@ main()
         new_transaction(transac_table, 2222);
         printf("punchid = %d\n", transac_table[2222]->punchid);
         del_transaction(transac_table[2222]);        
-        
+        err = RAND_bytes(buf,32);
+
         return 0;
 }
