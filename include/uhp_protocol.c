@@ -24,15 +24,24 @@ struct punch_msg *
 next_msg(struct transaction **table, int port)
 {
         struct punch_msg *msg;
-        
+        int err;
+
+        msg = new_punch_msg();
         if ( table[port] == NULL ) {
-                msg = new_punch_msg();
                 msg->tag = HELLO;
-                msg->punchid = rand();
+                err = RAND_bytes(msg->punchid, 32);
+                if ( err < 1 ) {
+                        perror("Random failed");
+                        del_punch_msg(msg);
+                        return NULL;
+                }
                 msg->epoch = (int)time(NULL); 
                 msg->count = 1;
-        } else {
-                msg = table[port];
+        } else if ( table[port]->type == HELLO ) {
+                memcpy(msg->punchid, table[port]->punchid, 32);
+                msg->epoch = table[port]->timestamp;
+                msg->tag = ACK;
+                msg->count = 1;
         }
 
         return msg;
@@ -62,15 +71,13 @@ new_transaction(struct transaction **table, int port)
                 perror("Failed to allocate memory");
                 return;
         }
-        t->punchid = -1;
+        memset(t->punchid,0,32);
+        t->type = -1;
         t->origin  = -1;
         t->master = -1;
         t->status = -1;
         t->timestamp = -1;
-        t->port_peer = -1;
-        t->asymetric = -1;
         t->retry = -1;
-        t->ip_peer = NULL;
 
         *(table+port) = t;
 }
@@ -79,15 +86,24 @@ void
 del_transaction(struct transaction *t)
 {
         if ( t != NULL ) {
-                if (t->ip_peer != NULL)
-                        free((void*)t->ip_peer);
                 free((void*)t);
                 t = NULL;
         }
 }
+
+void 
+update_transaction(struct transaction **table, int p, struct punch_msg *m)
+{
+        switch (m->tag) {
+                case HELLO: 
+                        break;
+                case ACK: 
+                        break;
+                case BYE: 
+                        break;
+       }
+}
 /*
 void                cleanup_table(struct transaction **);
-void                update_transaction(struct transaction **, int, 
-                                       struct punch_msg *);
 */
 
