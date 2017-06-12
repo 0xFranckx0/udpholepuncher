@@ -87,7 +87,7 @@ b64_encode(const unsigned char *b, size_t l, char **s)
 	BIO_set_close(bio, BIO_NOCLOSE);
 	BIO_free_all(bio);
 
-	*s = (*buf).data;
+	*s = buf->data;
 
 	return 0; 
 }
