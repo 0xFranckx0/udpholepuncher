@@ -26,8 +26,10 @@
 #define UHP_H
 
 #include <event2/event.h>
+#include <openssl/rand.h>
 #include <stdint.h>
 #include <jansson.h>
+#include <string.h>
 #include <time.h>
 
 #include "error.h"
@@ -45,6 +47,10 @@ enum socket_flag{
 	CLIENT
 };
 
+enum status {
+        PENDING,
+        COMPLETE
+};
 
 /**
  * \struct uhp_socks
@@ -73,28 +79,28 @@ struct uhp_state {
 };
   
 struct punch_msg {
+	unsigned char    punchid[32];       /*!< Numeric ID of transaction */
 	int		 tag;	/*!< TAG identifying the payload */
-	int	         punchid;       /*!< Numeric ID of transaction */
 	int		 epoch;	        /*!< Timestamp */
 	int	         count;          /*!< Numeric ID of transaction */
 };
 
 struct transaction {
-        int         punchid;
-        int         origin;
-        int         master;
-        int         status;
-        int         timestamp;
-        int         port_peer;
-        int         asymetric;
-        int         retry;
-        char       *ip_peer;
+        unsigned char   punchid[32];
+        int             type;
+        int             origin;
+        int             master;
+        int             status;
+        int             timestamp;
+        int             retry;
 };
 
 /* struct transaction *transac_table[MAX_PORT]; */
 
 /* uhp_data.c */
 int 	port_sanitization(char *);
+int     b64_encode(const unsigned char *, size_t , char **); 
+int     b64_decode(char *, unsigned char **, size_t *);
 
 /* uhp_net.c */
 evutil_socket_t		 new_receiver_socket(const char *);
