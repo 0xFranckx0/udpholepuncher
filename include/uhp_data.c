@@ -71,6 +71,7 @@ b64_encode(const unsigned char *b, size_t l, char **s)
         if ( err == 0 || err == -1 ) {
                 perror("No data written");
 	        BIO_free_all(bio);
+                return 1;
         } else if ( err == -2 ) {
                 perror("the operation is not implemented");
 	        BIO_free_all(bio);
