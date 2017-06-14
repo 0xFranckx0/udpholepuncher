@@ -58,13 +58,14 @@ init_table(struct transaction **table, int s)
 {
         int i;
         for (i = 0; i < s; i++)
-                *(table+i) = NULL;
+                table[i] = NULL;
 }
 
 void
 new_transaction(struct transaction **table, int port)
 {
         struct transaction *t;
+        int i;
 
         t = malloc(sizeof(*t));
         if ( t == NULL ) {
@@ -72,6 +73,9 @@ new_transaction(struct transaction **table, int port)
                 return;
         }
         memset(t->punchid,0,32);
+        for (i = 0; i < 32; i++) 
+                fprintf(stdout,"%i",t->punchid[i]);
+        printf("\n");        
         t->type = -1;
         t->origin  = -1;
         t->master = -1;
@@ -79,7 +83,10 @@ new_transaction(struct transaction **table, int port)
         t->timestamp = -1;
         t->retry = -1;
 
-        *(table+port) = t;
+        table[port] = t;
+        for (i = 0; i < 32; i++) 
+                fprintf(stdout,"%i",table[port]->punchid[i]);
+        printf("\n");        
 }
 
 void 

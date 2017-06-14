@@ -47,50 +47,35 @@ port_sanitization(char *p)
 
 int 
 b64_encode(const unsigned char *b, size_t l, char **s) 
-{ 
-	BIO *bio, *b64;
-	BUF_MEM *buf;
-        int err;
-
-	b64 = BIO_new(BIO_f_base64());
-        if (b64 == NULL) {
-                perror("BIO allocation failed");
+{
+        BIO *bio, *b64;
+        BUF_MEM *buf;
+         
+        b64 = BIO_new(BIO_f_base64());
+        bio = BIO_new(BIO_s_mem());
+        b64 = BIO_push(b64, bio);
+        BIO_write(b64, b, l);
+        BIO_flush(b64);
+        BIO_get_mem_ptr(b64, &buf);
+                 
+        *s = (char *)malloc(buf->length);
+        if (*s == NULL) {
+                perror("Malloc failed");
                 return 1;
         }
 
-	bio = BIO_new(BIO_s_mem());
-        if (bio == NULL) {
-                perror("BIO allocation failed");
-	        BIO_free(b64);
-                return 1;
-        }
-	bio = BIO_push(b64, bio);
+        memcpy(*s, buf->data, buf->length-1);
+        s[buf->length-1] = 0;
 
-	BIO_set_flags(bio, BIO_FLAGS_BASE64_NO_NL); 
-	err = BIO_write(bio, buf, l);
-        if ( err == 0 || err == -1 ) {
-                perror("No data written");
-	        BIO_free_all(bio);
-                return 1;
-        } else if ( err == -2 ) {
-                perror("the operation is not implemented");
-	        BIO_free_all(bio);
-                return 1;
-        }
+        BIO_free_all(b64);
 
-	err = BIO_flush(bio);
-        if ( err < 1 ) {
-                perror("Unable to flush the BIO");
-	        BIO_free_all(bio);
-                return 1;
-        }
-	BIO_get_mem_ptr(bio, &buf);
-	BIO_set_close(bio, BIO_NOCLOSE);
-	BIO_free_all(bio);
-
-	*s = buf->data;
-
-	return 0; 
+        return 0; 
 }
 
+
+int
+b64_decode(char *s, unsigned char **b, size_t l) 
+{ 
+	return (0); //success
+}
 

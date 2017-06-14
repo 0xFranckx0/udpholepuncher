@@ -100,7 +100,7 @@ struct transaction {
 /* uhp_data.c */
 int 	port_sanitization(char *);
 int     b64_encode(const unsigned char *, size_t , char **); 
-int     b64_decode(char *, unsigned char **, size_t *);
+int     b64_decode(char *, unsigned char **, size_t );
 
 /* uhp_net.c */
 evutil_socket_t		 new_receiver_socket(const char *);
