@@ -10,7 +10,7 @@ main()
         struct punch_msg *pm = NULL;
         int i, err;
         uint32_t id;
-        unsigned char buf[32], *b;
+        unsigned char buf[32], **b;
         char *e_str;
 
         init_table(transac_table, MAX_PORT);
@@ -43,10 +43,10 @@ main()
        if (e_str != NULL)
                printf("%s\n", e_str);
 
-        //b64_decode(e_str, &b, 32);
-        //for (i = 0; i < 32; i++) 
-        //        fprintf(stdout,"%i",buf[i]);
-        //printf("\n");        
+        b64_decode(e_str, &buf, 32);
+        for (i = 0; i < 32; i++) 
+                fprintf(stdout,"%i", buf[i]);
+        printf("\n");        
         del_transaction(transac_table[2222]);        
 
         return 0;

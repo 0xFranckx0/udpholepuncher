@@ -76,6 +76,22 @@ b64_encode(const unsigned char *b, size_t l, char **s)
 int
 b64_decode(char *s, unsigned char **b, size_t l) 
 { 
-	return (0); //success
+	BIO *b64, *bio;
+	int i;
+
+	*b = malloc(l);
+	memset(b, 0, l);
+	 
+	b64 = BIO_new(BIO_f_base64());
+        BIO_set_flags(b64, BIO_FLAGS_BASE64_NO_NL);
+	bio = BIO_new_mem_buf(s, l);
+	//bio = BIO_push(b64, bio);
+	BIO_push(b64, bio);
+	 
+	BIO_read(bio, *b, l);
+	 
+	BIO_free_all(bio);
+
+	return (0); 
 }
 
