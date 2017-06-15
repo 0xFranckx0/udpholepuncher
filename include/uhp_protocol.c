@@ -42,10 +42,16 @@ next_msg(struct transaction **table, int port)
                 msg->epoch = table[port]->timestamp;
                 msg->tag = ACK;
                 msg->count = 1;
+        } else if ( table[port]->type == ACK ) {
+                memcpy(msg->punchid, table[port]->punchid, 32);
+                msg->epoch = table[port]->timestamp;
+                msg->tag = BYE;
+                msg->count = 1;
         }
 
         return msg;
 }
+
 void
 next_operation(struct transaction **table, struct punch_msg *msg, int port)
 {
@@ -73,8 +79,6 @@ new_transaction(struct transaction **table, int port)
                 return;
         }
         memset(t->punchid,0,32);
-        for (i = 0; i < 32; i++) 
-                fprintf(stdout,"%i",t->punchid[i]);
         printf("\n");        
         t->type = -1;
         t->origin  = -1;
