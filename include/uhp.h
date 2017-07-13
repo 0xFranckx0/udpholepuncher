@@ -41,6 +41,7 @@
 #define	HELLO           0
 #define	ACK             1
 #define	BYE             2
+#define MAX_BYTES       30 
 
 enum socket_flag{
 	SERVER,
@@ -50,6 +51,15 @@ enum socket_flag{
 enum status {
         PENDING,
         COMPLETE
+};
+
+enum operations {
+        INIT_TABLE,
+        NEXT_MESSAGE,
+        UPDATE_TABLE_WITH_MESSAGE,
+        MARK_DIRTY,
+        MARK_RETRANSMIT,
+        END_OF_OPERATIONS
 };
 
 /**
@@ -79,17 +89,15 @@ struct uhp_state {
 };
   
 struct punch_msg {
-	unsigned char    punchid[32];       /*!< Numeric ID of transaction */
-	int		 tag;	/*!< TAG identifying the payload */
-	int		 epoch;	        /*!< Timestamp */
-	int	         count;          /*!< Numeric ID of transaction */
+	int             punchid;       /*!< Numeric ID of transaction */
+	int		tag;	/*!< TAG identifying the payload */
+	int		epoch;	        /*!< Timestamp */
+	int	        count;          /*!< Numeric ID of transaction */
 };
 
 struct transaction {
-        unsigned char   punchid[32];
+        int             punchid;
         int             type;
-        int             origin;
-        int             master;
         int             status;
         int             timestamp;
         int             retry;
@@ -99,8 +107,7 @@ struct transaction {
 
 /* uhp_data.c */
 int 	port_sanitization(char *);
-int     b64_encode(const unsigned char *, size_t , char **); 
-int     b64_decode(char *, unsigned char **, size_t );
+int     rand2int(uint8_t *, int);
 
 /* uhp_net.c */
 evutil_socket_t		 new_receiver_socket(const char *);
@@ -112,7 +119,7 @@ void 			 print_addr(const unsigned char *, const int);
 
 struct punch_msg   *new_punch_msg();
 struct punch_msg   *next_msg(struct transaction **, int);
-void                next_operation(struct transaction **,
+int                 next_operation(struct transaction **,
                                    struct punch_msg *, int);
 void                init_table(struct transaction **, int);
 void                cleanup_table(struct transaction **);
@@ -120,6 +127,6 @@ void                del_punch_msg(struct punch_msg *);
 void                new_transaction(struct transaction **, int);
 void                del_transaction(struct transaction *);
 void                update_transaction(struct transaction **, int, 
-                                       struct punch_msg *);
+                                       struct punch_msg *, int);
 #endif /* UHP_H */
 

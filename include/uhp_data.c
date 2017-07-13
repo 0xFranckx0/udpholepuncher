@@ -31,9 +31,6 @@
 #include <stdint.h>
 #include "uhp.h"
 
-#define MAX_BYTES 4
-
-
 int
 port_sanitization(char *p)
 {
@@ -45,53 +42,17 @@ port_sanitization(char *p)
 	return 0;
 }
 
-int 
-b64_encode(const unsigned char *b, size_t l, char **s) 
-{
-        BIO *bio, *b64;
-        BUF_MEM *buf;
-         
-        b64 = BIO_new(BIO_f_base64());
-        bio = BIO_new(BIO_s_mem());
-        b64 = BIO_push(b64, bio);
-        BIO_write(b64, b, l);
-        BIO_flush(b64);
-        BIO_get_mem_ptr(b64, &buf);
-                 
-        *s = (char *)malloc(buf->length);
-        if (*s == NULL) {
-                perror("Malloc failed");
-                return 1;
-        }
-
-        memcpy(*s, buf->data, buf->length-1);
-        s[buf->length-1] = 0;
-
-        BIO_free_all(b64);
-
-        return 0; 
-}
-
-
 int
-b64_decode(char *s, unsigned char **b, size_t l) 
-{ 
-	BIO *b64, *bio;
-	int i;
-
-	*b = malloc(l);
-	memset(b, 0, l);
-	 
-	b64 = BIO_new(BIO_f_base64());
-        BIO_set_flags(b64, BIO_FLAGS_BASE64_NO_NL);
-	bio = BIO_new_mem_buf(s, l);
-	//bio = BIO_push(b64, bio);
-	BIO_push(b64, bio);
-	 
-	BIO_read(bio, *b, l);
-	 
-	BIO_free_all(bio);
-
-	return (0); 
+rand2int(uint8_t *rb, int size)
+{
+        int res;
+	for (int i = 0; i < size; ++i) { 
+#if BYTE_ORDER == BIG_ENDIAN
+		    res |= (rb[i] & 1) << (7 - i);
+#elif BYTE_ORDER == LITTLE_ENDIAN
+		    res |= (rb[i] & 1) << (i);
+#endif
+	}
+        return res;
 }
 
