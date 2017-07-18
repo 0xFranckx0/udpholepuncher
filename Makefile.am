@@ -2,9 +2,9 @@ ACLOCAL_AMFLAGS = -I m4 --install
 
 lib_LTLIBRARIES = libobj/libuhp.la
 libobj_libuhp_la_SOURCES =  include/error.c \
+                    	    include/log.c \
                             include/uhp_data.c \
                     	    include/uhp_loop.c \
-                    	    include/uhp_log.c \
                             include/uhp_messages.c \
                             include/uhp_net.c \
                             include/uhp_protocol.c 
