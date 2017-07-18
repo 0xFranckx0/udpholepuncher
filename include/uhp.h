@@ -41,6 +41,11 @@
 #define	HELLO           0
 #define	ACK             1
 #define	BYE             2
+#define	CANCEL          3
+#define	HELLO_TAG       "HELLO"
+#define	ACK_TAG         "ACK"
+#define	BYE_TAG         "BYE"
+#define	CANCEL_TAG      "CANCEL"
 #define MAX_BYTES       30 
 
 enum socket_flag{
@@ -106,8 +111,10 @@ struct transaction {
 /* struct transaction *transac_table[MAX_PORT]; */
 
 /* uhp_data.c */
-int 	port_sanitization(char *);
-int     rand2int(uint8_t *, int);
+int 	                 port_sanitization(char *);
+int                      rand2int(uint8_t *, int);
+char                    *msg2json(const struct punch_msg *);
+struct punch_msg        *json2msg(const char *);
 
 /* uhp_net.c */
 evutil_socket_t		 new_receiver_socket(const char *);

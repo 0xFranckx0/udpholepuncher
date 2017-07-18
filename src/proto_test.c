@@ -15,6 +15,7 @@ main()
         uint8_t bu[MAX_BYTES];
         char *e_str;
     	int res = 0;
+        char *json;
 
         init_table(transac_table, MAX_PORT);
 /*
@@ -24,17 +25,18 @@ main()
         }
 */
         //next_operation(transac_table, &pm, 2);
-        RAND_bytes(bu, MAX_BYTES);
-	for (int i = 0; i < MAX_BYTES; ++i) { 
-#if BYTE_ORDER == BIG_ENDIAN
-		    res |= (bu[i] & 1) << (7 - i);
-#elif BYTE_ORDER == LITTLE_ENDIAN
-		    res |= (bu[i] & 1) << (i);
-#endif
-	}
-	printf("%d\n",res);
-     //   pm = next_msg(transac_table, 2222);
-//        printf("%d", pm->punchid);
+//        RAND_bytes(bu, MAX_BYTES);
+//        res = rand2int(bu, MAX_BYTES);
+//	printf("%d\n",res);
+        pm = next_msg(transac_table, 2222);
+        printf("%d\n", pm->punchid);
+        json = msg2json(pm);
+        if (json == NULL) {
+                perror("JSON ERROR");
+                exit(1);
+        }
+        printf("%s\n", json);
+
         /*
         for (i = 0; i < MAX_BYTES ; i++)
                 printf("%i", pm->punchid[i]);

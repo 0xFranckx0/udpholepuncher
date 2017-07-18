@@ -56,3 +56,86 @@ rand2int(uint8_t *rb, int size)
         return res;
 }
 
+char *
+msg2json(const struct punch_msg *msg)
+{
+	char *s = NULL;
+	char *type;
+	json_t *root = json_object();
+	switch(msg->tag) {  
+        case 0:
+                type = strdup(HELLO_TAG);
+                if (type == NULL){
+                        perror("String duplciation failed");
+                        goto error;
+                }
+                break;
+        case 1:
+                type = strdup(ACK_TAG);
+                if (type == NULL){
+                        perror("String duplciation failed");
+                        goto error;
+                }
+                break;
+        case 2:
+                type = strdup(BYE_TAG);
+                if (type == NULL){
+                        perror("String duplciation failed");
+                        goto error;
+                }
+                break;
+        case 3:
+                type = strdup(CANCEL_TAG);
+                if (type == NULL){
+                        perror("String duplciation failed");
+                        goto error;
+                }
+                break;
+        default:
+                perror("Unknown message tag");
+                goto error;
+        }
+
+        root = json_pack("{sssisisi}", 
+                        "type", type, 
+                        "punchid", msg->punchid,
+                        "count", msg->count,
+                        "epoch", msg->epoch);
+	  
+	s = json_dumps(root, 0);
+	json_decref(root);
+
+        return s;
+
+error:
+	json_decref(root);
+        return NULL;
+}
+
+struct punch_msg *
+json2msg(const char *s)
+{
+	json_t *root = json_object();
+        json_error_t err;
+        struct punch_msg *msg = NULL;
+
+	root = json_loads(s,0, &err);
+	if (root == NULL) {
+    		fprintf(stderr, "error: on line %d: %s\n", err.line, err.text);
+		goto error;
+	}
+        msg = new_punch_msg();
+
+	json_unpack(root, "{s:s, s:i, s:i, s:i}", 
+			"type", &msg->tag, 
+			"punchid", &msg->punchid,
+			"count", &msg->count,
+			"epoch", &msg->epoch);
+
+	json_decref(root);
+	return msg;
+
+error:
+        return NULL;
+}
+
