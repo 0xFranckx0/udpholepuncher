@@ -117,6 +117,7 @@ json2msg(const char *s)
 {
 	json_t *root = json_object();
         json_error_t err;
+	char *tag = NULL;
         struct punch_msg *msg = NULL;
 
 	root = json_loads(s,0, &err);
@@ -127,10 +128,22 @@ json2msg(const char *s)
         msg = new_punch_msg();
 
 	json_unpack(root, "{s:s, s:i, s:i, s:i}", 
-			"type", &msg->tag, 
+			"type", &tag, 
 			"punchid", &msg->punchid,
 			"count", &msg->count,
 			"epoch", &msg->epoch);
+	printf("TYPE: %s\n", tag);
+	if (strcmp(HELLO_TAG, tag) == 0) {
+		msg->tag = HELLO;
+	} else if (strcmp(CANCEL_TAG, tag) == 0){
+		msg->tag = CANCEL;
+	} else if (strcmp(ACK_TAG, tag) == 0) {
+		msg->tag = ACK;
+	} else if (strcmp(BYE_TAG, tag) == 0) {
+		msg->tag = BYE;
+	} else {
+		goto error;
+	}
 
 	json_decref(root);
 	return msg;
