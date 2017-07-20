@@ -47,19 +47,20 @@
 
 struct ev_data {
 	struct event_base 	*base;
-	void			*data;
+        struct sockaddr_in      *sin
 	struct uhp_socks 	*s;
 	struct uhp_infos 	*infos;
+	void			*data;
 	void (*uhp_cb)(int flag, struct uhp_info *ui);
 };
+
+struct transaction *transac_table[MAX_PORT];
 
 static void receiver_cb(evutil_socket_t, short, void*);
 static void sender_cb(evutil_socket_t, short, void*);
 
-static int 		 writer = WRITABLE;
 static struct uhp_socks *usock;
 static char 		*message;
-static struct uhp_info 	*ui;
 struct event 		*evs;
 struct event 		*evr;
 
@@ -128,6 +129,8 @@ punch(struct input_p *ip, struct output_p *op)
 
 	printf("RUN THE PUNCH: %s\n", ip->msg);
 	message = ip->msg;
+
+        init_table(transac_table, MAX_PORT);
 
 	s = malloc(sizeof(*s));
 	if (s == NULL){

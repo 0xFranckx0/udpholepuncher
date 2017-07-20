@@ -26,6 +26,9 @@
 #ifndef PUNCH_H
 #define PUNCH_H
 
+#define SELF 0
+#define PEER 1
+
 /*
 Defines a callback that returns the structure info
 modify punch function to accept an event base and the callback
@@ -40,17 +43,17 @@ modify punch function to accept an event base and the callback
  */
 struct uhp_info {
 	int 	 	 sock;	/*!< Socket on which communication is enabled */
+	int  	         master;/*!< Defines a master: SELF or PEER */
+	void 		*data;
 	char 		*port;	/*!< Destination port */
 	char 		*dst;	/*!< Destination address */
-	uint8_t  	 master;/*!< Defines a master */
-	void 		*data;
 };
 
 struct input_p {
+	struct event_base 	*base; 
 	char 			*address;
 	char 			*port;
 	char 			*msg;
-	struct event_base 	*base; 
 };
 
 struct output_p {
@@ -59,7 +62,5 @@ struct output_p {
 };
 
 void	punch(struct input_p *, struct output_p *);
-
-
 
 #endif /* PUNCH_H  */
