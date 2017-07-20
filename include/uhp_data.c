@@ -32,17 +32,6 @@
 #include "uhp.h"
 
 int
-port_sanitization(char *p)
-{
-	char buffer[33];
-	int ret = snprintf(buffer, sizeof(buffer), "%d", p); 
-	if (ret == -1 || ret >= sizeof(buffer)) 
-		return -1;
-
-	return 0;
-}
-
-int
 rand2int(uint8_t *rb, int size)
 {
         int res;
