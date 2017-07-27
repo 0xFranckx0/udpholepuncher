@@ -141,3 +141,51 @@ error:
         return NULL;
 }
 
+struct l_ports * 
+parse_ports(const char *fmt, ...)
+{       
+        struct l_ports *ports = NULL;
+        long item;
+        int i, count; 
+        int nb;
+        int retcode = 0;
+        int size = 0;
+        int chunk = 32;
+
+        ports = malloc(sizeof *ports);
+        if ( ports == NULL){
+                perror("Malloc failed");
+                goto error;
+        }
+
+        va_list ap;
+        va_start(ap, *ports);
+
+        for(i = 0, count = 0;; i++, ports->size++) {
+                if (i == chunk) {
+                        i = 0;
+                        size += chunk;
+
+                        ports->p = realloc(ports->p, chunk * sizeof(int));
+                        if (ports->p == NULL) {
+                                perror("REALLOC failed.");
+                                goto error;
+                        }
+                }
+                /* Implement here strtol */
+
+        }
+
+        va_end(ap);
+
+        return ports;
+
+error:
+        if (ports->p != NULL)
+                free(ports->p);
+        if (ports != NULL)
+                free(ports);
+        
+        return NULL;
+}
+

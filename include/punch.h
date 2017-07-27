@@ -61,6 +61,14 @@ struct output_p {
 	void *metadata;
 };
 
+struct l_ports {
+        int size;
+        int *p;
+};
+/* uhp_data.c */
+struct ports    *parse_args(int **, ...);
+
+/* uhp_loop.c */
 void	punch(struct input_p *, struct output_p *);
 
 #endif /* PUNCH_H  */
