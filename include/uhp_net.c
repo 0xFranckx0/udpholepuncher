@@ -29,6 +29,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <errno.h>
+#include <arpa/inet.h>
 
 #include "uhp.h"
 
@@ -140,8 +141,20 @@ new_receiver_socket(const char *port)
 struct sockaddr_in *
 get_sockaddr_in(const char * dst, const char * port)
 {
-	int s;
 	struct sockaddr_in 	*sin;
+        char *buf;
+        long lval;
+	int s, ival;
+
+	errno = 0; 
+        lval = strtol(port, &buf, 10);
+	if (buf[0] == '\0' || *buf != '\0') 
+	     goto not_a_number; 
+	if ((errno == ERANGE && (lval == LONG_MAX || lval == LONG_MIN)) || 
+	    (lval > 65535 || lval < 0)) 
+	     goto out_of_range; 
+	ival = lval;
+
 
 	sin = malloc(sizeof(*sin));
 	if (sin == NULL){
@@ -149,7 +162,8 @@ get_sockaddr_in(const char * dst, const char * port)
 		exit(-1);
 	}
 	sin->sin_family = AF_INET;
-	sin->sin_port = htons(atoi(port));
+	//sin->sin_port = htons(atoi(port));
+	sin->sin_port = htons(ival);
 
 	s = inet_pton(AF_INET, dst, &sin->sin_addr);
 	if (s <= 0){
@@ -164,4 +178,13 @@ get_sockaddr_in(const char * dst, const char * port)
 	}
 
 	return sin;
+
+not_a_number:
+	perror("not a number");
+	return NULL;
+
+out_of_range:
+	perror("out_of_range");
+	return NULL;
+
 }
