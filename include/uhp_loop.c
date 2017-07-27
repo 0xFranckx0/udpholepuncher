@@ -45,16 +45,14 @@
 
 
 
-struct ev_data {
+static struct ev_data {
 	struct event_base 	*base;
-        struct sockaddr_in      *sin
+        struct sockaddr_in      *sin;
 	struct uhp_socks 	*s;
 	struct uhp_infos 	*infos;
 	void			*data;
 	void (*uhp_cb)(int flag, struct uhp_info *ui);
 };
-
-struct transaction *transac_table[MAX_PORT];
 
 static void receiver_cb(evutil_socket_t, short, void*);
 static void sender_cb(evutil_socket_t, short, void*);
@@ -122,6 +120,7 @@ receiver_cb(evutil_socket_t listener, short event, void *arg)
 void
 punch(struct input_p *ip, struct output_p *op) 
 {
+        struct ev_data          *arg;
 	struct uhp_socks 	*s;
 	struct uhp_infos 	*infos;
 	struct timeval 		 time = {2,0};
@@ -131,9 +130,16 @@ punch(struct input_p *ip, struct output_p *op)
 	message = ip->msg;
 
         init_table(transac_table, MAX_PORT);
+        
+        arg = malloc(sizeof(*arg));
+	if (arg == NULL){
+		syserr(__func__, "malloc failed");
+		exit(-1);
+	}
+        memset(arg, 0, sizeof(arg));
 
-	s = malloc(sizeof(*s));
-	if (s == NULL){
+	arg->s = malloc(sizeof(*arg->s));
+	if (arg->s == NULL){
 		syserr(__func__, "malloc failed");
 		exit(-1);
 	}

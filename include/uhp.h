@@ -25,6 +25,7 @@
 #ifndef UHP_H
 #define UHP_H
 
+#include <limits.h>
 #include <event2/event.h>
 #include <openssl/rand.h>
 #include <stdint.h>
@@ -115,6 +116,9 @@ int 	                 port_sanitization(char *);
 int                      rand2int(uint8_t *, int);
 char                    *msg2json(const struct punch_msg *);
 struct punch_msg        *json2msg(const char *);
+
+/* uhp_loop.c */
+struct transaction      *transac_table[MAX_PORT];
 
 /* uhp_net.c */
 evutil_socket_t		 new_receiver_socket(const char *);
