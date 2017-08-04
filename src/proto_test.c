@@ -6,6 +6,7 @@
 int
 main()
 {
+        /*
         struct transaction *transac_table[MAX_PORT];
         struct punch_msg *pm = NULL;
         struct punch_msg *resp = NULL;
@@ -17,9 +18,10 @@ main()
         char *e_str;
     	int res = 0;
         char *json;
+        */
 
-        init_table(transac_table, MAX_PORT);
 /*
+        init_table(transac_table, MAX_PORT);
         for (i = 0; i < MAX_PORT; i++) {
                 if ( transac_table[i] == NULL)
                         printf("NOT INITIALIZED\n");
@@ -29,6 +31,7 @@ main()
 //        RAND_bytes(bu, MAX_BYTES);
 //        res = rand2int(bu, MAX_BYTES);
 //	printf("%d\n",res);
+/*
         pm = next_msg(transac_table, 2222);
         printf("%d\n", pm->punchid);
         json = msg2json(pm);
@@ -46,7 +49,7 @@ main()
         printf("PUNCHID: %d\n", resp->punchid);
         printf("EPOCH: %d\n", resp->epoch);
         printf("COUNT: %d\n", resp->count);
-		
+*/		
         /*
         for (i = 0; i < MAX_BYTES ; i++)
                 printf("%i", pm->punchid[i]);
@@ -72,5 +75,18 @@ main()
     /*    del_transaction(transac_table[2222]);        
         del_punch_msg(pm);
 */
+
+        
+        struct l_ports *ports; 
+        int i;
+
+        ports = parse_ports("%s","32", "40");
+        if(ports == NULL){
+                perror("ports error");
+                exit(0);
+        }
+        for(i = 0; i < ports->size; i++)
+                printf("%d\n", ports->p[i]);
+        
         return 0;
 }

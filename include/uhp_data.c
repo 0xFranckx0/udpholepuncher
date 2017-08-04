@@ -23,6 +23,17 @@
 */
 
 #include <stdio.h>
+#include <arpa/inet.h>
+#include <assert.h>
+
+#include <sys/types.h>
+#include <sys/un.h>
+#include <string.h>
+#include <stdlib.h>
+#include <errno.h>
+//#include <stdarg.h>
+#include <varargs.h>
+
 
 #include <openssl/bio.h>
 #include <openssl/evp.h>
@@ -145,37 +156,50 @@ struct l_ports *
 parse_ports(const char *fmt, ...)
 {       
         struct l_ports *ports = NULL;
-        long item;
-        int i, count; 
-        int nb;
+        va_list ap;
+        long item, lval;
+        int i, ival, nb; 
         int retcode = 0;
         int size = 0;
         int chunk = 32;
+	char *buf, *p;
 
         ports = malloc(sizeof *ports);
         if ( ports == NULL){
                 perror("Malloc failed");
                 goto error;
         }
+        ports->p = malloc(chunk * sizeof(int));
+        if (ports->p == NULL) {
+                perror("MALLOC failed.");
+                goto error;
+        }
 
-        va_list ap;
-        va_start(ap, *ports);
+        va_start(ap, fmt);
 
-        for(i = 0, count = 0;; i++, ports->size++) {
+        for(i = 0, ports->size = 0; *fmt  ; i++, ports->size++, *fmt++) {
+                p = va_arg(ap, char *);
+
                 if (i == chunk) {
                         i = 0;
                         size += chunk;
-
                         ports->p = realloc(ports->p, chunk * sizeof(int));
                         if (ports->p == NULL) {
                                 perror("REALLOC failed.");
                                 goto error;
                         }
                 }
-                /* Implement here strtol */
 
+                errno = 0; 
+                lval = strtol(p, &buf, 10);
+                if ((errno == ERANGE && (lval == LONG_MAX || 
+                        lval == LONG_MIN)) || (lval > 65535 || lval < 0)){ 
+                        perror("#2 strtol failed");
+                        goto error; 
+                }
+                ival = lval;
+                ports->p[i] = ival;
         }
-
         va_end(ap);
 
         return ports;
@@ -187,5 +211,6 @@ error:
                 free(ports);
         
         return NULL;
+
 }
 
