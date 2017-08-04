@@ -197,10 +197,10 @@ parse_ports(const char *fmt, ...)
                         /* Declare a variable-length array for strtok */
                         char tmp[n];
                         strcpy(tmp,p);
-                        token = strtok(p,delim);
+                        token = strtok(tmp,delim);
                         while (token != NULL) {
                                 printf( " %s\n", token );
-                                token = strtok(NULL, "-");
+                                token = strtok(NULL, delim);
                         } 
                         /* TODO fill out the ports array with the range */
                         goto error;
