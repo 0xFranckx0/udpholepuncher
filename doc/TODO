@@ -1,0 +1,19 @@
+1 Init phase
+	- Parse and format the arguments
+	- Initialize the sockets
+	- Initialize structures
+	
+2 Startup loop
+	- start the loop with the structures
+	- Initialize the Table
+
+3 Punching
+	- Realize the protocol
+	- Fillout the strcture containing the hole 
+
+4 Cleanup events
+	- Deallocate events, structures
+
+5 Return the punch 
+	- Return the structure
+	- Terminate the loop
