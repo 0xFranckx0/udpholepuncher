@@ -74,13 +74,13 @@ main()
         */
     /*    del_transaction(transac_table[2222]);        
         del_punch_msg(pm);
-*/
 
+*/
         
         struct l_ports *ports; 
         int i;
 
-        ports = parse_ports("%s","32", "40");
+        ports = parse_ports("%s", "40-50");
         if(ports == NULL){
                 perror("ports error");
                 exit(0);
@@ -88,5 +88,10 @@ main()
         for(i = 0; i < ports->size; i++)
                 printf("%d\n", ports->p[i]);
         
+
+ 
+
+
+
         return 0;
 }

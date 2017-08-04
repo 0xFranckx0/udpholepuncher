@@ -158,11 +158,13 @@ parse_ports(const char *fmt, ...)
         struct l_ports *ports = NULL;
         va_list ap;
         long item, lval;
-        int i, ival, nb; 
+        int i, ival, nb, n; 
         int retcode = 0;
         int size = 0;
         int chunk = 32;
 	char *buf, *p;
+        char *token = NULL;
+        char *delim = "-";
 
         ports = malloc(sizeof *ports);
         if ( ports == NULL){
@@ -188,6 +190,24 @@ parse_ports(const char *fmt, ...)
                                 perror("REALLOC failed.");
                                 goto error;
                         }
+                }
+                if (strchr(p,'-') != NULL && (strchr(p,'-') == strrchr(p,'-'))){
+                        /* Get the upper and lower port of the range */
+                        n = strlen(p)+1;
+                        /* Declare a variable-length array for strtok */
+                        char tmp[n];
+                        strcpy(tmp,p);
+                        token = strtok(p,delim);
+                        while (token != NULL) {
+                                printf( " %s\n", token );
+                                token = strtok(NULL, "-");
+                        } 
+                        /* TODO fill out the ports array with the range */
+                        goto error;
+
+                } else if (strchr(p,'-') != NULL && (strchr(p,'-') != strrchr(p,'-'))) {
+                        perror("BAD string");
+                        goto error;
                 }
 
                 errno = 0; 
