@@ -67,7 +67,7 @@ struct l_ports {
 };
 /* uhp_data.c */
 //struct ports    *parse_args(int **, ...);
-struct l_ports *parse_ports(const char *fmt, ...);
+struct l_ports *parse_ports(int, ...);
  
 
 /* uhp_loop.c */

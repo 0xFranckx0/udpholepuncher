@@ -42,6 +42,8 @@
 #include <stdint.h>
 #include "uhp.h"
 
+static int str2int(char *);
+
 int
 rand2int(uint8_t *rb, int size)
 {
@@ -153,12 +155,12 @@ error:
 }
 
 struct l_ports * 
-parse_ports(const char *fmt, ...)
+parse_ports(int count, ...)
 {       
         struct l_ports *ports = NULL;
         va_list ap;
         long item, lval;
-        int i, ival, nb, n; 
+        int i, ival, nb, n, x, diff; 
         int retcode = 0;
         int size = 0;
         int chunk = 32;
@@ -177,9 +179,9 @@ parse_ports(const char *fmt, ...)
                 goto error;
         }
 
-        va_start(ap, fmt);
+        va_start(ap, count);
 
-        for(i = 0, ports->size = 0; *fmt  ; i++, ports->size++, *fmt++) {
+        for(i = 0, ports->size = 0; count > 0  ; i++, count--) {
                 p = va_arg(ap, char *);
 
                 if (i == chunk) {
@@ -199,26 +201,26 @@ parse_ports(const char *fmt, ...)
                         strcpy(tmp,p);
                         token = strtok(tmp,delim);
                         while (token != NULL) {
-                                printf( " %s\n", token );
+                                x = str2int(token);
+                                if(x < 0) {
+                                        perror("Failed to conert string to int");
+                                        goto error;
+                                }
+                                ports->p[i] = x;
+                                ports->size++;
+				i++;
                                 token = strtok(NULL, delim);
                         } 
-                        /* TODO fill out the ports array with the range */
-                        goto error;
+                        continue;
 
                 } else if (strchr(p,'-') != NULL && (strchr(p,'-') != strrchr(p,'-'))) {
                         perror("BAD string");
                         goto error;
-                }
-
-                errno = 0; 
-                lval = strtol(p, &buf, 10);
-                if ((errno == ERANGE && (lval == LONG_MAX || 
-                        lval == LONG_MIN)) || (lval > 65535 || lval < 0)){ 
-                        perror("#2 strtol failed");
-                        goto error; 
-                }
-                ival = lval;
-                ports->p[i] = ival;
+                } else {
+                	ports->p[i] = str2int(p);
+			printf("#3 port[%d]: %d\n",i, ports->p[i]);
+                        ports->size++;
+		}
         }
         va_end(ap);
 
@@ -232,5 +234,24 @@ error:
         
         return NULL;
 
+}
+
+int
+str2int(char *str)
+{
+        long lval;
+        int ival;
+	char *buf;
+
+        errno = 0; 
+        lval = strtol(str, &buf, 10);
+        if ((errno == ERANGE && (lval == LONG_MAX || 
+                lval == LONG_MIN)) || (lval > 65535 || lval < 0)){ 
+                perror("#2 strtol failed");
+                return -1;
+        }
+        ival = lval;
+
+        return ival;
 }
 
