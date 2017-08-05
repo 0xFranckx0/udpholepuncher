@@ -35,7 +35,7 @@
 
 #include "error.h"
 #include "punch.h"
-#include "queue.h"
+#include "list.h"
 
 #define RANGE	        5
 #define MAX_PORT        65536
