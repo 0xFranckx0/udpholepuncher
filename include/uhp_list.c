@@ -6,6 +6,7 @@ slist_init(struct slist *list)
         list->head         = NULL;
         list->current      = NULL;
         list->tail         = NULL;
+        list->ref          = 0;
 }
 
 void
@@ -24,6 +25,7 @@ slist_insert(struct slist *list, void *data)
                 e->next = list->head;
         }
         list->head = e;
+        list->ref++;
 }
 
 void
@@ -41,8 +43,18 @@ slist_append(struct slist *list, void *data) {
                 list->tail->next = NULL;
         }
         list->tail = e;
+        list->ref++;
 }
 
+int
+slist_is_empty(struct slist *list)
+{
+        if (list->ref == 0) {
+                return 0;
+        } else {
+                return 1;
+        }
+}
 
 void
 slist_print(struct slist *list, void(*entry_print)(void *)) 
@@ -85,6 +97,7 @@ entry_delete(struct slist *list, void(*entry_free)(void *), struct entry *entry)
                 if (tmp != NULL)
                         tmp->next = entry->next;
         }
+        list->ref--;
         entry_free(entry);
 }
 
