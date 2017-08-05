@@ -168,7 +168,7 @@ parse_ports(int count, ...)
 	char *buf, *p;
         char *token = NULL;
         char *delim = "-";
-
+        
         ports = malloc(sizeof *ports);
         if ( ports == NULL){
                 perror("Malloc failed");
