@@ -76,7 +76,8 @@ main()
         del_punch_msg(pm);
 
 */
-        
+/* tests for split port strings 
+
         struct l_ports *ports; 
         int i;
 
@@ -88,7 +89,12 @@ main()
         for(i = 0; i < ports->size; i++)
                 printf("%d\n", ports->p[i]);
         
+*/
 
+/* Tests for strings */
+        struct slist list;
+
+        slist_init(&list);
  
 
 
