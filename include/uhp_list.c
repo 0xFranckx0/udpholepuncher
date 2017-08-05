@@ -40,7 +40,7 @@ slist_append(struct slist *list, void *data) {
         if (list->head == NULL) {
                 list->head = e;
         } else {
-                list->tail->next = NULL;
+                list->tail->next = e;
         }
         list->tail = e;
         list->ref++;

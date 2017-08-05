@@ -13,6 +13,7 @@ struct slist{
         int ref;
 };
 
+/* uhp_list.c */
 void             slist_init(struct slist *);
 void             slist_insert(struct slist *, void *);
 void             slist_append(struct slist *, void *);
