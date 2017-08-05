@@ -80,7 +80,7 @@ main()
         struct l_ports *ports; 
         int i;
 
-        ports = parse_ports("%s", "40-50");
+        ports = parse_ports(2, "40", "41-50");
         if(ports == NULL){
                 perror("ports error");
                 exit(0);
