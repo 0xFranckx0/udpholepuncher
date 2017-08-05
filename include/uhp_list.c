@@ -43,6 +43,17 @@ slist_append(struct slist *list, void *data) {
         list->tail = e;
 }
 
+
+void
+slist_print(struct slist *list, void(*entry_print)(void *)) 
+{
+        struct entry *current = list->head;
+        while (current != NULL) {
+                entry_print(current->data);
+                current = current->next;
+        }
+}
+
 struct entry *
 entry_new()
 {
@@ -53,3 +64,42 @@ entry_new()
         }
         return e;
 }
+
+
+void
+entry_delete(struct slist *list, void(*entry_free)(void *), struct entry *entry)
+{
+        struct entry *tmp;
+
+        if (entry == list->head) {
+                if (list->head->next == NULL) {
+                        list->head = list->tail = NULL;
+                } else {
+                        list->head = list->head->next;
+                }
+        } else {
+                tmp = list->head;
+                while ( tmp != NULL && tmp->next != entry){
+                        tmp = tmp->next;
+                }
+                if (tmp != NULL)
+                        tmp->next = entry->next;
+        }
+        entry_free(entry);
+}
+
+struct entry *
+entry_get(struct slist *list, int(*entry_cmp)(void *, void *), void *data)
+{
+        struct entry *entry = list->head;
+
+        while (entry != NULL) {
+                if (entry_cmp(entry->data,data) == 0)
+                        return entry;
+
+                entry = entry->next;        
+        }
+
+        return NULL;
+}
+
