@@ -161,7 +161,7 @@ parse_ports(int count, ...)
         struct l_ports *ports = NULL;
         va_list ap;
         long item, lval;
-        int i, ival, nb, n, x, diff; 
+        int i, ival,  n, x; 
         int retcode = 0;
         int size = 0;
         int chunk = 32;
@@ -185,6 +185,7 @@ parse_ports(int count, ...)
         for(i = 0, ports->size = 0; count > 0  ; i++, count--) {
                 p = va_arg(ap, char *);
 
+                /* implement list instead of array */
                 if (i == chunk) {
                         i = 0;
                         size += chunk;
