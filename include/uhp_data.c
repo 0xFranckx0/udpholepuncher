@@ -151,6 +151,7 @@ json2msg(const char *s)
 	return msg;
 
 error:
+        del_punch_msg(msg);
         return NULL;
 }
 
