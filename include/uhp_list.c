@@ -98,7 +98,10 @@ entry_delete(struct slist *list, void(*entry_free)(void *), struct entry *entry)
                         tmp->next = entry->next;
         }
         list->ref--;
-        entry_free(entry);
+        if (entry_free != NULL)
+                entry_free(entry);
+        if (entry != NULL)
+                free(entry);
 }
 
 struct entry *
