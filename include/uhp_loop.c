@@ -37,7 +37,6 @@
 #include <errno.h>
 
 #include "uhp.h"
-#include "queue.h"
 
 #define MAX_BUF		64000
 #define WRITABLE	3
