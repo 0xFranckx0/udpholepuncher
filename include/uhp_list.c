@@ -77,9 +77,18 @@ entry_new()
         return e;
 }
 
+/*
 
+Function entry_delete
+  - Params: 
+        - struct slist *list: the list in which you want to delete an item
+        - data_free: A function to free the data inside the entry. Can be NULL
+                     if you free the data by yourself.
+        - struct entry *entry: the entry to delete and free.             
+
+*/
 void
-entry_delete(struct slist *list, void(*entry_free)(void *), struct entry *entry)
+entry_delete(struct slist *list, void(*data_free)(void *), struct entry *entry)
 {
         struct entry *tmp;
 
@@ -97,11 +106,11 @@ entry_delete(struct slist *list, void(*entry_free)(void *), struct entry *entry)
                 if (tmp != NULL)
                         tmp->next = entry->next;
         }
-        list->ref--;
-        if (entry_free != NULL)
-                entry_free(entry);
+        if (data_free != NULL)
+                data_free(entry->data);
         if (entry != NULL)
                 free(entry);
+        list->ref--;
 }
 
 struct entry *
