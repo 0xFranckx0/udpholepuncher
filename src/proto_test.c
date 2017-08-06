@@ -4,6 +4,8 @@
 #include <include/uhp.h>
 
 static void print_data_int(void *);
+static int comp_data_int(void *, void *);
+static void delete_data_int(void *);
 
 int
 main()
@@ -93,12 +95,14 @@ main()
         
 */
 
-/* Tests for strings */
+/* Tests for LISTS */
         struct slist list;
+        struct entry *tmp = NULL;
         int data[10] = {5060, 22, 132, 3333, 40, 2, 50, 6};
         int i;
         int a = 12;
         int b = 13;
+        int c = 132;
 
         slist_init(&list);
         for (i = 0; i < 8; i++) 
@@ -109,7 +113,11 @@ main()
 
         slist_insert(&list, &a);
         slist_append(&list, &b);
-        printf("\n\n\n");
+        printf("\n---------\n");
+        slist_print(&list, print_data_int);
+        tmp = entry_get(&list, comp_data_int, &c);
+        entry_delete(&list, NULL, tmp);
+        printf("\n---------\n");
         slist_print(&list, print_data_int);
 
         return 0;
@@ -121,4 +129,10 @@ print_data_int(void *data)
         int c = *((int *) data); 
         if (data != NULL)
                 printf("%d\n", c);
+}
+
+int
+comp_data_int(void *x, void *y)
+{
+        return((*((int*)x) == *((int*)y)) ? 0 : 1);        
 }
