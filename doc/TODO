@@ -2,6 +2,8 @@
 	- Parse and format the arguments
 	- Initialize the sockets
 	- Initialize structures
+        - Add openbsd logs functions to the build and change perror to
+          relevant functions. (also delete customs error functions in error.h)
 	
 2 Startup loop
 	- start the loop with the structures
