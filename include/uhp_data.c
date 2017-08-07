@@ -31,9 +31,6 @@
 #include <string.h>
 #include <stdlib.h>
 #include <errno.h>
-//#include <stdarg.h>
-#include <varargs.h>
-
 
 #include <openssl/bio.h>
 #include <openssl/evp.h>
@@ -42,6 +39,7 @@
 #include <stdint.h>
 #include "uhp.h"
 
+static int cmp_int(const void *, const void *);
 static int str2int(char *);
 
 int
@@ -156,86 +154,99 @@ error:
 }
 
 struct l_ports * 
-parse_ports(int count, ...)
+parse_ports(char **ports, int size)
 {       
-        struct l_ports *ports = NULL;
-        va_list ap;
-        long item, lval;
-        int i, ival,  n, x; 
-        int retcode = 0;
-        int size = 0;
-        int chunk = 32;
+        struct l_ports *list_ports = NULL;
+        struct slist list;
+        void *data = NULL;
+        int range[2];
+        int i, j, n, x, diff, inf; 
 	char *buf, *p;
         char *token = NULL;
         char *delim = "-";
         
-        ports = malloc(sizeof *ports);
-        if ( ports == NULL){
-                perror("Malloc failed");
-                goto error;
-        }
-        ports->p = malloc(chunk * sizeof(int));
-        if (ports->p == NULL) {
-                perror("MALLOC failed.");
-                goto error;
-        }
+        slist_init(&list);
 
-        va_start(ap, count);
-
-        for(i = 0, ports->size = 0; count > 0  ; i++, count--) {
-                p = va_arg(ap, char *);
-
-                /* implement list instead of array */
-                if (i == chunk) {
-                        i = 0;
-                        size += chunk;
-                        ports->p = realloc(ports->p, chunk * sizeof(int));
-                        if (ports->p == NULL) {
-                                perror("REALLOC failed.");
-                                goto error;
-                        }
-                }
-                if (strchr(p,'-') != NULL && (strchr(p,'-') == strrchr(p,'-'))){
-                        /* Get the upper and lower port of the range */
-                        n = strlen(p)+1;
+        for(i = 0; i < size; i++) {
+                if (strchr(ports[i],'-') != NULL && 
+                    (strchr(ports[i],'-') == strrchr(ports[i],'-'))){
+                        /* Get the upper and lower ports of the range */
+                        n = strlen(ports[i])+1;
+                        j = 0;
                         /* Declare a variable-length array for strtok */
                         char tmp[n];
-                        strcpy(tmp,p);
+                        strcpy(tmp,ports[i]);
                         token = strtok(tmp,delim);
                         while (token != NULL) {
-                                x = str2int(token);
-                                if(x < 0) {
-                                        perror("Failed to conert string to int");
+                                range[j] = str2int(token);
+                                if(range[j] < 0) {
+                                        perror("Failed to convert string to int");
                                         goto error;
                                 }
-                                ports->p[i] = x;
-                                ports->size++;
-				i++;
                                 token = strtok(NULL, delim);
+                                j++;
                         } 
-                        continue;
+                        diff = (range[0] >= range[1])? range[0] - range[1]:
+                                                       range[1] - range[0];
+                        inf = (range[0] >= range[1])? range[1]:range[0];
 
-                } else if (strchr(p,'-') != NULL && (strchr(p,'-') != strrchr(p,'-'))) {
+                        for (j = 0; j <= diff; j++) { 
+                                x = range[0] = j;
+                                slist_append(&list, &x);
+                        }
+                } else if (strchr(ports[i],'-') != NULL && 
+                           (strchr(ports[i],'-') != strrchr(ports[i],'-'))) {
                         perror("BAD string");
                         goto error;
                 } else {
-                	ports->p[i] = str2int(p);
-			printf("#3 port[%d]: %d\n",i, ports->p[i]);
-                        ports->size++;
+                        x = str2int(ports[i]);
+                        if(x < 0) {
+                                perror("Failed to convert string to int");
+                                goto error;
+                        }
+                	slist_append(&list, &x);
 		}
         }
-        va_end(ap);
 
-        return ports;
+        list_ports = malloc(sizeof(struct l_ports));
+        if (list_ports == NULL) {
+                perror("Malloc failed");
+                goto error;
+        }
+
+        list_ports->p = malloc(list.len * sizeof(int));
+        if (list_ports->p == NULL) {
+                perror("Malloc failed");
+                goto error;
+        }
+        list_ports->p = 0;
+
+        while ((data = slist_pop(&list)) != NULL) {
+                list_ports->p[i] = *((int *)data); 
+                list_ports->size++;
+        }
+        /* sort the port list in ascending order */
+        qsort(list_ports->p, list_ports->size, sizeof(int), cmp_int); 
+
+        return list_ports;
 
 error:
-        if (ports->p != NULL)
-                free(ports->p);
-        if (ports != NULL)
-                free(ports);
+        if (list_ports->p != NULL)
+                free(list_ports->p);
+        if (list_ports != NULL)
+                free(list_ports);
         
         return NULL;
 
+}
+
+
+/* Local functions */
+
+int 
+cmp_int(const void *a, const void *b)
+{
+        return (*(int *)a - *(int *)b);
 }
 
 int
