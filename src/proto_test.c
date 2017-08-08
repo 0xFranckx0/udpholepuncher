@@ -80,22 +80,26 @@ main()
         del_punch_msg(pm);
 
 */
-/* tests for split port strings 
+/* tests for split port strings */ 
 
         struct l_ports *ports; 
         int i;
+        char *port_str[2] = {"40", "41-50"};
 
-        ports = parse_ports(2, "40", "41-50");
+        ports = parse_ports(port_str, 2);
         if(ports == NULL){
                 perror("ports error");
                 exit(0);
         }
+
+        printf("---42:  %d\n", ports->size);
+        
         for(i = 0; i < ports->size; i++)
                 printf("%d\n", ports->p[i]);
         
-*/
 
 /* Tests for LISTS */
+/*
         struct slist list;
         struct entry *tmp = NULL;
         int data[10] = {5060, 22, 132, 3333, 40, 2, 50, 6};
@@ -119,6 +123,7 @@ main()
         entry_delete(&list, NULL, tmp);
         printf("\n---------\n");
         slist_print(&list, print_data_int);
+*/
 
         return 0;
 }
