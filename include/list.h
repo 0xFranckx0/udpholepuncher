@@ -11,10 +11,11 @@ struct slist{
         struct entry *current;
         struct entry *tail;
         int len;
+        int size;
 };
 
 /* uhp_list.c */
-void             slist_init(struct slist *);
+void             slist_init(struct slist *, int);
 void             slist_insert(struct slist *, void *);
 void             slist_append(struct slist *, void *);
 void            *slist_pop(struct slist *);

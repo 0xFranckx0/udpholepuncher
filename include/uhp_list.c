@@ -1,12 +1,15 @@
+#include <stdlib.h>
+
 #include "uhp.h"
 
 void 
-slist_init(struct slist *list)
+slist_init(struct slist *list, int size)
 {
         list->head         = NULL;
         list->current      = NULL;
         list->tail         = NULL;
         list->len          = 0;
+        list->size         = size;
 }
 
 void
@@ -15,9 +18,14 @@ slist_insert(struct slist *list, void *data)
         struct entry *e = entry_new();
         if (e == NULL) {
                 perror("Can,t get a new entry");
-                return; 
+                goto error;
         }
-        e->data = data;
+        e->data = malloc(sizeof(list->size));
+        if(e->data == NULL) {
+                perror("Malloc failed");
+                goto error;
+        }
+        memcpy(e->data, data, list->size);
         if(list->head == NULL) {
                 list->tail = e;
                 e->next = NULL;
@@ -26,25 +34,14 @@ slist_insert(struct slist *list, void *data)
         }
         list->head = e;
         list->len++;
+        return;
+error:
+        if (e->data != NULL) 
+                free(e->data);
+
+        entry_delete(list, NULL, e);        
 }
 
-void
-slist_append(struct slist *list, void *data) {
-        struct entry *e = entry_new();
-        if (e == NULL) {
-                perror("Can,t get a new entry");
-                return; 
-        }
-        e->data = data;
-        e->next = NULL;
-        if (list->head == NULL) {
-                list->head = e;
-        } else {
-                list->tail->next = e;
-        }
-        list->tail = e;
-        list->len++;
-}
 
 void *
 slist_pop(struct slist *list)
