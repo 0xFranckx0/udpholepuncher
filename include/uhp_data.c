@@ -41,6 +41,8 @@
 
 static int cmp_int(const void *, const void *);
 static int str2int(char *);
+static void print_data_int(void *);
+
 
 int
 rand2int(uint8_t *rb, int size)
@@ -164,8 +166,8 @@ parse_ports(char **ports, int size)
 	char *buf, *p;
         char *token = NULL;
         char *delim = "-";
-        
-        slist_init(&list);
+
+        slist_init(&list, sizeof(int));
 
         for(i = 0; i < size; i++) {
                 if (strchr(ports[i],'-') != NULL && 
@@ -189,10 +191,9 @@ parse_ports(char **ports, int size)
                         diff = (range[0] >= range[1])? range[0] - range[1]:
                                                        range[1] - range[0];
                         inf = (range[0] >= range[1])? range[1]:range[0];
-
                         for (j = 0; j <= diff; j++) { 
-                                x = range[0] = j;
-                                slist_append(&list, &x);
+                                slist_insert(&list, &inf);
+                                inf++;
                         }
                 } else if (strchr(ports[i],'-') != NULL && 
                            (strchr(ports[i],'-') != strrchr(ports[i],'-'))) {
@@ -204,7 +205,7 @@ parse_ports(char **ports, int size)
                                 perror("Failed to convert string to int");
                                 goto error;
                         }
-                	slist_append(&list, &x);
+                	slist_insert(&list, &x);
 		}
         }
 
@@ -219,11 +220,16 @@ parse_ports(char **ports, int size)
                 perror("Malloc failed");
                 goto error;
         }
-        list_ports->p = 0;
+        list_ports->size = 0;
 
-        while ((data = slist_pop(&list)) != NULL) {
-                list_ports->p[i] = *((int *)data); 
-                list_ports->size++;
+        for (i = 0; slist_is_empty > 0; i++) {
+                data = slist_pop(&list);
+                if (data != NULL) {
+                        list_ports->p[i] = *((int *)data); 
+                        list_ports->size++;
+                } else {
+                        break;
+                }        
         }
         /* sort the port list in ascending order */
         qsort(list_ports->p, list_ports->size, sizeof(int), cmp_int); 
@@ -267,4 +273,13 @@ str2int(char *str)
 
         return ival;
 }
+
+void
+print_data_int(void *data)
+{
+        int c = *((int *) data); 
+        if (data != NULL)
+                printf("%d\n", c);
+}
+
 
