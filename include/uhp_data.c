@@ -41,7 +41,6 @@
 
 static int cmp_int(const void *, const void *);
 static int str2int(char *);
-static void print_data_int(void *);
 
 
 int
@@ -272,14 +271,6 @@ str2int(char *str)
         ival = lval;
 
         return ival;
-}
-
-void
-print_data_int(void *data)
-{
-        int c = *((int *) data); 
-        if (data != NULL)
-                printf("%d\n", c);
 }
 
 
