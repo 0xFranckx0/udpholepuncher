@@ -221,7 +221,7 @@ parse_ports(char **ports, int size)
         }
         list_ports->size = 0;
 
-        for (i = 0; slist_is_empty > 0; i++) {
+        for (i = 0; slist_is_empty(&list) > 0; i++) {
                 data = slist_pop(&list);
                 if (data != NULL) {
                         list_ports->p[i] = *((int *)data); 
