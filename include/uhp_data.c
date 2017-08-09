@@ -41,7 +41,8 @@
 
 static int cmp_int(const void *, const void *);
 static int str2int(char *);
-
+static int comp_data_int(void *, void *);
+static void print_data_int(void *);
 
 int
 rand2int(uint8_t *rb, int size)
@@ -161,7 +162,7 @@ parse_ports(char **ports, int size)
         struct slist list;
         void *data = NULL;
         int range[2];
-        int i, j, n, x, diff, inf; 
+        int i, j, n, x, y, diff, inf; 
 	char *buf, *p;
         char *token = NULL;
         char *delim = "-";
@@ -191,7 +192,10 @@ parse_ports(char **ports, int size)
                                                        range[1] - range[0];
                         inf = (range[0] >= range[1])? range[1]:range[0];
                         for (j = 0; j <= diff; j++) { 
-                                slist_insert(&list, &inf);
+                                if ((entry_find(&list, comp_data_int, &inf))> 0)
+                                        slist_insert(&list, &inf);
+                                
+                                slist_print(&list, print_data_int);
                                 inf++;
                         }
                 } else if (strchr(ports[i],'-') != NULL && 
@@ -204,7 +208,8 @@ parse_ports(char **ports, int size)
                                 perror("Failed to convert string to int");
                                 goto error;
                         }
-                	slist_insert(&list, &x);
+                        if ((entry_find(&list, comp_data_int, &x)) > 0)
+                                slist_insert(&list, &x);
 		}
         }
 
@@ -271,6 +276,20 @@ str2int(char *str)
         ival = lval;
 
         return ival;
+}
+
+int
+comp_data_int(void *x, void *y)
+{
+        return((*((int*)x) == *((int*)y)) ? 0 : 1);        
+}
+
+void
+print_data_int(void *data)
+{
+        int c = *((int *) data); 
+        if (data != NULL)
+                printf("%d\n", c);
 }
 
 

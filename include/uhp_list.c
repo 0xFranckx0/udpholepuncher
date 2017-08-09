@@ -146,3 +146,18 @@ entry_get(struct slist *list, int(*entry_cmp)(void *, void *), void *data)
         return NULL;
 }
 
+int
+entry_find(struct slist *list, int(*entry_cmp)(void *, void *), void *data)
+{
+        list->current = list->head;
+
+        while (list->current != NULL) {
+                if (entry_cmp(list->current->data,data) == 0)
+                        return 0;
+
+                list->current = list->current->next;        
+        }
+
+        return 1;
+}
+

@@ -84,7 +84,7 @@ main()
 
         struct l_ports *ports; 
         int i;
-        char *port_str[2] = {"40", "41-50"};
+        char *port_str[2] = {"4", "40-50"};
 
         ports = parse_ports(port_str, 2);
         if(ports == NULL){

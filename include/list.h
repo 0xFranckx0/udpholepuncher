@@ -24,5 +24,6 @@ void             slist_print(struct slist *, void(*)(void *));
 struct entry    *entry_new();
 void             entry_delete(struct slist *, void(*)(void *), struct entry *);
 struct entry    *entry_get(struct slist *, int(*)(void *, void *), void *);
+int              entry_find(struct slist *, int(*)(void *, void *), void *);
 
 #endif /* LIST_H */
