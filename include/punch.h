@@ -62,8 +62,9 @@ struct output_p {
 };
 
 struct l_ports {
-        int size;
-        int *p;
+        int   size;
+        int  *p;
+        char **p_str;
 };
 /* uhp_data.c */
 struct l_ports *parse_ports(char **, int);

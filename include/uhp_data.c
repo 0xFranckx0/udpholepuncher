@@ -224,6 +224,13 @@ parse_ports(char **ports, int size)
                 perror("Malloc failed");
                 goto error;
         }
+
+        list_ports->p_str = malloc(list.len * sizeof(char*));
+        if (list_ports->p_str == NULL) {
+                perror("Malloc failed");
+                goto error;
+        }
+
         list_ports->size = 0;
 
         for (i = 0; slist_is_empty(&list) > 0; i++) {
@@ -238,13 +245,32 @@ parse_ports(char **ports, int size)
         /* sort the port list in ascending order */
         qsort(list_ports->p, list_ports->size, sizeof(int), cmp_int); 
 
+        /* Fillout the char * array of ports */
+        for (i = 0; i < list_ports->size; i++){ 
+                list_ports->p_str[i] = malloc(6);
+                if (list_ports->p_str[i] == NULL) {
+                        perror("Malloc failed");
+                        goto error;
+                }
+                snprintf(list_ports->p_str[i], sizeof(list_ports->p_str[i]),
+                                        "%d", list_ports->p[i]);
+        }
+
         return list_ports;
 
 error:
-        if (list_ports->p != NULL)
-                free(list_ports->p);
-        if (list_ports != NULL)
+        if (list_ports != NULL) {
+                if (list_ports->p != NULL)
+                        free(list_ports->p);
+                if (list_ports->p_str != NULL){
+                        for(i = 0; i < list_ports->size || 
+                                        list_ports->p_str[i] ==NULL; i++)
+                                free(list_ports->p_str[i]);
+                        free(list_ports->p);
+                }        
+
                 free(list_ports);
+        }       
         
         return NULL;
 

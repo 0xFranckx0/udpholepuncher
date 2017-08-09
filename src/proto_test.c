@@ -84,7 +84,7 @@ main()
 
         struct l_ports *ports; 
         int i;
-        char *port_str[2] = {"4", "40-50"};
+        char *port_str[2] = {"75535", "40-50"};
 
         ports = parse_ports(port_str, 2);
         if(ports == NULL){
@@ -95,7 +95,7 @@ main()
         printf("---42:  %d\n", ports->size);
         
         for(i = 0; i < ports->size; i++)
-                printf("%d\n", ports->p[i]);
+                printf("INT %d, STR = %s\n", ports->p[i], (ports)->p_str[i]);
         
 
 /* Tests for LISTS */
