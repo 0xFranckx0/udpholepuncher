@@ -289,19 +289,21 @@ int
 str2int(char *str)
 {
         long lval;
-        int ival;
 	char *buf;
 
         errno = 0; 
         lval = strtol(str, &buf, 10);
+	if (str[0] == '\0' || *buf != '\0'){ 
+                perror("#1 strtol failed");
+		return -1;
+	}
         if ((errno == ERANGE && (lval == LONG_MAX || 
                 lval == LONG_MIN)) || (lval > 65535 || lval < 0)){ 
                 perror("#2 strtol failed");
                 return -1;
         }
-        ival = lval;
 
-        return ival;
+        return (int)lval;
 }
 
 int
