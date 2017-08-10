@@ -45,12 +45,13 @@ struct uhp_info {
 	int 	 	 sock;	/*!< Socket on which communication is enabled */
 	int  	         master;/*!< Defines a master: SELF or PEER */
 	void 		*data;
-	char 		*port;	/*!< Destination port */
+	char 		*port;	
 	char 		*dst;	/*!< Destination address */
 };
 
 struct input_p {
 	struct event_base 	*base; 
+	int			 port_int;
 	char 			*address;
 	char 			*port;
 	char 			*msg;
