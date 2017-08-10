@@ -8,7 +8,9 @@ slist_init(struct slist *list, int size)
         list->head         = NULL;
         list->current      = NULL;
         list->tail         = NULL;
+        /* length of the list */
         list->len          = 0;
+        /* size of the data should be assign with sizeof operator */
         list->size         = size;
 }
 
@@ -42,23 +44,22 @@ error:
         entry_delete(list, NULL, e);        
 }
 
-
 void *
 slist_pop(struct slist *list)
 {
         void *data = NULL;
-        struct entry *entry = list->head;
+        list->current = list->head;
 
-        if (entry == NULL) {
+        if (list->current == NULL) {
                 data = NULL;
-        } else if (entry == list->tail) {
+        } else if (list->current == list->tail) {
                 list->head = list->tail = NULL;
-                data = entry->data;
-                free(entry);
+                data = list->current->data;
+                free(list->current);
         } else {
                 list->head = list->head->next;
-                data = entry->data;
-                free(entry);
+                data = list->current->data;
+                free(list->current);
         }
         
         return data;
@@ -67,20 +68,16 @@ slist_pop(struct slist *list)
 int
 slist_is_empty(struct slist *list)
 {
-        if (list->len == 0) {
-                return 0;
-        } else {
-                return 1;
-        }
+        return((list->len == 0)?0:1); 
 }
 
 void
 slist_print(struct slist *list, void(*entry_print)(void *)) 
 {
-        struct entry *current = list->head;
-        while (current != NULL) {
-                entry_print(current->data);
-                current = current->next;
+        list->current = list->head;
+        while (list->current != NULL) {
+                entry_print(list->current->data);
+                list->current = list->current->next;
         }
 }
 
@@ -108,8 +105,6 @@ Function entry_delete
 void
 entry_delete(struct slist *list, void(*data_free)(void *), struct entry *entry)
 {
-        struct entry *tmp;
-
         if (entry == list->head) {
                 if (list->head->next == NULL) {
                         list->head = list->tail = NULL;
@@ -117,12 +112,12 @@ entry_delete(struct slist *list, void(*data_free)(void *), struct entry *entry)
                         list->head = list->head->next;
                 }
         } else {
-                tmp = list->head;
-                while ( tmp != NULL && tmp->next != entry){
-                        tmp = tmp->next;
+                list->current = list->head;
+                while ( list->current != NULL && list->current->next != entry){
+                        list->current = list->current->next;
                 }
-                if (tmp != NULL)
-                        tmp->next = entry->next;
+                if (list->current != NULL)
+                        list->current->next = entry->next;
         }
         if (data_free != NULL)
                 data_free(entry->data);
@@ -134,13 +129,13 @@ entry_delete(struct slist *list, void(*data_free)(void *), struct entry *entry)
 struct entry *
 entry_get(struct slist *list, int(*entry_cmp)(void *, void *), void *data)
 {
-        struct entry *entry = list->head;
+        list->current = list->head;
 
-        while (entry != NULL) {
-                if (entry_cmp(entry->data,data) == 0)
-                        return entry;
+        while (list->current != NULL) {
+                if (entry_cmp(list->current->data,data) == 0)
+                        return list->current;
 
-                entry = entry->next;        
+                list->current = list->current->next;        
         }
 
         return NULL;
@@ -149,15 +144,6 @@ entry_get(struct slist *list, int(*entry_cmp)(void *, void *), void *data)
 int
 entry_find(struct slist *list, int(*entry_cmp)(void *, void *), void *data)
 {
-        list->current = list->head;
-
-        while (list->current != NULL) {
-                if (entry_cmp(list->current->data,data) == 0)
-                        return 0;
-
-                list->current = list->current->next;        
-        }
-
-        return 1;
+        return ((entry_get(list, entry_cmp, data) == NULL?1:0));
 }
 

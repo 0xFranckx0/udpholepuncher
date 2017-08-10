@@ -82,6 +82,7 @@ main()
 */
 /* tests for split port strings */ 
 
+/*
         struct l_ports *ports; 
         int i;
         char *port_str[2] = {"6535", "40-50"};
@@ -96,19 +97,24 @@ main()
         
         for(i = 0; i < ports->size; i++)
                 printf("INT %d, STR = %s\n", ports->p[i], (ports)->p_str[i]);
+*/
         
 
 /* Tests for LISTS */
-/*
         struct slist list;
         struct entry *tmp = NULL;
         int data[10] = {5060, 22, 132, 3333, 40, 2, 50, 6};
-        int i;
+        int i, x;
         int a = 12;
         int b = 13;
         int c = 132;
 
-        slist_init(&list);
+        slist_init(&list, sizeof(int));
+        if (slist_is_empty(&list) > 0) {
+                printf("NOT EMPTY\n");
+        } else {
+                printf("EMPTY\n");
+        }
         for (i = 0; i < 8; i++) 
                 slist_insert(&list, &data[i]);
                 
@@ -116,14 +122,20 @@ main()
         
 
         slist_insert(&list, &a);
-        slist_append(&list, &b);
+        if (slist_is_empty(&list) > 0) {
+                printf("NOT EMPTY\n");
+        } else {
+                printf("EMPTY\n");
+        }
         printf("\n---------\n");
         slist_print(&list, print_data_int);
+        x = entry_find(&list, comp_data_int, &c);
+        printf("x = %d\n", x);
         tmp = entry_get(&list, comp_data_int, &c);
         entry_delete(&list, NULL, tmp);
+        slist_pop(&list);
         printf("\n---------\n");
         slist_print(&list, print_data_int);
-*/
 
         return 0;
 }
