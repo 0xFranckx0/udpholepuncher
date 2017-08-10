@@ -101,6 +101,7 @@ main()
         
 
 /* Tests for LISTS */
+/*
         struct slist list;
         struct entry *tmp = NULL;
         int data[10] = {5060, 22, 132, 3333, 40, 2, 50, 6};
@@ -136,6 +137,77 @@ main()
         slist_pop(&list);
         printf("\n---------\n");
         slist_print(&list, print_data_int);
+*/
+/* Test For initializing sockets */
+        struct l_ports *ports; 
+        struct input_p **ip;
+        int i;
+        char *port_str[2] = {"6535", "40-50"};
+        char *address = "10.30.40.50";  
+
+        ports = parse_ports(port_str, 2);
+        if(ports == NULL){
+                perror("ports error");
+                exit(0);
+        }
+
+        ip = malloc(ports->size * sizeof(struct input_p)); 
+        if(ip == NULL){
+                perror("ports error");
+		goto freemem;
+        }
+
+        for(i = 0; i < ports->size; i++){
+                ip[i] = malloc(sizeof(struct input_p)); 
+                if(ip[i] == NULL){
+                        perror("Malloc error");
+			goto freemem;
+                }
+		ip[i]->address = strdup(address);	
+		if (ip[i]->address == NULL){
+			perror("strdup failed");
+			goto freemem;
+		}
+		ip[i]->port_int = ports->p[i];
+		ip[i]->port = ports->p_str[i];
+
+		ip[i]->msg = strdup("HELLO");	
+		if (ip[i]->msg == NULL){
+			perror("strdup failed");
+			goto freemem;
+		}
+		printf("INITIALIZATION: MSG: %s\n", ip[i]->msg);
+
+		ip[i]->base = event_base_new();
+		if (ip[i]->base == NULL) {
+			perror("Couldn't open event base");
+			goto freemem;
+		}
+		printf("INITIALIZATION: ADDRESS: %s PORT: %d - %s\n",
+			ip[i]->address, ip[i]->port_int, ip[i]->port);
+	}
+
+freemem:
+	/* Freeing memory */
+	if (ip != NULL && ports != NULL) {
+		for(i = 0; i < ports->size; i++){
+			if (ip[i] != NULL){
+				if(ip[i]->address != NULL)
+					free(ip[i]->address);
+				if(ip[i]->msg != NULL)
+					free(ip[i]->msg);
+			}
+			if(ports->p_str != NULL && ports->p_str[i] != NULL)
+				free(ports->p_str[i]);
+		}
+		free(ip);
+		if(ports->p != NULL)
+			free(ports->p);
+		if(ports->p_str != NULL)
+			free(ports->p_str);
+			
+		free(ports);
+	}	
 
         return 0;
 }
