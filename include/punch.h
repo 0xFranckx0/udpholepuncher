@@ -51,6 +51,8 @@ struct uhp_info {
 
 struct input_p {
 	struct event_base 	*base; 
+        struct sockaddr_in      *sin;
+        int                      sock;
 	int			 port_int;
 	char 			*address;
 	char 			*port;
@@ -60,6 +62,11 @@ struct input_p {
 struct output_p {
 	int (*uhp_cb)(int, struct uhp_info *);
 	void *metadata;
+};
+
+struct uhp_data {
+        struct input_p  *in;
+        struct output_p *out;
 };
 
 struct l_ports {
@@ -73,5 +80,7 @@ struct l_ports *parse_ports(char **, int);
 
 /* uhp_loop.c */
 void	punch(struct input_p *, struct output_p *);
+/* uhp_init.c */
+struct slist *punch_init(char **, int, char *); 
 
 #endif /* PUNCH_H  */

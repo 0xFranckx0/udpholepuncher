@@ -200,6 +200,7 @@ freemem:
 			if(ports->p_str != NULL && ports->p_str[i] != NULL)
 				free(ports->p_str[i]);
 		}
+
 		free(ip);
 		if(ports->p != NULL)
 			free(ports->p);
