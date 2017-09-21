@@ -29,6 +29,7 @@ next_msg(struct transaction **table, int port)
 
         msg = new_punch_msg();
         if ( table[port] == NULL ) {
+                msg->port = port;
                 msg->tag = HELLO;
                 err = RAND_bytes(r, MAX_BYTES);
                 if ( err < 1 ) {

@@ -99,6 +99,7 @@ struct punch_msg {
 	int		tag;	/*!< TAG identifying the payload */
 	int		epoch;	        /*!< Timestamp */
 	int	        count;          /*!< Numeric ID of transaction */
+	int	        port;          /*!< source port */
 };
 
 struct transaction {
@@ -122,7 +123,7 @@ struct transaction      *transac_table[MAX_PORT];
 
 /* uhp_net.c */
 evutil_socket_t		 new_receiver_socket(const char *);
-struct sockaddr_in 	*get_sockaddr_in(const char *, const char *);
+struct sockaddr_in 	*get_sockaddr_in(const char *, int);
 unsigned char		*get_addr(const char *, const int);
 void 			 print_addr(const unsigned char *, const int);
 

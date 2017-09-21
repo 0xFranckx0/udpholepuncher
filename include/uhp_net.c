@@ -47,7 +47,7 @@ new_socket(const char *addr, const char *port)
     	struct addrinfo *res, hints;
 	int rv, s;
 
-	int optval = 1;
+	int optval;
 	memset(&hints, 0, sizeof(struct addrinfo));
 	hints.ai_family 	= AF_INET;
 	hints.ai_socktype 	= SOCK_DGRAM;
@@ -71,6 +71,7 @@ new_socket(const char *addr, const char *port)
 		goto cleanup;
 	}
 	evutil_make_socket_nonblocking(listener);
+        optval = 1;
 	if (setsockopt(listener, SOL_SOCKET, SO_REUSEADDR, 
 			&optval, sizeof(optval)) < 0){
 		perror("setsockopt failed");
@@ -139,21 +140,13 @@ new_receiver_socket(const char *port)
 
 
 struct sockaddr_in *
-get_sockaddr_in(const char * dst, const char * port)
+get_sockaddr_in(const char * dst, int port)
 {
 	struct sockaddr_in 	*sin;
         char *buf;
-        long lval;
-	int s, ival;
+	int s;
 
 	errno = 0; 
-        lval = strtol(port, &buf, 10);
-	if (buf[0] == '\0' || *buf != '\0') 
-	     goto not_a_number; 
-	if ((errno == ERANGE && (lval == LONG_MAX || lval == LONG_MIN)) || 
-	    (lval > 65535 || lval < 0)) 
-	     goto out_of_range; 
-	ival = lval;
 
 
 	sin = malloc(sizeof(*sin));
@@ -163,7 +156,7 @@ get_sockaddr_in(const char * dst, const char * port)
 	}
 	sin->sin_family = AF_INET;
 	//sin->sin_port = htons(atoi(port));
-	sin->sin_port = htons(ival);
+	sin->sin_port = htons(port);
 
 	s = inet_pton(AF_INET, dst, &sin->sin_addr);
 	if (s <= 0){

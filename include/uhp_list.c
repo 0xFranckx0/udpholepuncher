@@ -56,14 +56,17 @@ slist_pop(struct slist *list)
                 list->head = list->tail = NULL;
                 data = list->current->data;
                 free(list->current);
+                list->len--;
         } else {
                 list->head = list->head->next;
                 data = list->current->data;
                 free(list->current);
+                list->len--;
         }
         
         return data;
 }
+
 
 int
 slist_is_empty(struct slist *list)

@@ -68,28 +68,28 @@ msg2json(const struct punch_msg *msg)
         case 0:
                 type = strdup(HELLO_TAG);
                 if (type == NULL){
-                        perror("String duplciation failed");
+                        perror("String duplication failed");
                         goto error;
                 }
                 break;
         case 1:
                 type = strdup(ACK_TAG);
                 if (type == NULL){
-                        perror("String duplciation failed");
+                        perror("String duplication failed");
                         goto error;
                 }
                 break;
         case 2:
                 type = strdup(BYE_TAG);
                 if (type == NULL){
-                        perror("String duplciation failed");
+                        perror("String duplication failed");
                         goto error;
                 }
                 break;
         case 3:
                 type = strdup(CANCEL_TAG);
                 if (type == NULL){
-                        perror("String duplciation failed");
+                        perror("String duplication failed");
                         goto error;
                 }
                 break;
@@ -98,9 +98,10 @@ msg2json(const struct punch_msg *msg)
                 goto error;
         }
 
-        root = json_pack("{sssisisi}", 
+        root = json_pack("{sssisisisi}", 
                         "type", type, 
                         "punchid", msg->punchid,
+                        "port", msg->port,
                         "count", msg->count,
                         "epoch", msg->epoch);
 	  
@@ -129,9 +130,10 @@ json2msg(const char *s)
 	}
         msg = new_punch_msg();
 
-	json_unpack(root, "{s:s, s:i, s:i, s:i}", 
+	json_unpack(root, "{s:s, s:i, s:i, s:i, s:i}", 
 			"type", &tag, 
 			"punchid", &msg->punchid,
+			"port", &msg->port,
 			"count", &msg->count,
 			"epoch", &msg->epoch);
 	printf("TYPE: %s\n", tag);
@@ -195,7 +197,6 @@ parse_ports(char **ports, int size)
                                 if ((entry_find(&list, comp_data_int, &inf))> 0)
                                         slist_insert(&list, &inf);
                                 
-                                slist_print(&list, print_data_int);
                                 inf++;
                         }
                 } else if (strchr(ports[i],'-') != NULL && 

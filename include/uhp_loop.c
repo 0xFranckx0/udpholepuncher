@@ -51,27 +51,24 @@ static struct ev_data {
 	struct uhp_infos 	*infos;
 	void			*data;
 	void (*uhp_cb)(int flag, struct uhp_info *ui);
-};
+} ev_data;
 
-static void receiver_cb(evutil_socket_t, short, void*);
 static void sender_cb(evutil_socket_t, short, void*);
+static void receiver_cb(evutil_socket_t, short, void*);
 
-static struct uhp_socks *usock;
-static char 		*message;
-struct event 		*evs;
-struct event 		*evr;
 
 void
 sender_cb(evutil_socket_t listener, short event, void *arg)
 {
-	struct event_base 	*base = arg;
+        struct uhp_data *data = arg;
+        printf("RECEIVER Port: %s MESSAGE: %s\n", data->in->port, 
+                        data->in->msg);
+
+/*
 	struct sockaddr_in 	*sin;
-	struct timeval 		 time = {2,0};
-	int 			 slen = sizeof(sin);
 	int 			 len;
 	int			 s;
 	ssize_t 		 lensnd;
-
 	len = strlen(message) + 1;
 	sin = (struct sockaddr_in *)arg;
 
@@ -96,11 +93,14 @@ sender_cb(evutil_socket_t listener, short event, void *arg)
 		free(usock);
 		event_free(evs);
 	}
+*/
 }
 
 void
 receiver_cb(evutil_socket_t listener, short event, void *arg)
 {
+        struct input_p *in = arg;
+/*
 	struct event_base *base = arg;
 	struct sockaddr_in sin;
 	ssize_t lenrcv;
@@ -114,77 +114,31 @@ receiver_cb(evutil_socket_t listener, short event, void *arg)
 		perror("recvfrom()");
 	}
 	printf("SERVER RECEIVED : %s\n", buf);
+*/
 }
 
-void
-punch(struct input_p *ip, struct output_p *op) 
-{
-        struct ev_data          *arg;
-	struct uhp_socks 	*s;
-	struct uhp_infos 	*infos;
-	struct timeval 		 time = {2,0};
-	struct sockaddr_in 	*sin;
 
-	printf("RUN THE PUNCH: %s\n", ip->msg);
-	message = ip->msg;
+void
+punch_start(struct slist *list, struct event_base *base) 
+{
+        struct event 		*evs, *evr;
+	struct timeval 		 time = {2,0};
+        struct uhp_data         *data = NULL;
+        int i;
 
         init_table(transac_table, MAX_PORT);
         
-        arg = malloc(sizeof(*arg));
-	if (arg == NULL){
-		syserr(__func__, "malloc failed");
-		exit(-1);
-	}
-        memset(arg, 0, sizeof(arg));
-
-	arg->s = malloc(sizeof(*arg->s));
-	if (arg->s == NULL){
-		syserr(__func__, "malloc failed");
-		exit(-1);
-	}
-
-	s->dst = strndup(ip->address, strlen(ip->address) + 1);
-	if (s->dst == NULL){
-		syserr(__func__, "strdup");
-		free(s);
-		exit(-1);
-	}
-
-	s->rport = strndup(ip->port, strlen(ip->port) + 1);
-	if (s->rport == NULL){
-		syserr(__func__, "strdup");
-		free(s->dst);
-		free(s);
-		exit(-1);
-	}
-
-	s->r = new_receiver_socket(ip->port);
-	if (s->r < 0){
-		funerr(__func__, "new_receiver_scoket failed");	
-		free(s->dst);
-		free(s->rport);
-		free(s);
-		exit(-1);
-	}
-	usock = s;
-
-	infos = malloc(sizeof(infos));
-	if (infos == NULL){
-		syserr(__func__, "malloc");
-		free(s->dst);
-		free(s->rport);
-		free(s);
-		exit(-1);
-	}
-
-	sin = get_sockaddr_in((const char *)usock->dst, 
-				(const char *)usock->rport);
-
-	evs = event_new( ip->base, usock->r, EV_TIMEOUT|EV_PERSIST,
-					sender_cb, (void*)sin);
-	evr = event_new( ip->base, usock->r, EV_READ|EV_PERSIST,
-					receiver_cb, (void*)ip->base);
-	event_add(evs, &time);
-	event_add(evr, NULL);
-
+        for (i = 0; slist_is_empty > 0; i++){
+                if ((data = (struct uhp_data *)slist_pop(list)) != NULL) {
+                        evs = event_new(base, data->in->sock, 
+                               EV_TIMEOUT|EV_PERSIST, sender_cb, (void *)data);
+                        evr = event_new(base, data->in->sock,    
+                               EV_READ|EV_PERSIST, receiver_cb, (void *)data);
+                        event_add(evs, &time);
+                        event_add(evr, NULL);
+                } else {
+                        printf("NO DATA\n");
+                        break;
+                }
+        }
 }
