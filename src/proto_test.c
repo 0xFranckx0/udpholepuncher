@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <openssl/rand.h>
 
 #include <include/uhp.h>
@@ -139,6 +140,7 @@ main()
         slist_print(&list, print_data_int);
 */
 /* Test For initializing sockets */
+        /*
         struct l_ports *ports; 
         struct input_p **ip;
         int i;
@@ -188,7 +190,7 @@ main()
 	}
 
 freemem:
-	/* Freeing memory */
+	// Freeing memory 
 	if (ip != NULL && ports != NULL) {
 		for(i = 0; i < ports->size; i++){
 			if (ip[i] != NULL){
@@ -209,6 +211,53 @@ freemem:
 			
 		free(ports);
 	}	
+
+        return 0;
+}
+
+void
+print_data_int(void *data)
+{
+        int c = *((int *) data); 
+        if (data != NULL)
+                printf("%d\n", c);
+}
+
+int
+comp_data_int(void *x, void *y)
+{
+        return((*((int*)x) == *((int*)y)) ? 0 : 1);        
+}
+*/
+	
+        struct event_base *base;
+	struct uhp_data *data;
+	struct entry	*e;
+        struct slist    *items = NULL;
+        char            *port_str[2] = {"6528", "4000"};
+        char            *address = "10.30.40.50";  
+	int		 i;
+	
+        if ((items = punch_init(port_str, 2, address)) 
+                        == NULL) {
+                perror("Punch init failed");
+                return -1;
+        }
+        if (( base = event_base_new()) == NULL) {
+                perror("Failed to create event");
+                exit(-1);
+        }
+        punch_start(items, base);
+        event_base_dispatch(base);
+
+        for (i = 0; slist_is_empty(items) > 0; i++) {
+		printf("NB items = %d\n", items->len);
+		data = (struct uhp_data *)slist_pop(items);
+		if (data != NULL) {
+			input_free(data->in);
+			free(data);
+		}
+        }	
 
         return 0;
 }
