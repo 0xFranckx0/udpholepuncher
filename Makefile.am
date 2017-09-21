@@ -27,7 +27,7 @@ include_HEADERS =   include/error.h \
 
 bin_PROGRAMS = proto_test
 proto_test_SOURCES = src/proto_test.c
-proto_test_CPPFLAGS = -DDEBUG
+proto_test_CFLAGS = -DDEBUG -g3 -O0
 proto_test_LDADD = $(lib_LTLIBRARIES) \
 	     $(libevent_LIBS) 
 EXTRA_DIST = m4/NOTES                                                           
