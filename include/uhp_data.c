@@ -321,4 +321,8 @@ print_data_int(void *data)
                 printf("%d\n", c);
 }
 
-
+char *
+simple_message(struct input_p *i)
+{
+        return i->port;
+}

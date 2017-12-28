@@ -132,7 +132,12 @@ update_transaction(struct transaction **table, int p,
                         break;
        }
 }
-/*
-void                cleanup_table(struct transaction **);
-*/
+void 
+cleanup_table(struct transaction **table, int s)
+{
+        int i;
+
+        for (i = 0; i < s; i++) 
+                del_transaction(table[i]);
+}
 

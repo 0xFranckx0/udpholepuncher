@@ -22,6 +22,7 @@ struct uhp_info {
 
 /* input_p is passed to punch loop to create events */
 struct input_p {
+        char * (*get_message)(struct input_p *);
 	struct event_base 	*base; 
         struct sockaddr_in      *sin;
 	char 			*address;
@@ -48,7 +49,7 @@ struct l_ports {
 };
 /* uhp_data.c */
 struct l_ports *parse_ports(char **, int);
- 
+char * simple_message(struct input_p *); 
 
 /* uhp_loop.c */
 struct slist;

@@ -134,7 +134,7 @@ struct punch_msg   *next_msg(struct transaction **, int);
 int                 next_operation(struct transaction **,
                                    struct punch_msg *, int);
 void                init_table(struct transaction **, int);
-void                cleanup_table(struct transaction **);
+void                cleanup_table(struct transaction **, int);
 void                del_punch_msg(struct punch_msg *);
 void                new_transaction(struct transaction **, int);
 void                del_transaction(struct transaction *);

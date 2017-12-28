@@ -60,6 +60,7 @@ punch_init(char **pt, int sz, char *addr)
 			perror("strdup failed");
 			goto error;
 		}
+                in->get_message = simple_message;
         
                 slist_insert(l_data, &d);
         }
