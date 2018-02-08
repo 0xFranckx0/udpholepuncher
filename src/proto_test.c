@@ -233,32 +233,47 @@ comp_data_int(void *x, void *y)
         struct event_base *base;
 	struct uhp_data *data;
 	struct entry	*e;
-        struct slist    *items = NULL;
+        struct slist    *it = NULL;
         char            *port_str[2] = {"6528", "4000"};
         char            *address = "10.30.40.50";  
 	int		 i;
-	
-        if ((items = punch_init(port_str, 2, address)) 
+
+        if ((it = punch_init(port_str, 2, address)) 
                         == NULL) {
                 perror("Punch init failed");
                 return -1;
         }
+        struct output_p out = {
+                .sock_punch = 0,
+                .uhp_cb = NULL,
+                .metadata = NULL
+        };
+        struct uhp_input in = {
+                .items = it,
+                .out = &out
+        };
+	
+
         if (( base = event_base_new()) == NULL) {
                 perror("Failed to create event");
                 exit(-1);
         }
-        punch_start(items, base);
-        event_base_dispatch(base);
 
-        for (i = 0; slist_is_empty(items) > 0; i++) {
-		printf("NB items = %d\n", items->len);
-		data = (struct uhp_data *)slist_pop(items);
+        punch_start(&in, base);
+        event_base_dispatch(base);
+        event_base_free(base);
+
+        printf("Returned: %d\n",in.out->sock_punch);
+
+        for (i = 0; slist_is_empty(it) > 0; i++) {
+		printf("NB items = %d\n", it->len);
+		data = (struct uhp_data *)slist_pop(it);
 		if (data != NULL) {
 			input_free(data->in);
 			free(data);
 		}
         }	
-
+        
         return 0;
 }
 
