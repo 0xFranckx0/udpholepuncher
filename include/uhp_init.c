@@ -10,8 +10,6 @@ punch_init(char **pt, int sz, char *addr)
         struct l_ports *ports = NULL;
         struct slist *l_data   = NULL;
         struct input_p *in = NULL; 
-        struct output_p *out = NULL; 
-        struct uhp_data d; 
         int i;
 
         ports = parse_ports(pt, sz);
@@ -25,7 +23,7 @@ punch_init(char **pt, int sz, char *addr)
                 perror("Malloc Failed");
                 goto error;
         }
-        slist_init(l_data, sizeof(struct uhp_data));
+        slist_init(l_data, sizeof(struct input_p));
 
         for (i = 0; i < ports->size; i++) {
                 in = malloc(sizeof(struct input_p));
@@ -33,18 +31,8 @@ punch_init(char **pt, int sz, char *addr)
                         perror("Malloc Failed");
                         goto error;
                 }
-                out = malloc(sizeof(struct output_p));
-                d.in = in;
-                d.out = out;
 	        in->address = strdup(addr);	
                 in->base = NULL;
-                /*
-		in->base = event_base_new();
-		if (in->base == NULL) {
-			perror("Couldn't open event base");
-			goto error;
-		}
-                */
 		in->port_int = ports->p[i];
                 in->port = ports->p_str[i];
                 in->sock = new_receiver_socket(in->port);
@@ -62,7 +50,7 @@ punch_init(char **pt, int sz, char *addr)
 		}
                 in->get_message = simple_message;
         
-                slist_insert(l_data, &d);
+                slist_insert(l_data, in);
         }
         
 

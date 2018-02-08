@@ -24,31 +24,40 @@ static void sender_cb(evutil_socket_t, short, void*);
 static void receiver_cb(evutil_socket_t, short, void*);
 
 static struct event_base *stop_base;
-char *MSG = "TEST";
+static struct output_p *data_out;
+
+int max_hints = 5;
 
 void
 sender_cb(evutil_socket_t listener, short event, void *arg)
 {
-        struct uhp_data *data = arg;
+        struct input_p *data = arg;
 	ssize_t 		 lensnd;
-        char *msg = data->in->get_message(data->in);
+        char *msg = data->get_message(data);
 	int len = strlen(msg) + 1;
 
         
 	if (lensnd = (sendto((int)listener, (const void *)msg, len , 0, 
-		        (struct sockaddr *) data->in->sin, 
-                        sizeof(*data->in->sin))) < 0 ) {
+		        (struct sockaddr *) data->sin, 
+                        sizeof(*data->sin))) < 0 ) {
 
 	        perror("sendto()");
-		event_base_loopbreak(stop_base);
+		//event_base_loopbreak(stop_base);
         }
 
-        printf("RECEIVER Port: %s MESSAGE: %s\n", data->in->port, msg);
+        printf("RECEIVER Port: %s MESSAGE: %s\n", data->port, msg);
 
-	if (strncmp(msg,data->in->port,len) == 0 ){
+	if (strncmp(msg,data->port,len) == 0 ){
 		printf("DELETING event\n");
-		event_base_loopbreak(stop_base);
+		//event_base_loopbreak(stop_base);
 	}
+
+        if (max_hints > 0){
+                max_hints--;
+        } else {
+                data_out->sock_punch = data->sock;
+		event_base_loopbreak(stop_base);
+        }
 }
 
 void
@@ -69,25 +78,23 @@ receiver_cb(evutil_socket_t listener, short event, void *arg)
 	printf("SERVER RECEIVED : %s\n", buf);
 }
 
-
 void
-punch_start(struct slist *list, struct event_base *base) 
+punch_start(struct uhp_input *in, struct event_base *base) 
 {
         struct event 		*evs, *evr;
 	struct timeval 		 time = {2,0};
-        struct uhp_data         *data = NULL;
-        /* int i; */
+        struct input_p         *data = NULL;
+        data_out =              in->out;
+
         stop_base = base;
-        printf("%s\n",MSG);
 
         init_table(transac_table, MAX_PORT);
         
-        /* for (i = 0; slist_is_empty > 0; i++){ */
         while (slist_is_empty > 0){
-                if ((data = (struct uhp_data *)slist_pop(list)) != NULL) {
-                        evs = event_new(base, data->in->sock, 
+                if ((data = (struct input_p *)slist_pop(in->items)) != NULL) {
+                        evs = event_new(base, data->sock, 
                                EV_TIMEOUT|EV_PERSIST, sender_cb, (void *)data);
-                        evr = event_new(base, data->in->sock,    
+                        evr = event_new(base, data->sock,    
                                EV_READ|EV_PERSIST, receiver_cb, (void *)data);
                         event_add(evs, &time);
                         event_add(evr, NULL);

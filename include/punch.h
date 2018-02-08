@@ -33,8 +33,14 @@ struct input_p {
 };
 
 struct output_p {
+        int sock_punch;        
 	int (*uhp_cb)(int, struct uhp_info *);
-	void *metadata;
+	void    *metadata;
+};
+
+struct uhp_input {
+        struct slist *items;
+        struct output_p *out;
 };
 
 struct uhp_data {
@@ -53,7 +59,7 @@ char * simple_message(struct input_p *);
 
 /* uhp_loop.c */
 struct slist;
-void	punch_start(struct slist *, struct event_base *);
+void	punch_start(struct uhp_input *, struct event_base *);
 
 /* uhp_init.c */
 struct slist *punch_init(char **, int, char *); 
