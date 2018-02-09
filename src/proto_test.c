@@ -244,7 +244,7 @@ comp_data_int(void *x, void *y)
                 return -1;
         }
         struct output_p out = {
-                .sock_punch = 0,
+                .data_punch = NULL,
                 .uhp_cb = NULL,
                 .metadata = NULL
         };
@@ -263,7 +263,7 @@ comp_data_int(void *x, void *y)
         event_base_dispatch(base);
         event_base_free(base);
 
-        printf("Returned: %d\n",in.out->sock_punch);
+        /*printf("Returned: %d\n",in.out->sock_punch);*/
 
         for (i = 0; slist_is_empty(it) > 0; i++) {
 		printf("NB items = %d\n", it->len);
