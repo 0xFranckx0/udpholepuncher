@@ -53,9 +53,10 @@ sender_cb(evutil_socket_t listener, short event, void *arg)
 	}
 
         if (max_hints > 0){
-                max_hints--;
+                data->max_hints--;
         } else {
-                data_out->sock_punch = data->sock;
+                /*data_out->sock_punch = data->sock;*/
+                data->selected = 1;
 		event_base_loopbreak(stop_base);
         }
 }
@@ -63,19 +64,23 @@ sender_cb(evutil_socket_t listener, short event, void *arg)
 void
 receiver_cb(evutil_socket_t listener, short event, void *arg)
 {
-        struct input_p *in = arg;
+        struct input_p *data = arg;
 	ssize_t lenrcv;
-	socklen_t slen = sizeof(in->sin);
+	socklen_t slen = sizeof(data->sin);
 	char buf[MAX_BUF];
 
 	memset(buf,0,MAX_BUF);
 
 	if (lenrcv = (recvfrom((int)listener, &buf, sizeof(buf) - 1, 0,
-		(struct sockaddr *) &in->sin, &slen)) == -1) {
+		(struct sockaddr *) &data->sin, &slen)) == -1) {
 		perror("recvfrom()");
 		event_base_loopbreak(stop_base);
 	}
 	printf("SERVER RECEIVED : %s\n", buf);
+
+        data->selected = 1;
+        data_out->data_punch = NULL;
+	event_base_loopbreak(stop_base);
 }
 
 void

@@ -38,6 +38,7 @@
 
 #include <stdint.h>
 #include "uhp.h"
+#include "punch.h"
 
 static int cmp_int(const void *, const void *);
 static int str2int(char *);
@@ -277,6 +278,31 @@ error:
 
 }
 
+struct input_p *
+dup_input(struct input_p *in)
+{
+        struct input_p *dup;
+        dup = malloc(sizeof(dup));
+        if (dup == NULL) {
+                perror("Malloc Failed in dup_input() call");
+                goto error;
+        }
+        dup->sin = malloc(sizeof(struct sockaddr_in));
+        if (dup->sin == NULL) {
+                perror("Malloc Failed in dup_input() call");
+                goto error;
+        }
+        
+        return dup;
+
+error:
+        if(dup != NULL){
+                if(dup->base != NULL)
+                        free(dup->base);
+                free(dup);
+        }
+        return NULL;
+}
 
 /* Local functions */
 

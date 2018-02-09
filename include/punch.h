@@ -30,10 +30,12 @@ struct input_p {
 	char 			*port;
         int                      sock;
 	int			 port_int;
+        int                      max_hints;
+        int                      selected;
 };
 
 struct output_p {
-        int sock_punch;        
+        struct input_p *data_punch;        
 	int (*uhp_cb)(int, struct uhp_info *);
 	void    *metadata;
 };
@@ -53,6 +55,7 @@ struct l_ports {
         int  *p;
         char **p_str;
 };
+
 /* uhp_data.c */
 struct l_ports *parse_ports(char **, int);
 char * simple_message(struct input_p *); 

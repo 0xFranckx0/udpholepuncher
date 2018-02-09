@@ -49,6 +49,8 @@ punch_init(char **pt, int sz, char *addr)
 			goto error;
 		}
                 in->get_message = simple_message;
+                in->selected = 0;
+                in->max_hints = 3;
         
                 slist_insert(l_data, in);
         }

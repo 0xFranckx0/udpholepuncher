@@ -117,6 +117,7 @@ int 	                 port_sanitization(char *);
 int                      rand2int(uint8_t *, int);
 char                    *msg2json(const struct punch_msg *);
 struct punch_msg        *json2msg(const char *);
+struct input_p          *dup_input(struct input_p *);
 
 /* uhp_loop.c */
 struct transaction      *transac_table[MAX_PORT];
