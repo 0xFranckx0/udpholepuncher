@@ -23,7 +23,6 @@ struct uhp_info {
 /* input_p is passed to punch loop to create events */
 struct input_p {
         char * (*get_message)(struct input_p *);
-	struct event_base 	*base; 
         struct sockaddr_in      *sin;
 	char 			*address;
 	char 			*msg;
