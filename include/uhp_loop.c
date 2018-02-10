@@ -88,19 +88,23 @@ punch_start(struct uhp_input *in, struct event_base *base)
 {
         struct event 		*evs, *evr;
 	struct timeval 		 time = {2,0};
-        struct input_p         *data = NULL;
-        data_out =              in->out;
+        struct input_p          *data = NULL;
+        data_out =               in->out;
 
         stop_base = base;
 
         init_table(transac_table, MAX_PORT);
         
-        while (slist_is_empty > 0){
+        for (int i = 0; slist_is_empty(in->items) > 0; i++){
                 if ((data = (struct input_p *)slist_pop(in->items)) != NULL) {
                         evs = event_new(base, data->sock, 
                                EV_TIMEOUT|EV_PERSIST, sender_cb, (void *)data);
+                        in->out->list_evts[0][i] = evs;
+
                         evr = event_new(base, data->sock,    
                                EV_READ|EV_PERSIST, receiver_cb, (void *)data);
+                        in->out->list_evts[1][i] = evr;
+
                         event_add(evs, &time);
                         event_add(evr, NULL);
                 } else {

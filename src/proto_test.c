@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <openssl/rand.h>
+#include <event.h>
 
 #include <include/uhp.h>
 
@@ -244,6 +245,7 @@ comp_data_int(void *x, void *y)
                 return -1;
         }
         struct output_p out = {
+                .list_evts = NULL,
                 .data_punch = NULL,
                 .uhp_cb = NULL,
                 .metadata = NULL
@@ -252,7 +254,16 @@ comp_data_int(void *x, void *y)
                 .items = it,
                 .out = &out
         };
-	
+
+        *(out.list_evts[0]) = malloc(it->len * sizeof(struct event *));
+        if (*(out.list_evts[0]) == NULL){
+                perror("Malloc failed in punch_init");
+        }
+        *(out.list_evts[1]) = malloc(it->len * sizeof(struct event *));
+        if (*(out.list_evts[1]) == NULL){
+                perror("Malloc failed in punch_init");
+        }
+ 
 
         if (( base = event_base_new()) == NULL) {
                 perror("Failed to create event");
@@ -261,7 +272,7 @@ comp_data_int(void *x, void *y)
 
         punch_start(&in, base);
         event_base_dispatch(base);
-        event_base_free(base);
+        
 
         /*printf("Returned: %d\n",in.out->sock_punch);*/
 
@@ -272,7 +283,12 @@ comp_data_int(void *x, void *y)
 			input_free(data->in);
 			free(data);
 		}
+                event_free(out.list_evts[0][i]);
+                event_free(out.list_evts[1][i]);
         }	
+        event_base_free(base);
+        
+        input_free(data->out->data_punch);
         
         return 0;
 }

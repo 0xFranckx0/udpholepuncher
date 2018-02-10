@@ -34,6 +34,7 @@ struct input_p {
 };
 
 struct output_p {
+        struct event **list_evts[2];
         struct input_p *data_punch;        
 	int (*uhp_cb)(int, struct uhp_info *);
 	void    *metadata;
