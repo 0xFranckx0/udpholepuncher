@@ -5,6 +5,8 @@
 
 #include <include/uhp.h>
 
+#define MAX_BUF		64000
+
 static void print_data_int(void *);
 static int comp_data_int(void *, void *);
 static void delete_data_int(void *);
@@ -235,9 +237,14 @@ comp_data_int(void *x, void *y)
 	struct uhp_data *data;
 	struct entry	*e;
         struct slist    *it = NULL;
-        char            *port_str[2] = {"6528", "4000"};
+        char            *port_str[2] = {"6527", "4001"};
         char            *address = "10.30.40.50";  
+	char		*message = "PUNCHED FROM: ";
+	char buf[MAX_BUF];
 	int		 i;
+	int len = strlen(message) + 1;
+	ssize_t lenrcv, lensnd;
+	socklen_t slen = sizeof(struct sockaddr_in);
 
         if ((it = punch_init(port_str, 2, address)) 
                         == NULL) {
@@ -255,15 +262,15 @@ comp_data_int(void *x, void *y)
                 .out = &out
         };
 
-        *(out.list_evts[0]) = malloc(it->len * sizeof(struct event *));
-        if (*(out.list_evts[0]) == NULL){
+        out.list_evts[0] = malloc(it->len * sizeof(struct event *));
+        if (out.list_evts[0] == NULL){
                 perror("Malloc failed in punch_init");
         }
-        *(out.list_evts[1]) = malloc(it->len * sizeof(struct event *));
-        if (*(out.list_evts[1]) == NULL){
+
+        out.list_evts[1] = malloc(it->len * sizeof(struct event *));
+        if (out.list_evts[1] == NULL){
                 perror("Malloc failed in punch_init");
         }
- 
 
         if (( base = event_base_new()) == NULL) {
                 perror("Failed to create event");
@@ -273,8 +280,6 @@ comp_data_int(void *x, void *y)
         punch_start(&in, base);
         event_base_dispatch(base);
         
-
-        /*printf("Returned: %d\n",in.out->sock_punch);*/
 
         for (i = 0; slist_is_empty(it) > 0; i++) {
 		printf("NB items = %d\n", it->len);
@@ -288,7 +293,32 @@ comp_data_int(void *x, void *y)
         }	
         event_base_free(base);
         
-        input_free(data->out->data_punch);
+
+        
+	if (lensnd = (sendto((int)out.data_punch->sock, (const void *)message, 
+			len , 0, (struct sockaddr *) out.data_punch->sin, 
+			slen)) < 0 ) {
+
+	        perror("sendto()");
+		goto cleanup;
+        }
+
+
+	memset(buf,0,MAX_BUF);
+
+	if (lenrcv = (recvfrom((int)out.data_punch->sock, &buf, sizeof(buf) - 1, 
+			0, (struct sockaddr *) &out.data_punch->sin, 
+			&slen)) == -1) {
+
+		perror("recvfrom()");
+		goto cleanup;
+	}
+
+	printf("SERVER RECEIVED : %s at address : \n", buf, 
+		out.data_punch->address);
+
+cleanup:
+        input_free(out.data_punch);
         
         return 0;
 }
