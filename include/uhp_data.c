@@ -292,15 +292,48 @@ dup_input(struct input_p *in)
                 perror("Malloc Failed in dup_input() call");
                 goto error;
         }
-        
+        memcpy(dup->sin, in->sin, sizeof(dup->sin));
+
+        if (in->address != NULL){
+                dup->address = strdup(strlen(in->address));
+                if (dup->address == NULL) {
+                        perror("Failed to duplicate string");
+                        goto error;
+                }
+        } else {
+                perror("No address");
+                goto error;
+        }
+
+        if (in->msg) {                       
+                dup->msg = strdup(in->msg);
+                if (dup->address == NULL) {
+                        perror("Failed to duplicate string");
+                        goto error;
+                }
+        }
+
+        if (in->port != NULL){
+                dup->port = in->port;
+                if (dup->port == NULL) {
+                        perror("Failed to duplicate string");
+                        goto error;
+                }
+        } else {
+                perror("No port");
+                goto error;
+        }
+
+        dup->get_message = *(in->get_message);
+        dup->sock = in->sock;
+        dup->port_int = in->port_int;
+        dup->max_hints = in->max_hints;
+        dup->selected = in->selected;
+
         return dup;
 
 error:
-        if(dup != NULL){
-                if(dup->base != NULL)
-                        free(dup->base);
-                free(dup);
-        }
+        input_free(dup);
         return NULL;
 }
 

@@ -32,13 +32,11 @@ punch_init(char **pt, int sz, char *addr)
                         goto error;
                 }
 	        in->address = strdup(addr);	
-                in->base = NULL;
 		in->port_int = ports->p[i];
                 in->port = ports->p_str[i];
                 in->sock = new_receiver_socket(in->port);
                 if (in->sock < 0){
                         perror("Failed to create socket");
-                        free(in->base);
                         continue;
                 }
 	        in->sin = get_sockaddr_in((const char *)in->address, 
@@ -72,11 +70,10 @@ void
 input_free(struct input_p *in)
 {
         if (in != NULL){
-                close(in->sock);
+                if (in->selected < 1)
+                        close(in->sock);
                 if (in->sin)
                         free(in->sin);
-                if (in->base)
-                        event_base_free(in->base);
                 if (in->address)
                         free(in->address);
                 if (in->port)
