@@ -292,10 +292,10 @@ dup_input(struct input_p *in)
                 perror("Malloc Failed in dup_input() call");
                 goto error;
         }
-        memcpy(dup->sin, in->sin, sizeof(dup->sin));
+        memcpy(dup->sin, in->sin, sizeof(struct sockaddr_in));
 
         if (in->address != NULL){
-                dup->address = strdup(strlen(in->address));
+                dup->address = strdup(in->address);
                 if (dup->address == NULL) {
                         perror("Failed to duplicate string");
                         goto error;

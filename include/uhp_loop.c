@@ -47,15 +47,12 @@ sender_cb(evutil_socket_t listener, short event, void *arg)
 
         printf("RECEIVER Port: %s MESSAGE: %s\n", data->port, msg);
 
-	if (strncmp(msg,data->port,len) == 0 ){
-		printf("DELETING event\n");
-		//event_base_loopbreak(stop_base);
-	}
 
-        if (max_hints > 0){
+        if (data->max_hints > 0){
                 data->max_hints--;
+                printf("MAX HINTS: %d\n", data->max_hints);
         } else {
-                /*data_out->sock_punch = data->sock;*/
+                data_out->data_punch = dup_input(data);
                 data->selected = 1;
 		event_base_loopbreak(stop_base);
         }
