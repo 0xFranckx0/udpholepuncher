@@ -140,7 +140,7 @@ new_receiver_socket(const char *port)
 
 
 struct sockaddr_in *
-get_sockaddr_in(const char * dst, int port)
+get_sockaddr_in(const char *dst, int port)
 {
 	struct sockaddr_in 	*sin;
         char *buf;
@@ -151,11 +151,10 @@ get_sockaddr_in(const char * dst, int port)
 
 	sin = malloc(sizeof(*sin));
 	if (sin == NULL){
-		syserr(__func__, "malloc");
+		perror("malloc failed");
 		exit(-1);
 	}
 	sin->sin_family = AF_INET;
-	//sin->sin_port = htons(atoi(port));
 	sin->sin_port = htons(port);
 
 	s = inet_pton(AF_INET, dst, &sin->sin_addr);
@@ -171,13 +170,4 @@ get_sockaddr_in(const char * dst, int port)
 	}
 
 	return sin;
-
-not_a_number:
-	perror("not a number");
-	return NULL;
-
-out_of_range:
-	perror("out_of_range");
-	return NULL;
-
 }
