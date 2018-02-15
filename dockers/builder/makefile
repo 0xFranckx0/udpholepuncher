@@ -12,10 +12,10 @@ compile:
 	docker exec -i $(IMAGE) /opt/build.sh
 
 run:
-	docker run -d -i --name builder --net=host -v $(SRC):/opt/uhp cdev/builder:1-0 
+	docker run -d -i --name $(IMAGE) --net=host -v $(SRC):/opt/uhp cdev/$(IMAGE):$(TAG)
 
 stop:
 	docker stop $(IMAGE) && docker rm $(IMAGE)
 
 punch:
-	docker exec -i -t $(IMAGE) /opt/uhp/test -a 192.168.0.10 -p 55555 -m message
+	docker exec -i -t $(IMAGE) /usr/local/bin/proto_test -a 192.168.0.10 -p 55555 -m message

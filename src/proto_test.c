@@ -15,7 +15,7 @@
 static void print_data_int(void *);
 static int comp_data_int(void *, void *);
 static void delete_data_int(void *);
-static int p_cb(int, struct uhp_info *);
+/*static int p_cb(int, struct uhp_carrier *);*/
 static void usage();
 
 int
@@ -23,7 +23,6 @@ main (int argc, char **argv)
 {
 
 	struct event_base 	*base; 
-	struct uhp_info 	*ui;
 	char 			*port;
 	char 			*pt[1];
 	char 			*message, *msg;
@@ -31,7 +30,7 @@ main (int argc, char **argv)
 	int			 c;
 	int			 options = 0;
 
-	struct uhp_data         *data;
+	struct uhp_carrier      *data;
 	struct entry	        *e;
         struct slist            *it = NULL;
         char                    *port_str[2] = {"6527", "4001"};
@@ -93,15 +92,11 @@ main (int argc, char **argv)
                 perror("Punch init failed");
                 return -1;
         }
-        struct output_p out = {
+        struct uhp_carrier out = {
+                .items = it,
                 .list_evts = NULL,
                 .data_punch = NULL,
-                .uhp_cb = NULL,
                 .metadata = NULL
-        };
-        struct uhp_input in = {
-                .items = it,
-                .out = &out
         };
 
         out.list_evts[0] = malloc(it->len * sizeof(struct event *));
@@ -119,15 +114,15 @@ main (int argc, char **argv)
                 exit(-1);
         }
 
-        punch_start(&in, base);
+        punch_start(&out, base);
         event_base_dispatch(base);
-        
+/*        
 
         for (i = 0; slist_is_empty(it) > 0; i++) {
 		printf("NB items = %d\n", it->len);
 		data = (struct uhp_data *)slist_pop(it);
 		if (data != NULL) {
-			input_free(data->in);
+			sock_free(data->in);
 			free(data);
 		}
                 event_free(out.list_evts[0][i]);
@@ -158,19 +153,19 @@ main (int argc, char **argv)
 
 	printf("SERVER RECEIVED : %s at address : \n", buf, 
 		out.data_punch->address);
-
+*/
 cleanup:
-        input_free(out.data_punch);
+        sock_free(out.data_punch);
 	return 0;
 }
-
+/*
 int
 p_cb(int flag, struct uhp_info *ui)
 {
 	
 	return 0;
 }
-
+*/
 void 
 usage(){
 	printf("Usage: ");

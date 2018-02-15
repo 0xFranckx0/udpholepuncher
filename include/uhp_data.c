@@ -278,10 +278,10 @@ error:
 
 }
 
-struct input_p *
-dup_input(struct input_p *in)
+struct uhp_sock *
+dup_sock(struct uhp_sock *in)
 {
-        struct input_p *dup;
+        struct uhp_sock *dup;
         dup = malloc(sizeof(dup));
         if (dup == NULL) {
                 perror("Malloc Failed in dup_input() call");
@@ -314,7 +314,7 @@ dup_input(struct input_p *in)
         }
 
         if (in->port != NULL){
-                dup->port = in->port;
+                dup->port = strdup(in->port);
                 if (dup->port == NULL) {
                         perror("Failed to duplicate string");
                         goto error;
@@ -324,7 +324,6 @@ dup_input(struct input_p *in)
                 goto error;
         }
 
-        dup->get_message = *(in->get_message);
         dup->sock = in->sock;
         dup->port_int = in->port_int;
         dup->max_hints = in->max_hints;
@@ -333,7 +332,7 @@ dup_input(struct input_p *in)
         return dup;
 
 error:
-        input_free(dup);
+        sock_free(dup);
         return NULL;
 }
 
@@ -381,7 +380,7 @@ print_data_int(void *data)
 }
 
 char *
-simple_message(struct input_p *i)
+simple_message(struct uhp_sock *i)
 {
         return i->port;
 }

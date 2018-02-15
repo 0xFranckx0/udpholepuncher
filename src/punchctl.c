@@ -21,7 +21,7 @@ main (int argc, char **argv)
 	int			 c;
 	int			 options = 0;
 
-	struct input_p 		*ip;
+	struct uhp_sock 		*ip;
 	struct output_p 	*op;
 
 	printf("INITIALIZATION\n");
