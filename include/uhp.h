@@ -68,38 +68,13 @@ enum operations {
         END_OF_OPERATIONS
 };
 
-/**
- * \struct uhp_socks
- * \brief uhp_socks is used for sockets and sendto operations.
- *
- */
-struct uhp_socks {
-	int   r; 	/*!< Socket */
-	char *rport;	/*!< receiver port */
-	char *dst; 	/*!< Destination address */
-};
 
-/**
- * \struct uhp_state
- * \brief uhp_state is used during the punch hole step to get the state of the
- *	  attemtps and if the socket successfuls to strike.
- *
- */
-struct uhp_state {
-	struct uhp_socks 	*s;	/*!< Datastructure on which previous 
-					     params are applied to*/
-	int 			 count;	/*!< Number of max tries */
-	int 			 del;	/*!< Del indicates whether 
-						an event should be deleted */
-	uint32_t 		 number;/*!< Rand number for master election */
-};
-  
 struct punch_msg {
-	int             punchid;       /*!< Numeric ID of transaction */
-	int		tag;	/*!< TAG identifying the payload */
-	int		epoch;	        /*!< Timestamp */
-	int	        count;          /*!< Numeric ID of transaction */
-	int	        port;          /*!< source port */
+	int             punchid;       /* Numeric ID of transaction */
+	int		tag;	       /* TAG identifying the payload */
+	int		epoch;	       /* Timestamp */
+	int	        count;         /* Numeric ID of transaction */
+	int	        port;          /* source port */
 };
 
 struct transaction {
@@ -117,7 +92,7 @@ int 	                 port_sanitization(char *);
 int                      rand2int(uint8_t *, int);
 char                    *msg2json(const struct punch_msg *);
 struct punch_msg        *json2msg(const char *);
-struct input_p          *dup_input(struct input_p *);
+struct uhp_sock          *dup_sock(struct uhp_sock *);
 
 /* uhp_loop.c */
 struct transaction      *transac_table[MAX_PORT];
