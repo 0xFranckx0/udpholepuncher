@@ -9,7 +9,7 @@ punch_init(char **pt, int sz, char *addr)
 {
         struct l_ports *ports = NULL;
         struct slist *l_data   = NULL;
-        struct input_p *in = NULL; 
+        struct uhp_sock *in = NULL; 
         int i;
 
         ports = parse_ports(pt, sz);
@@ -23,10 +23,10 @@ punch_init(char **pt, int sz, char *addr)
                 perror("Malloc Failed");
                 goto error;
         }
-        slist_init(l_data, sizeof(struct input_p));
+        slist_init(l_data, sizeof(struct uhp_sock));
 
         for (i = 0; i < ports->size; i++) {
-                in = malloc(sizeof(struct input_p));
+                in = malloc(sizeof(struct uhp_sock));
                 if (in == NULL) {
                         perror("Malloc Failed");
                         goto error;
@@ -46,9 +46,8 @@ punch_init(char **pt, int sz, char *addr)
 			perror("strdup failed");
 			goto error;
 		}
-                in->get_message = simple_message;
                 in->selected = 0;
-                in->max_hints = 3;
+                in->max_hints = 300;
         
                 slist_insert(l_data, in);
         }
@@ -67,7 +66,7 @@ error:
 }
 
 void
-input_free(struct input_p *in)
+sock_free(struct uhp_sock *in)
 {
         if (in != NULL){
                 if (in->selected < 1)
