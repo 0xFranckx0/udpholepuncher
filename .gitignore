@@ -1,3 +1,4 @@
+tests/vgcore*
 *.*~
 *.o
 *.lo

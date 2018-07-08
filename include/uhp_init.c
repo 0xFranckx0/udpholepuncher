@@ -17,12 +17,13 @@ punch_init(char **pt, int sz, char *addr)
                 perror("ports error");
                 goto error;
         }
-                
+
         l_data = malloc(sizeof(struct slist));
         if (l_data == NULL) {
                 perror("Malloc Failed");
                 goto error;
         }
+
         slist_init(l_data, sizeof(struct uhp_sock));
 
         for (i = 0; i < ports->size; i++) {
@@ -31,7 +32,6 @@ punch_init(char **pt, int sz, char *addr)
                         perror("Malloc Failed");
                         goto error;
                 }
-	        in->address = strdup(addr);	
 		in->port_int = ports->p[i];
                 in->port = ports->p_str[i];
                 in->sock = new_receiver_socket(in->port);
@@ -39,28 +39,33 @@ punch_init(char **pt, int sz, char *addr)
                         perror("Failed to create socket");
                         continue;
                 }
-	        in->sin = get_sockaddr_in((const char *)in->address, 
-				in->port_int);
-		in->msg = strdup("HELLO");
-		if (in->msg == NULL){
-			perror("strdup failed");
-			goto error;
-		}
                 in->selected = 0;
-                in->max_hints = 300;
+                in->max_hints = 4;
+		in->dst = strdup(addr);
+		
+	        if ((in->sin = get_sockaddr_in((const char *)addr, 
+				in->port_int)) == NULL ) 
+			goto error;
+
         
                 slist_insert(l_data, in);
         }
-       
 
+	free(ports->p_str);
+	free(ports->p);
         free(ports);
+
         return l_data;
 
 error:
         if (l_data != NULL)
                 free(l_data);
+        if (ports->p_str != NULL)
+		free(ports->p_str);
+        if (ports->p != NULL)
+		free(ports->p);
         if (ports != NULL)
-                free(ports);
+		free(ports);
         
         return NULL;
 }
@@ -73,12 +78,10 @@ sock_free(struct uhp_sock *in)
                         close(in->sock);
                 if (in->sin)
                         free(in->sin);
-                if (in->address)
-                        free(in->address);
                 if (in->port)
                         free(in->port);
-                if (in->msg)
-                        free(in->msg);
+		if (in->dst)
+			free(in->dst);
                 free(in);
         }
 

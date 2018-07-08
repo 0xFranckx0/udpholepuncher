@@ -152,7 +152,7 @@ get_sockaddr_in(const char *dst, int port)
 	sin = malloc(sizeof(*sin));
 	if (sin == NULL){
 		perror("malloc failed");
-		exit(-1);
+		return NULL;
 	}
 	sin->sin_family = AF_INET;
 	sin->sin_port = htons(port);
@@ -161,11 +161,11 @@ get_sockaddr_in(const char *dst, int port)
 	if (s <= 0){
 		if (s == 0) {
       			perror ("Invalid IPv4 address");
-			exit(-1);
+			return NULL;
 		}
     		else {
       			perror ("System error");
-			exit(-1);
+			return NULL;
 		}	
 	}
 

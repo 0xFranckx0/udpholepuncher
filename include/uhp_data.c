@@ -44,6 +44,7 @@ static int cmp_int(const void *, const void *);
 static int str2int(char *);
 static int comp_data_int(void *, void *);
 static void print_data_int(void *);
+static struct l_ports * __parse_ports(char **, int);
 
 int
 rand2int(uint8_t *rb, int size)
@@ -159,13 +160,72 @@ error:
 }
 
 struct l_ports * 
-parse_ports(char **ports, int size)
+parse_ports(char **p, int size)
+{
+	int len = 0;
+	struct l_ports *ports_list = NULL;
+	struct l_ports **ports;
+	ports = malloc(size * sizeof(*ports));
+	if(ports == NULL) {
+		perror("malloc failed in parse_ports");
+		goto error;
+	}
+
+	for (int i = 0 ; i < size; i++){ 
+		ports[i] = __parse_ports(p, 1);
+		if (ports[i] == NULL) {
+			perror("error while parsing ports");
+			goto error;
+		}
+		len += ports[i]->size;
+		p = p + i;
+	}
+
+	ports_list = malloc(size * sizeof(*ports_list));
+	if(ports_list == NULL) {
+		perror("malloc failed in parse_ports");
+		goto error;
+	}
+	ports_list->p = malloc(len * sizeof(int));
+	if(ports_list == NULL){
+		perror("Malloc error in parse_ports");
+		goto error;
+	}
+	return ports_list;
+
+error:
+	if (ports != NULL) {
+		for (int i = 0; i < size; i++) {
+			if (ports[i] != NULL) 
+				free(ports[i]);
+		}
+		free(ports);
+	}
+	if (ports_list != NULL) {
+		if (ports_list->p != NULL)
+			free(ports_list->p);
+		if (ports_list->p_str != NULL) {
+			for (int i = 0; i < ports_list->size; i++ )
+				free(ports_list->p_str[i]);
+			free(ports_list->p_str);
+		}
+		free(ports_list);
+	}
+		
+	return NULL;
+}
+
+struct l_ports * 
+__parse_ports(char **ports, int size)
 {       
         struct l_ports *list_ports = NULL;
         struct slist list;
         void *data = NULL;
         int range[2];
-        int i, j, n, x, y, diff, inf; 
+        int i, j, n, x, y, diff;
+	int  inf=0;
+	int  *tmp_int = NULL; 
+	int  *tmp_int1 = NULL; 
 	char *buf, *p;
         char *token = NULL;
         char *delim = "-";
@@ -191,12 +251,25 @@ parse_ports(char **ports, int size)
                                 token = strtok(NULL, delim);
                                 j++;
                         } 
+			/*
+			Calculate the range. Need to take care which is the upper 
+			and the lower born.
+			*/
                         diff = (range[0] >= range[1])? range[0] - range[1]:
                                                        range[1] - range[0];
                         inf = (range[0] >= range[1])? range[1]:range[0];
-                        for (j = 0; j <= diff; j++) { 
-                                if ((entry_find(&list, comp_data_int, &inf))> 0)
-                                        slist_insert(&list, &inf);
+
+			tmp_int = malloc((diff+1)  * sizeof(int));
+			if (tmp_int == NULL) {
+				perror("malloc failed in parse_ports");
+				goto error;
+			}
+			memset(tmp_int,0,diff);
+			for (j = 0; j <= diff; j++) { 
+                                if ((entry_find(&list, comp_data_int, &inf))> 0){
+					tmp_int[j] = inf;
+                                        slist_insert(&list, &tmp_int[j]);
+				}
                                 
                                 inf++;
                         }
@@ -205,47 +278,60 @@ parse_ports(char **ports, int size)
                         perror("BAD string");
                         goto error;
                 } else {
-                        x = str2int(ports[i]);
-                        if(x < 0) {
+			tmp_int1 = malloc(sizeof(int));
+			if (tmp_int1 == NULL) {
+				perror("malloc failed for tmp in parse_ports");
+				goto error;
+			}
+			memset(tmp_int1,0,sizeof(1));
+                        *tmp_int1 = str2int(ports[i]);
+                        if(*tmp_int1 < 0) {
                                 perror("Failed to convert string to int");
                                 goto error;
                         }
-                        if ((entry_find(&list, comp_data_int, &x)) > 0)
-                                slist_insert(&list, &x);
+                        if ((entry_find(&list, comp_data_int, tmp_int1)) > 0)
+                                slist_insert(&list, tmp_int1);
 		}
         }
-
+	
         list_ports = malloc(sizeof(struct l_ports));
         if (list_ports == NULL) {
                 perror("Malloc failed");
                 goto error;
         }
+	memset(list_ports,0,sizeof(struct l_ports));
 
         list_ports->p = malloc(list.len * sizeof(int));
         if (list_ports->p == NULL) {
                 perror("Malloc failed");
                 goto error;
         }
+	memset(list_ports->p,0,list.len);
+	
 
         list_ports->p_str = malloc(list.len * sizeof(char*));
         if (list_ports->p_str == NULL) {
                 perror("Malloc failed");
                 goto error;
         }
+	memset(list_ports->p_str,0,list.len * sizeof(char*));
 
         list_ports->size = 0;
 
         for (i = 0; slist_is_empty(&list) > 0; i++) {
                 data = slist_pop(&list);
                 if (data != NULL) {
-                        list_ports->p[i] = *((int *)data); 
+                        list_ports->p[i] = *(int*)data; 
                         list_ports->size++;
                 } else {
                         break;
                 }        
         }
+
         /* sort the port list in ascending order */
         qsort(list_ports->p, list_ports->size, sizeof(int), cmp_int); 
+
+	for (i = 0; i < list_ports->size; i++)
 
         /* Fillout the char * array of ports */
         for (i = 0; i < list_ports->size; i++){ 
@@ -258,6 +344,10 @@ parse_ports(char **ports, int size)
                                         "%d", list_ports->p[i]);
         }
 
+	if(tmp_int != NULL)
+		free(tmp_int);
+	if(tmp_int1 != NULL)
+		free(tmp_int1);
         return list_ports;
 
 error:
@@ -293,25 +383,6 @@ dup_sock(struct uhp_sock *in)
                 goto error;
         }
         memcpy(dup->sin, in->sin, sizeof(struct sockaddr_in));
-
-        if (in->address != NULL){
-                dup->address = strdup(in->address);
-                if (dup->address == NULL) {
-                        perror("Failed to duplicate string");
-                        goto error;
-                }
-        } else {
-                perror("No address");
-                goto error;
-        }
-
-        if (in->msg) {                       
-                dup->msg = strdup(in->msg);
-                if (dup->address == NULL) {
-                        perror("Failed to duplicate string");
-                        goto error;
-                }
-        }
 
         if (in->port != NULL){
                 dup->port = strdup(in->port);

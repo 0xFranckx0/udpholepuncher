@@ -1,8 +1,8 @@
 .PHONY:	build compile run stop punch
 
-SRC=/root/udpholepuncher
+SRC=/root/puncher
 IMAGE = builder
-TAG = 1-0
+TAG = 1-6
 
 
 build:	

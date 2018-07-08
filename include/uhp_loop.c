@@ -35,11 +35,22 @@ sender_cb(evutil_socket_t listener, short event, void *arg)
 	ssize_t 		 lensnd;
         char *msg = "NUMERO 2";
 	int len = strlen(msg) + 1;
+	struct sockaddr_in 	sin;
+	int slen = sizeof(sin);
+        char *buf;
+	int s;
 
-        
-	if (lensnd = (sendto((int)listener, (const void *)msg, len , 0, 
-		        (struct sockaddr *) data->sin, 
-                        sizeof(*data->sin))) < 0 ) {
+	memset((char*) &sin, 0, sizeof(sin));
+	sin.sin_family = AF_INET;
+	sin.sin_port = htons(data->port_int);
+
+	if (inet_aton(data->dst,&sin.sin_addr)==0) {
+		perror("inet_aton");
+		exit(1);
+	}
+
+	if (lensnd = (sendto((int)listener, msg, len , 0, 
+		        &sin, slen)) < 0 ) {
 
 	        perror("sendto()");
 		event_base_loopbreak(stop_base);

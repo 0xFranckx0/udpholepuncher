@@ -1,6 +1,8 @@
 #ifndef PUNCH_H
 #define PUNCH_H
 
+#include <event2/event.h>
+
 struct slist;
 /* uhp_sock is passed to punch loop to create events */
 struct uhp_sock {
@@ -8,9 +10,8 @@ struct uhp_sock {
 	int			 port_int;
         int                      max_hints;
         int                      selected;
-	char 			*address;
-	char 			*msg;
 	char 			*port;
+	char	*dst;
         struct sockaddr_in      *sin;
 };
 
@@ -19,6 +20,7 @@ struct uhp_carrier {
         struct event **list_evts[2];
         struct uhp_sock *data_punch;        
 	void    *metadata;
+	char	*dst;
 };
 
 struct l_ports {
